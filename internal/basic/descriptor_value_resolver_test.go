@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 
 	_ "modernc.org/sqlite"
 )

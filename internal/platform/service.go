@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/stats"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/stats"
 )
 
 type platformsFile struct {

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 const gameStatsProcessCacheInterval = 5 * time.Minute

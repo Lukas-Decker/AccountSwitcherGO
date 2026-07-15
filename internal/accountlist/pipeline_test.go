@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 func TestOrderedIDsKeepsSavedOrderAndSortsMissing(t *testing.T) {

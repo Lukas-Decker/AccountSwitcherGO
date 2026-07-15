@@ -5,7 +5,7 @@
   import { motionEnabled } from "../lib/animation";
   import { formatToastWithError } from "../lib/formatWailsError";
   import { openExternalUrl } from "../lib/openExternalUrl";
-  import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { t } from "../stores/i18n";
   import { pushToast } from "../stores/toast";
 

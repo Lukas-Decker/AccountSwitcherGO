@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 func SafeFolderName(platformKey string) string {

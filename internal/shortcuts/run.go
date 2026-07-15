@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/exeicon"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/exeicon"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/winutil"
 )
 
 // RunShortcut uses LoginCache copy, else Desktop (non-recursive), else Start Menu (recursive).

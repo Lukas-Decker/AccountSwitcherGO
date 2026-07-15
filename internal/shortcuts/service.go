@@ -7,14 +7,14 @@ import (
 	"strings"
 	"sync"
 
-	"TcNo-Acc-Switcher/internal/basic"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/steam"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/basic"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/security"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/steam"
+	"account-switcher/internal/winutil"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

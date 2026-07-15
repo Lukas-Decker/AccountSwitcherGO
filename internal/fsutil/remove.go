@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 )
 
 // RemoveAllWithRetry calls os.RemoveAll with bounded exponential-backoff

@@ -1,6 +1,6 @@
 import { derived, get, writable } from "svelte/store";
-import * as SecurityService from "../../bindings/TcNo-Acc-Switcher/internal/security/securityservice.js";
-import { InterruptedRestoreInfo, QuarantineInfo, Status } from "../../bindings/TcNo-Acc-Switcher/internal/security/models.js";
+import * as SecurityService from "../../bindings/account-switcher/internal/security/securityservice.js";
+import { InterruptedRestoreInfo, QuarantineInfo, Status } from "../../bindings/account-switcher/internal/security/models.js";
 
 export type SecurityStatus = InstanceType<typeof Status>;
 export type SecurityQuarantineInfo = InstanceType<typeof QuarantineInfo>;

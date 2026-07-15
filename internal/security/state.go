@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/paths"
 
 	"golang.org/x/crypto/argon2"
 )

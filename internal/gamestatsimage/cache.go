@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/profileimage"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/profileimage"
 )
 
 const DefaultMaxAgeDays = 7
@@ -82,7 +82,7 @@ func DownloadIfNeeded(ctx context.Context, client *http.Client, subdir, imageURL
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "TcNo-Acc-Switcher/1.0")
+	req.Header.Set("User-Agent", "account-switcher/1.0")
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err

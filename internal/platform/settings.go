@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"TcNo-Acc-Switcher/internal/settingsfile"
+	"account-switcher/internal/settingsfile"
 )
 
 const (

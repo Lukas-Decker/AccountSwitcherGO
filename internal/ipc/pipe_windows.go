@@ -13,7 +13,7 @@ import (
 	"net"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/crashlog"
+	"account-switcher/internal/crashlog"
 
 	"github.com/Microsoft/go-winio"
 )

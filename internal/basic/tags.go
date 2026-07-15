@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/stats"
+	"account-switcher/internal/stats"
 )
 
 const maxTagNameLen = 64

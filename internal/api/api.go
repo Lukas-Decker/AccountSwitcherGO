@@ -8,7 +8,7 @@ import (
 const baseURL = "https://api.tcno.co/sw"
 
 func UserAgent(version string) string {
-	return "TcNo-Acc-Switcher/" + strings.TrimSpace(version)
+	return "account-switcher/" + strings.TrimSpace(version)
 }
 
 func AnonymousStatsUploadURL() string {

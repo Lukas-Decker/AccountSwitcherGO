@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 func Merge[ListRow any, EnrichRow any, Out any](

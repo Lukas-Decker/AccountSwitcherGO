@@ -1,4 +1,4 @@
-import * as BasicService from "../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
+import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
 import { openContextMenu, type MenuItemDef } from "../stores/contextMenu";
 import { openTagExpiryModal } from "../stores/modal";
 

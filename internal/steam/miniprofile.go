@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/profileimage"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/profileimage"
 
 	"golang.org/x/net/html"
 )

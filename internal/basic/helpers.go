@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
 )
 
 func loadDescriptor(raw []byte, platformKey string) (platform.Descriptor, error) {

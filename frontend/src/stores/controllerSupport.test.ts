@@ -6,7 +6,7 @@ const platformService = vi.hoisted(() => ({
   UpdateSettings: vi.fn(),
 }));
 
-vi.mock("../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js", () => platformService);
+vi.mock("../../bindings/account-switcher/internal/platform/platformservice.js", () => platformService);
 
 import {
   controllerSupportEnabled,

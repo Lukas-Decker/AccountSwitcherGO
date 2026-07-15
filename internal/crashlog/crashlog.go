@@ -12,12 +12,12 @@ import (
 	"runtime/debug"
 	"time"
 
-	buildinfo "TcNo-Acc-Switcher/build"
-	"TcNo-Acc-Switcher/internal/api"
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/logsanitize"
-	"TcNo-Acc-Switcher/internal/paths"
+	buildinfo "account-switcher/build"
+	"account-switcher/internal/api"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/logsanitize"
+	"account-switcher/internal/paths"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

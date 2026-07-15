@@ -6,7 +6,7 @@
   import PathPickerTree from "./PathPickerTree.svelte";
   import { t } from "../../stores/i18n";
   import { FOLDER_PICKER_APPDATA, FOLDER_PICKER_PORTABLE } from "../../stores/modal";
-  import * as FilesystemService from "../../../bindings/TcNo-Acc-Switcher/filesystemservice";
+  import * as FilesystemService from "../../../bindings/account-switcher/filesystemservice";
   import { normalizeDisplayPath } from "../../lib/fsPaths";
   import { tooltip } from "../../lib/actions/tooltip";
 

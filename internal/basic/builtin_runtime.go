@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 var battleNetAccountDBPathRegex = regexp.MustCompile(`(?im)Opened database at:\s+.*[\\/]Battle\.net[\\/]Account[\\/]([0-9]+)[\\/]account\.db`)

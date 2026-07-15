@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 )
 
 // WriteFileAtomic writes data to path using a temp file in the same directory.

@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/settingsfile"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/settingsfile"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/winutil"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

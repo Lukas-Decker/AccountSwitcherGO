@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 // ---------------------------------------------------------------------------

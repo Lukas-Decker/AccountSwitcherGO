@@ -1,7 +1,7 @@
 package main
 
 import (
-	"TcNo-Acc-Switcher/internal/basic"
+	"account-switcher/internal/basic"
 
 	_ "embed"
 )

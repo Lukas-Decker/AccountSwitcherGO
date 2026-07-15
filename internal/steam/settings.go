@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
 
 	"github.com/tidwall/gjson"
 )

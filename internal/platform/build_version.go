@@ -1,7 +1,7 @@
 package platform
 
 import (
-	buildinfo "TcNo-Acc-Switcher/build"
+	buildinfo "account-switcher/build"
 )
 
 func appVersionFromBuildConfig() string {

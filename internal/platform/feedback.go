@@ -3,8 +3,8 @@ package platform
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/stability"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/stability"
 )
 
 // SubmitStabilityRating records whether an account switch worked for the given platform.

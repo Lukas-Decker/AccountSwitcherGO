@@ -9,14 +9,14 @@
   import PlatformSettingsSteamSection from "../components/settings/PlatformSettingsSteamSection.svelte";
   import PlatformSettingsGenericSection from "../components/settings/PlatformSettingsGenericSection.svelte";
   import PlatformSettingsToolsSection from "../components/settings/PlatformSettingsToolsSection.svelte";
-  import * as Wails from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
-  import * as BasicService from "../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
+  import * as Wails from "../../bindings/account-switcher/internal/platform/platformservice.js";
+  import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
   import * as Shortcuts from "wails-shortcuts-service";
-  import { SaveSteamSettings, GetSteamSettings, RefreshVACStatus, RefreshAllSteamImages } from "../../bindings/TcNo-Acc-Switcher/internal/steam/steamservice.js";
+  import { SaveSteamSettings, GetSteamSettings, RefreshVACStatus, RefreshAllSteamImages } from "../../bindings/account-switcher/internal/steam/steamservice.js";
   import { requestPlatformAccountsRefresh } from "../stores/platformPage";
   import { controllerSpatialNavigation } from "../lib/actions/controllerSpatialNavigation";
-  import { PlatformSettings } from "../../bindings/TcNo-Acc-Switcher/internal/platform/models.js";
-  import { Settings } from "../../bindings/TcNo-Acc-Switcher/internal/steam/models.js";
+  import { PlatformSettings } from "../../bindings/account-switcher/internal/platform/models.js";
+  import { Settings } from "../../bindings/account-switcher/internal/steam/models.js";
   import {
     ARG_SILENT,
     ARG_VGUI,

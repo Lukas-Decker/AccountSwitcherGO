@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

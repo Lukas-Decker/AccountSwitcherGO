@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 )
 
 func isSharingViolationErr(err error) bool {

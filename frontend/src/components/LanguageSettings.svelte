@@ -1,6 +1,6 @@
 <script lang="ts">
   import { get } from "svelte/store";
-  import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { viewportDropdown } from "../lib/actions/viewportDropdown";
   import type { CrowdinTranslatorsList } from "../lib/crowdinTranslators";
   import { openExternalUrl } from "../lib/openExternalUrl";

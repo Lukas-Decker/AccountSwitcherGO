@@ -1,7 +1,7 @@
 package steam
 
 import (
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 // CountSavedAccounts returns the number of Steam accounts in loginusers.vdf, or 0 when unavailable.

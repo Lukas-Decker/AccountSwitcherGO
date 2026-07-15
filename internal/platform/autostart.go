@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

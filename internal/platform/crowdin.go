@@ -10,7 +10,7 @@ import (
 	"sort"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/appclient"
+	"account-switcher/internal/appclient"
 )
 
 const crowdinAPIURL = "https://tcno.co/Projects/AccSwitcher/api/crowdin/"

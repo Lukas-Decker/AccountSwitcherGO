@@ -6,7 +6,7 @@ const platformService = vi.hoisted(() => ({
   SetAnimationsEnabled: vi.fn(),
 }));
 
-vi.mock("../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js", () => platformService);
+vi.mock("../../bindings/account-switcher/internal/platform/platformservice.js", () => platformService);
 
 import { animationsEnabled, setAnimationsEnabled } from "./animationSettings";
 

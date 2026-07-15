@@ -1,4 +1,4 @@
-module TcNo-Acc-Switcher
+module account-switcher
 
 go 1.26.4
 

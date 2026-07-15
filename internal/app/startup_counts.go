@@ -3,11 +3,11 @@ package app
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/basic"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/steam"
+	"account-switcher/internal/basic"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/security"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/steam"
 )
 
 // RegisterStartupAccountCounts wires per-platform account totals for GetStartup skeleton hints.

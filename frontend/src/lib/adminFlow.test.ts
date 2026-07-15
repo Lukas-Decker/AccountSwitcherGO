@@ -6,7 +6,7 @@ vi.mock("./formatWailsError", () => ({
   formatToastWithError: vi.fn(),
 }));
 
-vi.mock("../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js", () => ({
+vi.mock("../../bindings/account-switcher/internal/platform/platformservice.js", () => ({
   CheckAdminForPlatform: vi.fn(),
   RestartAsAdmin: vi.fn(),
 }));

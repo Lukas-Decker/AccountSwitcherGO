@@ -17,11 +17,11 @@ import (
 	"github.com/tidwall/gjson"
 	htmlnet "golang.org/x/net/html"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/security"
 )
 
 type gameStatsFile struct {

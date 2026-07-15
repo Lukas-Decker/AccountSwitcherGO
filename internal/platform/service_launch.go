@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/exeicon"
+	"account-switcher/internal/exeicon"
 )
 
 func (p *PlatformService) LaunchPlatform(platformKey string) error {

@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/profileimage"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/profileimage"
 )
 
 func remoteProfilePicTemplate(tpl string) bool {

@@ -7,13 +7,13 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"TcNo-Acc-Switcher/internal/basic"
-	"TcNo-Acc-Switcher/internal/cli"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/shortcuts"
-	"TcNo-Acc-Switcher/internal/steam"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/basic"
+	"account-switcher/internal/cli"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/security"
+	"account-switcher/internal/shortcuts"
+	"account-switcher/internal/steam"
+	"account-switcher/internal/winutil"
 )
 
 type Dispatch struct {

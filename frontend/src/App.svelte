@@ -25,8 +25,8 @@
   import { loadPageModule, prefetchCommonPages } from "./lib/pageLoaders";
   import { actionBarStatus } from './stores/fileDrop'
   import { t } from "./stores/i18n";
-  import { NotifyLaunchUpdateCheck } from "../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
-  import * as PlatformService from "../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import { NotifyLaunchUpdateCheck } from "../bindings/account-switcher/internal/platform/platformservice.js";
+  import * as PlatformService from "../bindings/account-switcher/internal/platform/platformservice.js";
   import { pushToast } from "./stores/toast";
   import { formatToastWithError } from "./lib/formatWailsError";
   import { registerSvgRenderBridge } from "./lib/svgRenderBridge";

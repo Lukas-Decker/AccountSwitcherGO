@@ -3,7 +3,7 @@ package stability
 import (
 	"log/slog"
 
-	"TcNo-Acc-Switcher/internal/appclient"
+	"account-switcher/internal/appclient"
 )
 
 // OnSuccessfulSwitch increments the per-platform switch counter and may emit a rating prompt.

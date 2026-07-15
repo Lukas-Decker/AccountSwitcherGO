@@ -3,8 +3,8 @@ package shortcuts
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/steam"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/steam"
 )
 
 func loadEntries(platformKey string) ([]platform.GameShortcutEntry, error) {

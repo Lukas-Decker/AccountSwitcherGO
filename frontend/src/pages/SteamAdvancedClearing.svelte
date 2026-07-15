@@ -8,7 +8,7 @@
   import { sanitizeHtml } from "../lib/sanitizeHtml";
   import { pushToast } from "../stores/toast";
   import { activeModal } from "../stores/modal";
-  import { RunAdvancedClearingAction } from "../../bindings/TcNo-Acc-Switcher/internal/steam/steamservice.js";
+  import { RunAdvancedClearingAction } from "../../bindings/account-switcher/internal/steam/steamservice.js";
   import "../styles/Settings.scss";
 
   const WIKI_URL =

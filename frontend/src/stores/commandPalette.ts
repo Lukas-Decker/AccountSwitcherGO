@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store";
-import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 import { pushToast } from "./toast";
 import { t } from "./i18n";
 import { formatToastWithError } from "../lib/formatWailsError";

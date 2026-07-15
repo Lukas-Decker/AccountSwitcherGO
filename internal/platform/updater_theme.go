@@ -1,6 +1,6 @@
 package platform
 
-import "TcNo-Acc-Switcher/internal/updatertheme"
+import "account-switcher/internal/updatertheme"
 
 func (*PlatformService) SetUpdaterThemeCSS(css string) {
 	updatertheme.SetCSS(css)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 // Must match steam.steamKillNames (admin pre-flight uses the same process list).

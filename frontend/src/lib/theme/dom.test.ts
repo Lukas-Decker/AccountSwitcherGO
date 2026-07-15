@@ -32,7 +32,7 @@ vi.mock("../updaterTheme", () => updaterThemeMock);
 vi.mock("../../styles/modal-primary.scss?inline", () => ({
   default: "/* modal primary */",
 }));
-vi.mock("../../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js", () => platformServiceMock);
+vi.mock("../../../bindings/account-switcher/internal/platform/platformservice.js", () => platformServiceMock);
 
 type LoadedThemeModules = {
   dom: typeof import("./dom");

@@ -1,4 +1,4 @@
-import type { AccountDTO, AccountPatch } from "../../../bindings/TcNo-Acc-Switcher/internal/steam/models.js";
+import type { AccountDTO, AccountPatch } from "../../../bindings/account-switcher/internal/steam/models.js";
 import type { TagDefRow } from "../accountTagsContext";
 
 export type SteamAccountRow = InstanceType<typeof AccountDTO> & {

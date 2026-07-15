@@ -1,7 +1,7 @@
 package platform
 
 import (
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 func (p *PlatformService) GetLanguage() (string, error) {

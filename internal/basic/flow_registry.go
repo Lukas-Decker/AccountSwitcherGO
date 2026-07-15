@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 type regDumpEntry struct {

@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 // SaveFolderFromConfirmedExe writes SteamSettings FolderPath from a chosen steam.exe and removes PlatformExePaths["Steam"].

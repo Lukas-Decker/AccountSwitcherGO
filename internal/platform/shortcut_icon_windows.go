@@ -5,7 +5,7 @@ package platform
 import (
 	"strings"
 
-	winos "TcNo-Acc-Switcher/internal/platform/os/windows"
+	winos "account-switcher/internal/platform/os/windows"
 )
 
 func findStartMenuIconShortcut(entry PlatformEntry) (string, bool) {

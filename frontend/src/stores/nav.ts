@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store";
-import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 import { setPlatformAccountCounts, setPlatformTagCounts } from "./platformAccountsCache";
 import {
   applySinglePlatformStartupRoute,
@@ -8,7 +8,7 @@ import {
   parseHash,
   validateRoute,
 } from "./routeCodec";
-import type { PlatformStartup } from "../../bindings/TcNo-Acc-Switcher/internal/platform/models.js";
+import type { PlatformStartup } from "../../bindings/account-switcher/internal/platform/models.js";
 import { homeScreenData } from "./homeScreenData";
 
 export type { Route };

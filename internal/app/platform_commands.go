@@ -3,9 +3,9 @@ package app
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/basic"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/steam"
+	"account-switcher/internal/basic"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/steam"
 )
 
 type platformCommandAdapter interface {

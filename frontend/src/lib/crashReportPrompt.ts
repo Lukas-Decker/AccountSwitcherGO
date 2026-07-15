@@ -4,7 +4,7 @@ import { offlineMode } from "../stores/offlineMode";
 import { pushToast } from "../stores/toast";
 import { openCrashReportPrompt, type CrashReportChoice } from "../stores/modal";
 import { formatToastWithError } from "./formatWailsError";
-import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 
 async function applyCrashReportChoice(choice: CrashReportChoice): Promise<void> {
   if (choice === "no") {

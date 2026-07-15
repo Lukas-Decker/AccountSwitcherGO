@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
+	"account-switcher/internal/fsutil"
 )
 
 type BackupResult struct {

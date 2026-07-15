@@ -12,7 +12,7 @@
   } from "../../lib/platformSettingsShared";
   import SharedSettingCheckbox from "./SharedSettingCheckbox.svelte";
   import ProcessMethodDropdown from "./ProcessMethodDropdown.svelte";
-  import type { Settings } from "../../../bindings/TcNo-Acc-Switcher/internal/steam/models";
+  import type { Settings } from "../../../bindings/account-switcher/internal/steam/models";
 
   export let name: string;
   export let steamSettings: Settings;

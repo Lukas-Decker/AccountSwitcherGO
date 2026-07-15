@@ -11,8 +11,8 @@ import (
 	"sort"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/winutil"
 
 	"github.com/tidwall/gjson"
 )

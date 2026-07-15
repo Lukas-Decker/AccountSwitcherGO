@@ -11,8 +11,8 @@ import (
 	"sync"
 	"unicode"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/winutil"
 )
 
 var (

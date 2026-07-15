@@ -8,10 +8,10 @@ import (
 	"strings"
 	"unicode"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/security"
 )
 
 // Error messages match i18n keys; the Windows frontend maps them in PlatformSteam.

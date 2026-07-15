@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/platform"
 
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/comparer"

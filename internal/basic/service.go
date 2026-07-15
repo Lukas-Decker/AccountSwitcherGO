@@ -8,14 +8,14 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/accountlist"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/tray"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/accountlist"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/security"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/tray"
+	"account-switcher/internal/winutil"
 )
 
 type BasicService struct {

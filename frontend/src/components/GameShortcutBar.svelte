@@ -65,7 +65,7 @@
   import {
     ListPayload,
     ShortcutDTO,
-  } from "../../bindings/TcNo-Acc-Switcher/internal/shortcuts/models.js";
+  } from "../../bindings/account-switcher/internal/shortcuts/models.js";
   import {
     platformActionBusy,
     selectedAccount,
@@ -73,7 +73,7 @@
     requestPlatformAccountsRefresh,
   } from "../stores/platformPage";
   import { t } from "../stores/i18n";
-  import { HasShortcutMainExe } from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import { HasShortcutMainExe } from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { fileDropAcceptor } from "../stores/fileDrop";
   import { runShortcut, hideShortcut, openShortcutFolder, buildShortcutContextMenu, buildPlatformContextMenu } from "../lib/shortcutActions";
   import { tooltip } from "../lib/actions/tooltip";

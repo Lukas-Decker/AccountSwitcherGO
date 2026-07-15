@@ -3,8 +3,8 @@ package platform
 import (
 	"time"
 
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/winutil"
 )
 
 // StatsSwitcherRow is one platform block in the stats report (bindings / UI).

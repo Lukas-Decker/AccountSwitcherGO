@@ -4,7 +4,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 // Latest GitHub releases; may later be replaced or extended by an in-app auto-updater.

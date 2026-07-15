@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 const steamTestRegBase = `HKCU\Software\Valve\Steam`

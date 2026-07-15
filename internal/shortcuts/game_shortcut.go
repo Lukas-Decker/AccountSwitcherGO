@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/cli"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/cli"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/winutil"
 )
 
 var steamRungameIDRE = regexp.MustCompile(`(?i)steam://rungameid/(\d+)`)

@@ -1,7 +1,7 @@
 package platform
 
 import (
-	"TcNo-Acc-Switcher/internal/crashlog"
+	"account-switcher/internal/crashlog"
 )
 
 // HasPendingCrashReport reports whether a local crash dump is waiting for user action.

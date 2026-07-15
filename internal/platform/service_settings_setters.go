@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/stats"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/stats"
+	"account-switcher/internal/winutil"
 )
 
 func (p *PlatformService) SetLanguage(code string) error {

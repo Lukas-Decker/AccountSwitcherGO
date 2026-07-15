@@ -3,7 +3,7 @@
   import { tooltip } from "../lib/actions/tooltip";
   import { contextMenu } from "../lib/actions/contextMenu";
   import { scrollbarWidthVar } from "../lib/actions/scrollbarWidthVar";
-  import type { ShortcutDTO } from "../../bindings/TcNo-Acc-Switcher/internal/shortcuts/models.js";
+  import type { ShortcutDTO } from "../../bindings/account-switcher/internal/shortcuts/models.js";
   import type { MenuItemDef } from "../stores/contextMenu";
   import { offlineMode, offlineSafeImageSrc } from "../stores/offlineMode";
 

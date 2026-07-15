@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/paths"
 )
 
 type quarantineFailure struct {

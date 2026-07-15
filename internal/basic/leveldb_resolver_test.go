@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 
 	"github.com/syndtr/goleveldb/leveldb"
 )

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as FilesystemService from "../../../bindings/TcNo-Acc-Switcher/filesystemservice";
+  import * as FilesystemService from "../../../bindings/account-switcher/filesystemservice";
   import {
     normalizeDisplayPath,
     sameFsPath,

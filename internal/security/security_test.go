@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/paths"
 )
 
 func resetSecurityTest(t *testing.T) string {

@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync/atomic"
 
-	"TcNo-Acc-Switcher/internal/settingsfile"
+	"account-switcher/internal/settingsfile"
 )
 
 var (

@@ -13,8 +13,8 @@ import (
 	"time"
 	"unicode"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
 )
 
 // ManualProfileMarkerSuffix is appended to the account avatar cache stem (same as image basename without ext).

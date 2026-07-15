@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
 )
 
 func loginCacheRoot(platformKey string) (string, error) {

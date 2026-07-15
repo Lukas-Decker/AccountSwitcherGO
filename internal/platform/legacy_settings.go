@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/settingsfile"
+	"account-switcher/internal/settingsfile"
 )
 
 const legacyWindowSettingsFileName = "WindowSettings.json"

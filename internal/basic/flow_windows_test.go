@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 const flowTestRegistryRoot = `HKCU\Software\TcNo-Acc-Switcher\FlowTest`

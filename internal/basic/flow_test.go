@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/platform"
 )
 
 // flowTestEnv scaffolds a temp exeDir + install dir for integration tests.

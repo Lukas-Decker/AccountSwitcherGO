@@ -9,7 +9,7 @@
   } from "../../lib/platformSettingsShared";
   import SharedSettingCheckbox from "./SharedSettingCheckbox.svelte";
   import ProcessMethodDropdown from "./ProcessMethodDropdown.svelte";
-  import type { PlatformSettings } from "../../../bindings/TcNo-Acc-Switcher/internal/platform/models";
+  import type { PlatformSettings } from "../../../bindings/account-switcher/internal/platform/models";
 
   export let name: string;
   export let genericPS: PlatformSettings;

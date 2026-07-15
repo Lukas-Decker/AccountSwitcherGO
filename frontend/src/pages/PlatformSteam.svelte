@@ -11,18 +11,18 @@
   import { pushToast } from "../stores/toast";
   import { t } from "../stores/i18n";
   import { openConfirm, openPrompt } from "../stores/modal";
-  import * as SteamService from "../../bindings/TcNo-Acc-Switcher/internal/steam/steamservice.js";
+  import * as SteamService from "../../bindings/account-switcher/internal/steam/steamservice.js";
   import {
     AccountDTO,
     AccountPatch,
     SteamAccountEnrichmentDTO,
     SteamAccountListItemDTO,
-  } from "../../bindings/TcNo-Acc-Switcher/internal/steam/models.js";
+  } from "../../bindings/account-switcher/internal/steam/models.js";
   import * as Shortcuts from "wails-shortcuts-service";
-  import { ListPayload } from "../../bindings/TcNo-Acc-Switcher/internal/shortcuts/models.js";
+  import { ListPayload } from "../../bindings/account-switcher/internal/shortcuts/models.js";
   import { offlineMode } from "../stores/offlineMode";
   import { formatToastWithError } from "../lib/formatWailsError";
-  import * as BasicService from "../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
+  import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
   import { buildSteamExtraMenu } from "../lib/steam/contextMenuBuilder";
   import type { SteamMenuDeps } from "../lib/steam/menuCommands";
   import type { SteamAccountRow } from "../lib/steam/types";

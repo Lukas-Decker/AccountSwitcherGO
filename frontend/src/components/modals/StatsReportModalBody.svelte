@@ -1,7 +1,7 @@
 <script lang="ts">
   import { get } from "svelte/store";
-  import * as PlatformService from "../../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice";
-  import type { StatsReport } from "../../../bindings/TcNo-Acc-Switcher/internal/platform/models";
+  import * as PlatformService from "../../../bindings/account-switcher/internal/platform/platformservice";
+  import type { StatsReport } from "../../../bindings/account-switcher/internal/platform/models";
   import { openExternalUrl } from "../../lib/openExternalUrl";
   import { t } from "../../stores/i18n";
   import { pushToast } from "../../stores/toast";

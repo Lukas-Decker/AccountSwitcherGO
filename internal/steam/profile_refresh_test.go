@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/profileimage"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/profileimage"
 )
 
 func TestFetchProfileXMLWithRetryMarksTransientFailurePendingThenSucceeds(t *testing.T) {

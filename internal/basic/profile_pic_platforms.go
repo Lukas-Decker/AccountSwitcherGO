@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	basicplatforms "TcNo-Acc-Switcher/internal/basic/platforms"
-	"TcNo-Acc-Switcher/internal/platform"
+	basicplatforms "account-switcher/internal/basic/platforms"
+	"account-switcher/internal/platform"
 )
 
 type profileImageSource struct {

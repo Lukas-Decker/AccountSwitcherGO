@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/winutil"
 )
 
 // ResolveLnkTarget returns the shortcut target path for a .lnk file.

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 func TestExpandDescriptorVariables_Basic(t *testing.T) {

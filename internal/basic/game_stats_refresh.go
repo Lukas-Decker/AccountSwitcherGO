@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/security"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

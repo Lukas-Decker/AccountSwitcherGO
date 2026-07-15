@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { MenuItemDef } from "../stores/contextMenu";
 
-vi.mock("../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js", () => ({
+vi.mock("../../bindings/account-switcher/internal/basic/basicservice.js", () => ({
   AddTagToAccount: vi.fn(),
   ApplySpecialTag: vi.fn(),
   CreateTagAndAddToAccount: vi.fn(),

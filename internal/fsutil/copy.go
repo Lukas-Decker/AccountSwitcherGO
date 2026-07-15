@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 )
 
 // CopyDir recursively copies a directory tree (files + subdirs, permissions not preserved for files).

@@ -8,8 +8,8 @@
   import { t } from "../stores/i18n";
   import { openConfirm, openFeedbackModal, openFolderPicker } from "../stores/modal";
   import { pushToast } from "../stores/toast";
-  import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
-  import type { PlatformStartup } from "../../bindings/TcNo-Acc-Switcher/internal/platform/models.js";
+  import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
+  import type { PlatformStartup } from "../../bindings/account-switcher/internal/platform/models.js";
   import { platformIconFgHref } from "../lib/platformIcon";
   import { contextMenu } from "../lib/actions/contextMenu";
   import type { MenuItemDef } from "../stores/contextMenu";

@@ -3,8 +3,8 @@ package app
 import (
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/cli"
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/cli"
+	"account-switcher/internal/platform"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )

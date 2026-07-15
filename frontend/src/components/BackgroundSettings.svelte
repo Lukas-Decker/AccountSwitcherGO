@@ -10,7 +10,7 @@
     type BackgroundAlignment,
     type BackgroundFit,
   } from "../lib/backgroundDisplay";
-  import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { appBgInfo, platformBgInfo } from "../stores/backgroundImage";
 
   export let target: "app" | "platform" = "app";

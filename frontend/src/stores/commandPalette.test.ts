@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js", () => ({
+vi.mock("../../bindings/account-switcher/internal/platform/platformservice.js", () => ({
   ReadSettings: vi.fn(),
   UpdateSettings: vi.fn(),
 }));

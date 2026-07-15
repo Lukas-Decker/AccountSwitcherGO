@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 func TestIsREG(t *testing.T) {

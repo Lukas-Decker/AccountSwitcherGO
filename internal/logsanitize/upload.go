@@ -1,6 +1,6 @@
 package logsanitize
 
-import "TcNo-Acc-Switcher/internal/actionlog"
+import "account-switcher/internal/actionlog"
 
 // ActionLogForUpload returns the pruned session action log with account identifiers redacted.
 func ActionLogForUpload() string {

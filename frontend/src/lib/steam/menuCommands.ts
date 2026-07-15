@@ -2,7 +2,7 @@ import { pushToast } from "../../stores/toast";
 import type { SteamAccountRow } from "./types";
 import { formatWailsError, formatToastWithError } from "../formatWailsError";
 import { reportLaunchFailure } from "../adminFlow";
-import * as SteamService from "../../../bindings/TcNo-Acc-Switcher/internal/steam/steamservice.js";
+import * as SteamService from "../../../bindings/account-switcher/internal/steam/steamservice.js";
 import * as Shortcuts from "wails-shortcuts-service";
 
 const STEAM_USERDATA_ERR_KEYS = new Set([

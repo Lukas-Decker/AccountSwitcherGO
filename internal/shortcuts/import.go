@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/security"
 )
 
 var ErrNoShortcutFilesInDrop = errors.New("Toast_ShortcutImportUnsupported")

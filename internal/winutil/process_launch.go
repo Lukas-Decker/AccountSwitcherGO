@@ -8,7 +8,7 @@ import (
 	"strings"
 	"syscall"
 
-	"TcNo-Acc-Switcher/internal/crashlog"
+	"account-switcher/internal/crashlog"
 )
 
 // Start launches exe with args. Uses PowerShell Start-Process -Verb RunAs when opts.Admin.

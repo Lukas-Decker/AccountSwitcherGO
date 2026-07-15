@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 
 	"golang.org/x/sys/windows/registry"
 )

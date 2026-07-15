@@ -10,8 +10,8 @@ import (
 	"github.com/Jleagle/steam-go/steamvdf"
 	"github.com/tidwall/gjson"
 
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/settingsfile"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/settingsfile"
 )
 
 type idsFile struct {

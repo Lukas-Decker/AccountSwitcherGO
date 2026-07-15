@@ -12,7 +12,7 @@ export default defineConfig({
     alias: {
       "wails-shortcuts-service": path.resolve(
         __dirname,
-        "bindings/TcNo-Acc-Switcher/internal/shortcuts/service.js",
+        "bindings/account-switcher/internal/shortcuts/service.js",
       ),
     },
   },

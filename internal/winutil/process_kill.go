@@ -16,7 +16,7 @@ import (
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
-	"TcNo-Acc-Switcher/internal/crashlog"
+	"account-switcher/internal/crashlog"
 )
 
 const servicePrefix = "SERVICE:"

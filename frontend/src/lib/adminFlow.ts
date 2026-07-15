@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 import { t } from "../stores/i18n";
 import { openConfirm } from "../stores/modal";
 import { pushToast } from "../stores/toast";

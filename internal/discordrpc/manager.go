@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/stats"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/stats"
 
 	richgo "github.com/hugolgst/rich-go/client"
 )

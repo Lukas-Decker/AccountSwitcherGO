@@ -19,7 +19,7 @@ interface Window {
 /** Typings for Wails shortcuts bindings (see `wails-shortcuts-service` path in tsconfig / Vite alias). */
 declare module "wails-shortcuts-service" {
   import type { CancellablePromise } from "@wailsio/runtime"
-  import type { ShortcutDTO } from "../bindings/TcNo-Acc-Switcher/internal/shortcuts/models.js"
+  import type { ShortcutDTO } from "../bindings/account-switcher/internal/shortcuts/models.js"
 
   export function CreateAccountShortcut(
     platformKey: string,

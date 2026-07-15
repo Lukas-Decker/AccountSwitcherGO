@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 var descriptorVarsLog = slog.Default().With("component", "descriptor-variables")

@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/security"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"golang.org/x/sync/semaphore"

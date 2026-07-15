@@ -1,6 +1,6 @@
 import { derived, writable } from "svelte/store";
-import type { AppBackgroundInfo } from "../../bindings/TcNo-Acc-Switcher/internal/platform/models.js";
-import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+import type { AppBackgroundInfo } from "../../bindings/account-switcher/internal/platform/models.js";
+import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 
 export type { AppBackgroundInfo };
 

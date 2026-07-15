@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/actionlog"
+	"account-switcher/internal/actionlog"
 )
 
 func TestCaptureDump_includesLogField(t *testing.T) {

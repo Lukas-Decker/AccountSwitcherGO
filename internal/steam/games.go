@@ -16,10 +16,10 @@ import (
 	"sync"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
 
 	"github.com/ulikunitz/xz"
 )
@@ -441,7 +441,7 @@ func fetchSteamAppNameMapRaw(ctx context.Context, source steamAppNameMapSource) 
 	} else {
 		req.Header.Set("Accept", "application/json")
 	}
-	req.Header.Set("User-Agent", "TcNo-Acc-Switcher/3 (Steam app names; +https://github.com/TcNo-Acc-Switcher)")
+	req.Header.Set("User-Agent", "account-switcher/3 (Steam app names; +https://github.com/TcNo-Acc-Switcher)")
 	resp, err := appclient.Shared.Do(req)
 	if err != nil {
 		return nil, err

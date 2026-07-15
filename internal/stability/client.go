@@ -7,11 +7,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	buildinfo "TcNo-Acc-Switcher/build"
-	"TcNo-Acc-Switcher/internal/api"
-	"TcNo-Acc-Switcher/internal/appclient"
-	"TcNo-Acc-Switcher/internal/crashlog"
-	"TcNo-Acc-Switcher/internal/logsanitize"
+	buildinfo "account-switcher/build"
+	"account-switcher/internal/api"
+	"account-switcher/internal/appclient"
+	"account-switcher/internal/crashlog"
+	"account-switcher/internal/logsanitize"
 )
 
 type ratePayload struct {

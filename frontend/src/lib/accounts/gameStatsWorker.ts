@@ -1,4 +1,4 @@
-import * as BasicService from "../../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
+import * as BasicService from "../../../bindings/account-switcher/internal/basic/basicservice.js";
 import type { AccountRowProjection } from "../../components/PlatformAccountAdapter";
 import { openAlertNoButton } from "../../stores/modal";
 import { get } from "svelte/store";

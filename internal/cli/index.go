@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
+	"account-switcher/internal/platform"
 )
 
 // PlatformIndex maps CLI short tokens to full platform names from Platforms.json.

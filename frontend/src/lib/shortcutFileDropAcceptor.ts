@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { ImportDroppedShortcuts } from "../../bindings/TcNo-Acc-Switcher/internal/shortcuts/service.js";
+import { ImportDroppedShortcuts } from "../../bindings/account-switcher/internal/shortcuts/service.js";
 import { pushToast } from "../stores/toast";
 import { t } from "../stores/i18n";
 import { formatToastWithError, formatWailsError } from "./formatWailsError";

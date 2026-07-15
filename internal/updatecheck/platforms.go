@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/api"
-	"TcNo-Acc-Switcher/internal/appclient"
+	"account-switcher/internal/api"
+	"account-switcher/internal/appclient"
 )
 
 // PlatformsJSONRawURL is the canonical remote Platforms.json used for background updates.

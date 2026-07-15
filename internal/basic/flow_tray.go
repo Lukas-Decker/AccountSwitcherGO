@@ -3,9 +3,9 @@ package basic
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/cli"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/tray"
+	"account-switcher/internal/cli"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/tray"
 )
 
 func recordBasicTrayRecent(platformKey, uniqueID string) {

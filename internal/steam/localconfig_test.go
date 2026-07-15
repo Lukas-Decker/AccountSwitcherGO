@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
+	"account-switcher/internal/fsutil"
 )
 
 func TestWriteFileAtomic_LockedFile(t *testing.T) {

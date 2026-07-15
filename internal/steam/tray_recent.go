@@ -3,8 +3,8 @@ package steam
 import (
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/tray"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/tray"
 )
 
 // RecordTrayRecentAfterSwap updates Tray_Users.json for Steam after a successful login switch (+s: arg).

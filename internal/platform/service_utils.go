@@ -1,7 +1,7 @@
 package platform
 
 import (
-	"TcNo-Acc-Switcher/internal/stats"
+	"account-switcher/internal/stats"
 )
 
 func (p *PlatformService) GetPlatformSettings(platformKey string) (PlatformSettings, error) {

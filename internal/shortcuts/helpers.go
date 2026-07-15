@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/exeicon"
+	"account-switcher/internal/exeicon"
 )
 
 func removeShortcutExt(name string) string {

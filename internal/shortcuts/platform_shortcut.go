@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/winutil"
 )
 
 // platformSwitcherLnkPath returns the Desktop path for the "open this platform in TcNo" shortcut.

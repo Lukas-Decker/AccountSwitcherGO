@@ -6,7 +6,7 @@
   import { t } from "../stores/i18n";
   import { openFeedbackModal } from "../stores/modal";
   import { controllerSpatialNavigation } from "../lib/actions/controllerSpatialNavigation";
-  import * as PlatformService from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import "../styles/toast.scss";
   import "../styles/stability-prompt.scss";
 

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"TcNo-Acc-Switcher/internal/api"
-	"TcNo-Acc-Switcher/internal/appclient"
+	"account-switcher/internal/api"
+	"account-switcher/internal/appclient"
 )
 
 const (

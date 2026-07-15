@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/fsutil"
+	"account-switcher/internal/paths"
 
 	"github.com/google/uuid"
 )

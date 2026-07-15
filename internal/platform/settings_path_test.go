@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"TcNo-Acc-Switcher/internal/settingsfile"
+	"account-switcher/internal/settingsfile"
 )
 
 func TestLoadSettings_migratesExeRootToPortableUserData(t *testing.T) {

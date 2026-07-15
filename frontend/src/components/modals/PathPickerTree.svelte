@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, setContext, tick } from "svelte";
   import { get, writable, type Writable } from "svelte/store";
-  import * as FilesystemService from "../../../bindings/TcNo-Acc-Switcher/filesystemservice";
+  import * as FilesystemService from "../../../bindings/account-switcher/filesystemservice";
   import PathPickerNode from "./PathPickerNode.svelte";
   import { normalizeDisplayPath, sameFsPath } from "../../lib/fsPaths";
   import { t } from "../../stores/i18n";

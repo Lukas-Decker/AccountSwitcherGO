@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
+	"account-switcher/internal/fsutil"
 
 	"github.com/Jleagle/steam-go/steamid"
 	"github.com/Jleagle/steam-go/steamvdf"

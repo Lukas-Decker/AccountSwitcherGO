@@ -3,7 +3,7 @@ package platform
 import (
 	"os"
 
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/security"
 )
 
 func (p *PlatformService) GetUserDataLocation() (string, error) {

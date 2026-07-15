@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"TcNo-Acc-Switcher/internal/fsutil"
+	"account-switcher/internal/fsutil"
 )
 
 func writeFileAtomicDurable(path string, data []byte, perm os.FileMode) error {

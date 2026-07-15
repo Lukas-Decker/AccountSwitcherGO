@@ -31,8 +31,8 @@
   import { pushToast } from "../stores/toast";
   import { activeModal, openConfirm, openPrompt } from "../stores/modal";
   import { locale, t } from "../stores/i18n";
-  import * as BasicService from "../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
-  import { GetPlatformExeIcon } from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
+  import { GetPlatformExeIcon } from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { formatToastWithError, formatWailsError } from "../lib/formatWailsError";
   import {
     preflightAdminForPlatform,

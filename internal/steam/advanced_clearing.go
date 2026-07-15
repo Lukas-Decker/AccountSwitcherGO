@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/security"
+	"account-switcher/internal/winutil"
 )
 
 // AdvancedClearResult is returned to the UI for each clearing action.

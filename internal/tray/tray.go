@@ -12,10 +12,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"TcNo-Acc-Switcher/internal/i18n"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/security"
+	"account-switcher/internal/i18n"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/security"
 
 	"github.com/nfnt/resize"
 	"github.com/wailsapp/wails/v3/pkg/application"

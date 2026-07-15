@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"TcNo-Acc-Switcher/internal/paths"
+	"account-switcher/internal/paths"
 )
 
 // UserDataDirName is the folder that holds per-user app data (%AppData% for installs, or next to exe for portable).

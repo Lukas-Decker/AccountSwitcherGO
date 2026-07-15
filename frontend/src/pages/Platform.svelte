@@ -6,14 +6,14 @@
   import type { MenuItemDef } from "../stores/contextMenu";
   import { pushToast } from "../stores/toast";
   import { t } from "../stores/i18n";
-  import * as BasicService from "../../bindings/TcNo-Acc-Switcher/internal/basic/basicservice.js";
+  import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
   import {
     AccountDTO,
     AccountEnrichmentDTO,
     AccountImagePatch,
     AccountListItemDTO,
-  } from "../../bindings/TcNo-Acc-Switcher/internal/basic/models.js";
-  import { LaunchPlatform } from "../../bindings/TcNo-Acc-Switcher/internal/platform/platformservice.js";
+  } from "../../bindings/account-switcher/internal/basic/models.js";
+  import { LaunchPlatform } from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { formatToastWithError } from "../lib/formatWailsError";
   import { offerRestartIfNeedsAdmin, isNeedsAdminError } from "../lib/adminFlow";
   import { openPrompt } from "../stores/modal";

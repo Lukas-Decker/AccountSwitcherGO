@@ -5,12 +5,12 @@ import (
 	"log/slog"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/accountlist"
-	"TcNo-Acc-Switcher/internal/basic"
-	"TcNo-Acc-Switcher/internal/platform"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/security"
-	"TcNo-Acc-Switcher/internal/stats"
+	"account-switcher/internal/accountlist"
+	"account-switcher/internal/basic"
+	"account-switcher/internal/platform"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/security"
+	"account-switcher/internal/stats"
 )
 
 // SteamAccountListItemDTO is the fast Steam account list payload.

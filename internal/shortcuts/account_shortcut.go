@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"TcNo-Acc-Switcher/internal/cli"
-	"TcNo-Acc-Switcher/internal/paths"
-	"TcNo-Acc-Switcher/internal/profileimage"
-	"TcNo-Acc-Switcher/internal/winutil"
+	"account-switcher/internal/cli"
+	"account-switcher/internal/paths"
+	"account-switcher/internal/profileimage"
+	"account-switcher/internal/winutil"
 )
 
 // CreateAccountShortcut builds a Desktop .lnk; for Steam, stateSuffix is persona argv index and stateTitle is an optional filename segment.
