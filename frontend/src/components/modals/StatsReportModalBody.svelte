@@ -2,12 +2,9 @@
   import { get } from "svelte/store";
   import * as PlatformService from "../../../bindings/account-switcher/internal/platform/platformservice";
   import type { StatsReport } from "../../../bindings/account-switcher/internal/platform/models";
-  import { openExternalUrl } from "../../lib/openExternalUrl";
   import { t } from "../../stores/i18n";
   import { pushToast } from "../../stores/toast";
   import { openConfirm } from "../../stores/modal";
-
-  const STATS_URL = "https://tcno.co/Projects/AccSwitcher/stats/";
 
   export let initialReport: StatsReport;
 
@@ -22,11 +19,6 @@
     const m = Math.floor((s % 3600) / 60);
     const r = s % 60;
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
-  }
-
-  function openStatsUrl(e: MouseEvent): void {
-    e.preventDefault();
-    void openExternalUrl(STATS_URL);
   }
 
   function monoSummary(r: StatsReport, tr: (k: string, v?: Record<string, string | number>) => string): string {
@@ -115,10 +107,6 @@
   {:else}
     <p class="stats-report__share">{$t("Stats_ModalShareDisabled")}</p>
   {/if}
-  <p class="stats-report__linkrow">
-    <a class="fancyLink" href={STATS_URL} on:click={openStatsUrl}>https://hub.tcno.co/switcher/</a>
-  </p>
-
   <pre class="stats-report__mono">{summaryBlock}</pre>
 
   <h3 class="stats-report__h3">{$t("Stats_InDepth")}</h3>

@@ -221,7 +221,7 @@ def context_note(key: str, role: str, locations: list[dict[str, object]]) -> str
 
 def build_markdown(strings: dict[str, str], usage: dict[str, dict[str, object]], locales: list[str]) -> str:
     out: list[str] = []
-    out.append("# TcNo Account Switcher i18n Translation Plan")
+    out.append("# Account Switcher i18n Translation Plan")
     out.append("")
     out.append(f"Generated: {date.today().isoformat()}")
     out.append(f"Source locale: `{SOURCE_LOCALE}`")

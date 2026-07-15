@@ -8,7 +8,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-const singletonMutexName = "TcNo-Acc-Switcher-Singleton"
+const singletonMutexName = "Account-Switcher-Singleton"
 
 // TryAcquireSingleton creates the global mutex; returns release func if this process was first.
 // If another instance holds the mutex, returns alreadyRunning=true and release=nil.

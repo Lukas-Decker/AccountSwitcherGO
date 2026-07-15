@@ -19,7 +19,7 @@ import (
 )
 
 // PipePath is the Windows named pipe used for forwarding argv to the running GUI.
-const PipePath = `\\.\pipe\TcNo-Acc-Switcher`
+const PipePath = `\\.\pipe\Account-Switcher`
 
 // ArgsEnvelope is one line-delimited JSON message to the GUI process.
 type ArgsEnvelope struct {

@@ -43,10 +43,10 @@ type AppSettings struct {
 
 	PlatformsJSONPath string `json:"platformsJsonPath,omitempty"`
 
-	// UserDataPath is the absolute path to the TcNo Account Switcher user data folder.
+	// UserDataPath is the absolute path to the Account Switcher user data folder.
 	UserDataPath string `json:"userDataPath,omitempty"`
 
-	// ProtocolEnabled registers the tcno:// URL scheme on Windows when true.
+	// ProtocolEnabled registers the accswitcher:// URL scheme on Windows when true.
 	ProtocolEnabled bool `json:"protocolEnabled,omitempty"`
 
 	// OfflineMode blocks outbound HTTP (avatars, Steam APIs, etc.) when true.
@@ -217,12 +217,12 @@ func resolveSettingsSavePath(exeDir string, s AppSettings) (string, error) {
 	return filepath.Join(filepath.Clean(exeDir), settingsFileName), nil
 }
 
-// LoadAppSettings reads TcNo-Acc-Switcher.settings.json from the resolved location.
+// LoadAppSettings reads Account-Switcher.settings.json from the resolved location.
 func LoadAppSettings(exeDir string) (AppSettings, error) {
 	return loadSettings(exeDir)
 }
 
-// SaveAppSettings writes TcNo-Acc-Switcher.settings.json atomically.
+// SaveAppSettings writes Account-Switcher.settings.json atomically.
 func SaveAppSettings(exeDir string, s AppSettings) error {
 	return saveSettingsAtomic(exeDir, s)
 }

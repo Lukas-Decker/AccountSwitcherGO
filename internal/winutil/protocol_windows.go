@@ -9,9 +9,9 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-const protocolScheme = "tcno"
+const protocolScheme = "accswitcher"
 
-// IsProtocolRegistered reports whether HKCR\tcno has URL Protocol set (custom URL scheme).
+// IsProtocolRegistered reports whether HKCR\accswitcher has URL Protocol set (custom URL scheme).
 func IsProtocolRegistered() bool {
 	k, err := registry.OpenKey(registry.CLASSES_ROOT, protocolScheme, registry.QUERY_VALUE)
 	if err != nil {
@@ -22,7 +22,7 @@ func IsProtocolRegistered() bool {
 	return err == nil && strings.TrimSpace(v) != ""
 }
 
-// RegisterProtocol writes HKCR\tcno with Shell\Open\Command pointing at exe with "%1".
+// RegisterProtocol writes HKCR\accswitcher with Shell\Open\Command pointing at exe with "%1".
 func RegisterProtocol(exePath string) error {
 	exePath = strings.TrimSpace(exePath)
 	if exePath == "" {
@@ -35,7 +35,7 @@ func RegisterProtocol(exePath string) error {
 	}
 	defer k.Close()
 
-	if err := k.SetStringValue("", "URL:TcNo Account Switcher"); err != nil {
+	if err := k.SetStringValue("", "URL:Account Switcher"); err != nil {
 		return err
 	}
 	if err := k.SetStringValue("URL Protocol", ""); err != nil {
@@ -53,7 +53,7 @@ func RegisterProtocol(exePath string) error {
 	return cmdKey.SetStringValue("", cmd)
 }
 
-// UnregisterProtocol removes HKCR\tcno (best-effort; delete children first).
+// UnregisterProtocol removes HKCR\accswitcher (best-effort; delete children first).
 func UnregisterProtocol() error {
 	_ = registry.DeleteKey(registry.CLASSES_ROOT, protocolScheme+`\shell\open\command`)
 	_ = registry.DeleteKey(registry.CLASSES_ROOT, protocolScheme+`\shell\open`)

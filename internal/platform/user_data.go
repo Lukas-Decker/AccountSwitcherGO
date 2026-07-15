@@ -11,7 +11,7 @@ import (
 )
 
 // UserDataDirName is the folder that holds per-user app data (%AppData% for installs, or next to exe for portable).
-const UserDataDirName = "TcNo Account Switcher"
+const UserDataDirName = "Account Switcher"
 
 var (
 	resolvedUserDataMu  sync.RWMutex
@@ -20,7 +20,7 @@ var (
 	pathsInitialized    bool
 )
 
-// DefaultUserDataDir returns the default install location (%AppData%/TcNo Account Switcher on Windows).
+// DefaultUserDataDir returns the default install location (%AppData%/Account Switcher on Windows).
 func DefaultUserDataDir() (string, error) {
 	cfg, err := os.UserConfigDir()
 	if err != nil {
@@ -29,7 +29,7 @@ func DefaultUserDataDir() (string, error) {
 	return filepath.Join(cfg, UserDataDirName), nil
 }
 
-// PortableUserDataDir returns {exeDir}/TcNo Account Switcher/.
+// PortableUserDataDir returns {exeDir}/Account Switcher/.
 func PortableUserDataDir(exeDir string) string {
 	return filepath.Join(filepath.Clean(exeDir), UserDataDirName)
 }

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	failStateFile    = "TcNo-Acc-Switcher.lastUpdateCheckFail.json"
+	failStateFile    = "Account-Switcher.lastUpdateCheckFail.json"
 	httpTimeout      = 15 * time.Second
 	LaunchCheckDelay = 700 * time.Millisecond
 )

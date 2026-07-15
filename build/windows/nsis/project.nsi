@@ -1,6 +1,6 @@
-;TcNo Account Switcher
-;Wesley Pyburn (TroubleChute)
-;https://github.com/TcNoco/TcNo-Acc-Switcher
+;Account Switcher
+;Account Switcher
+;https://github.com/TcNoco/Account-Switcher
 
 ;--------------------------------
 ;Defaults (override via -D on makensis command line)
@@ -13,7 +13,7 @@
 !endif
 
 !ifndef INSTALLER_7Z
-  !define INSTALLER_7Z "..\..\..\bin\TcNo-Acc-Switcher.7z"
+  !define INSTALLER_7Z "..\..\..\bin\Account-Switcher.7z"
 !endif
 !ifndef OPEN_SOURCE_LICENSES_TXT
   !define OPEN_SOURCE_LICENSES_TXT "..\..\..\OPEN_SOURCE_LICENSES.txt"
@@ -31,22 +31,22 @@
 ;--------------------------------
 ;Variables
 
-!define APP_NAME "TcNo Account Switcher"
-!define PRODUCT_EXECUTABLE "TcNo-Acc-Switcher.exe"
-!define LNK_NAME "TcNo Account Switcher.lnk"
-!define COMP_NAME "TroubleChute (Wesley Pyburn)"
-!define WEB_SITE "https://tcno.co"
-!define COPYRIGHT "TroubleChute (Wesley Pyburn) (C) 2026"
-!define DESCRIPTION "TcNo Account Switcher Installer"
+!define APP_NAME "Account Switcher"
+!define PRODUCT_EXECUTABLE "Account-Switcher.exe"
+!define LNK_NAME "Account Switcher.lnk"
+!define COMP_NAME "Account Switcher"
+!define WEB_SITE ""
+!define COPYRIGHT "Account Switcher (C) 2026"
+!define DESCRIPTION "Account Switcher Installer"
 !define INSTALL_TYPE "SetShellVarContext current"
 !define REG_ROOT "HKCU"
 !define REG_APP_PATH "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_EXECUTABLE}"
-!define UNINSTALL_EXE "Uninstall TcNo Account Switcher.exe"
-!define UNINSTALL_LNK_NAME "Uninstall TcNo Account Switcher.lnk"
+!define UNINSTALL_EXE "Uninstall Account Switcher.exe"
+!define UNINSTALL_LNK_NAME "Uninstall Account Switcher.lnk"
 !define UNINST_PATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
 
 !define REG_START_MENU "Start Menu Folder"
-!define SM_Folder "TcNo Account Switcher"
+!define SM_Folder "Account Switcher"
 
 VIProductVersion  "${VERSION}"
 VIAddVersionKey "ProductName"  "${APP_NAME}"
@@ -58,8 +58,8 @@ VIAddVersionKey "FileVersion"  "${VERSION}"
 ;--------------------------------
 ;Version specific variables
 
-!define INSTALLER_NAME "TcNo Account Switcher Installer.exe"
-!define INSTALL_DIR "$PROGRAMFILES64\TcNo Account Switcher"
+!define INSTALLER_NAME "Account Switcher Installer.exe"
+!define INSTALL_DIR "$PROGRAMFILES64\Account Switcher"
 
 ;--------------------------------
 ;Build options
@@ -148,8 +148,8 @@ FunctionEnd
   !insertmacro MUI_PAGE_INSTFILES
 
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_LINK "https://github.com/TCNOCo/TcNo-Acc-Switcher"
-  !define MUI_FINISHPAGE_LINK_LOCATION "https://github.com/TCNOCo/TcNo-Acc-Switcher"
+  !define MUI_FINISHPAGE_LINK "Account Switcher"
+  !define MUI_FINISHPAGE_LINK_LOCATION ""
 
 Function Finish
   ${If} $CheckLaunchState <> 0
@@ -228,8 +228,8 @@ Section "Main files" InstSec
   SetDetailsPrint listonly
   File "${INSTALLER_7Z}"
   SetCompress auto
-  Nsis7z::ExtractWithDetails "$INSTDIR\TcNo-Acc-Switcher.7z" "Decompressing %s..."
-  Delete "$OUTDIR\TcNo-Acc-Switcher.7z"
+  Nsis7z::ExtractWithDetails "$INSTDIR\Account-Switcher.7z" "Decompressing %s..."
+  Delete "$OUTDIR\Account-Switcher.7z"
   File "/oname=OPEN_SOURCE_LICENSES.txt" "${OPEN_SOURCE_LICENSES_TXT}"
 
   ;Store installation folder
@@ -237,7 +237,7 @@ Section "Main files" InstSec
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\${UNINSTALL_EXE}"
-  WriteRegStr HKLM "${UNINST_PATH}" "DisplayName" "TcNo Account Switcher"
+  WriteRegStr HKLM "${UNINST_PATH}" "DisplayName" "Account Switcher"
   WriteRegStr HKLM "${UNINST_PATH}" "DisplayVersion" "${DISPLAY_VERSION}"
   WriteRegStr HKLM "${UNINST_PATH}" "UninstallString" "$INSTDIR\${UNINSTALL_EXE}"
   WriteRegStr HKLM "${UNINST_PATH}" "InstallLocation" "$INSTDIR"

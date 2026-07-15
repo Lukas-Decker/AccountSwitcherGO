@@ -8,7 +8,7 @@ import (
 
 // setTestAppData sets %APPDATA% to a temporary directory for the duration of the test
 // and restores the original value on cleanup. This prevents tests from seeing the
-// host machine's real TcNo Account Switcher config in %AppData%.
+// host machine's real Account Switcher config in %AppData%.
 func setTestAppData(t *testing.T) {
 	t.Helper()
 	orig := os.Getenv("APPDATA")

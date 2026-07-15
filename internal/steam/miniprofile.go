@@ -54,7 +54,7 @@ func FetchMiniprofile(ctx context.Context, client *http.Client, steamID64 string
 		if rerr != nil {
 			return "", "", rerr
 		}
-		req.Header.Set("User-Agent", "TcNo Account Switcher")
+		req.Header.Set("User-Agent", "Account Switcher")
 		resp, derr := client.Do(req)
 		if derr != nil {
 			return "", "", derr

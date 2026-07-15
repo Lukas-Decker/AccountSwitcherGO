@@ -74,7 +74,7 @@ func FetchProfileXML(ctx context.Context, client *http.Client, steamID64 string)
 		if err != nil {
 			return ProfileXMLFields{}, err
 		}
-		req.Header.Set("User-Agent", "TcNo Account Switcher")
+		req.Header.Set("User-Agent", "Account Switcher")
 		resp, err := client.Do(req)
 		if err != nil {
 			return ProfileXMLFields{}, err

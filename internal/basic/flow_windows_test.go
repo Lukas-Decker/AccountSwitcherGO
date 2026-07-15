@@ -11,7 +11,7 @@ import (
 	"account-switcher/internal/winutil"
 )
 
-const flowTestRegistryRoot = `HKCU\Software\TcNo-Acc-Switcher\FlowTest`
+const flowTestRegistryRoot = `HKCU\Software\Account-Switcher\FlowTest`
 
 func flowTestRegKey(sub string) string {
 	return flowTestRegistryRoot + `\` + sub

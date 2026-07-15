@@ -6,7 +6,7 @@ import (
 )
 
 func TestWebViewCacheDir(t *testing.T) {
-	dataDir := filepath.Join(t.TempDir(), "TcNo Account Switcher")
+	dataDir := filepath.Join(t.TempDir(), "Account Switcher")
 	ResetForTest(dataDir)
 
 	got, err := WebViewCacheDir()

@@ -11,7 +11,7 @@ import (
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-const autostartIdentifier = "co.tcno.acc-switcher"
+const autostartIdentifier = "com.accountswitcher.app"
 
 var errAutostartAppUnavailable = errors.New("application is not available")
 

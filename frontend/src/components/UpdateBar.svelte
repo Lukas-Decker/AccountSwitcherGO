@@ -21,7 +21,7 @@
       showBanner = true;
       dismissed = false;
       dialogMessage = payload?.message ?? "";
-      dialogDownloadUrl = payload?.downloadUrl ?? "https://github.com/TCNOco/TcNo-Acc-Switcher/releases/latest";
+      dialogDownloadUrl = payload?.downloadUrl ?? "https://github.com/TCNOco/Account-Switcher/releases/latest";
     });
     return () => {
       off?.();

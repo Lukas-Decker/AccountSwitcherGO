@@ -18,7 +18,7 @@
         PublisherName="CN=My Company"
         PublisherDisplayName="My Company"
         Version="0.1.0.0"
-        PackageDescription="A TcNo-Acc-Switcher application">
+        PackageDescription="A Account-Switcher application">
         <Capabilities>
             <Capability Name="runFullTrust" />
             
@@ -26,7 +26,7 @@
         <Applications>
             <Application
                 Id="com.example.tcnoaccswitcher"
-                Description="A TcNo-Acc-Switcher application"
+                Description="A Account-Switcher application"
                 DisplayName="My Product"
                 ExecutableName="tcno-acc-switcher.exe"
                 EntryPoint="Windows.FullTrustApplication">
@@ -43,7 +43,7 @@
             <Framework>false</Framework>
             <DisplayName>My Product</DisplayName>
             <PublisherDisplayName>My Company</PublisherDisplayName>
-            <Description>A TcNo-Acc-Switcher application</Description>
+            <Description>A Account-Switcher application</Description>
             <Logo>Assets\AppIcon.png</Logo>
         </Properties>
     </PackageInformation>

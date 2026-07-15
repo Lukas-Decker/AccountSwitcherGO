@@ -402,7 +402,7 @@ func DownloadIfNeeded(ctx context.Context, client *http.Client, platformKey, acc
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "TcNo Account Switcher")
+	req.Header.Set("User-Agent", "Account Switcher")
 
 	resp, err := client.Do(req)
 	if err != nil {

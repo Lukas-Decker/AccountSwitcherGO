@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=My Product
-Comment=A TcNo-Acc-Switcher application
+Comment=A Account-Switcher application
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/tcno-acc-switcher.exe %u
 Terminal=false

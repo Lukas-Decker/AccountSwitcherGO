@@ -1,4 +1,4 @@
-// Package settingsfile resolves TcNo-Acc-Switcher.settings.json locations without importing platform.
+// Package settingsfile resolves Account-Switcher.settings.json locations without importing platform.
 package settingsfile
 
 import (
@@ -9,17 +9,17 @@ import (
 
 const (
 	// FileName is the app-wide settings JSON filename.
-	FileName = "TcNo-Acc-Switcher.settings.json"
+	FileName = "Account-Switcher.settings.json"
 	// UserDataDirName is the folder that holds per-user app data.
-	UserDataDirName = "TcNo Account Switcher"
+	UserDataDirName = "Account Switcher"
 )
 
-// PortableUserDataDir returns {exeDir}/TcNo Account Switcher/.
+// PortableUserDataDir returns {exeDir}/Account Switcher/.
 func PortableUserDataDir(exeDir string) string {
 	return filepath.Join(filepath.Clean(exeDir), UserDataDirName)
 }
 
-// DefaultUserDataDir returns the default install location (%AppData%/TcNo Account Switcher).
+// DefaultUserDataDir returns the default install location (%AppData%/Account Switcher).
 func DefaultUserDataDir() (string, error) {
 	cfg, err := os.UserConfigDir()
 	if err != nil {
@@ -74,7 +74,7 @@ func IsDefaultUserDataDir(dir, exeDir string) bool {
 	return false
 }
 
-// IsExeRootPath reports whether path is {exeDir}/TcNo-Acc-Switcher.settings.json.
+// IsExeRootPath reports whether path is {exeDir}/Account-Switcher.settings.json.
 func IsExeRootPath(exeDir, path string) bool {
 	return strings.EqualFold(filepath.Clean(path), filepath.Join(filepath.Clean(exeDir), FileName))
 }

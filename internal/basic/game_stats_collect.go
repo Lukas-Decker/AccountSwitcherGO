@@ -76,7 +76,7 @@ func fetchGameStatsHTML(ctx context.Context, urlStr, cookiesHeader string) ([]by
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "TcNo-Acc-Switcher")
+	req.Header.Set("User-Agent", "Account-Switcher")
 	if strings.TrimSpace(cookiesHeader) != "" {
 		req.Header.Set("Cookie", cookiesHeader)
 	}

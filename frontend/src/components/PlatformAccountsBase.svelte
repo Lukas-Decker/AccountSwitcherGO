@@ -152,7 +152,7 @@
 
   // Reactive declarations
   $: so = $searchOverlayCtrl;
-  $: appBarTitle.set(name || "TcNo Account Switcher");
+  $: appBarTitle.set(name || "Account Switcher");
   $: isActionBusy = isActionBusyValue;
 
   $: {

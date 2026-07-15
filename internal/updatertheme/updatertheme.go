@@ -66,7 +66,7 @@ func NewBuiltinWindow() *updater.BuiltinWindow {
 	return &updater.BuiltinWindow{
 		CSS: CurrentCSS(),
 		Options: updater.WindowOptions{
-			Title: "TcNo Account Switcher Update",
+			Title: "Account Switcher Update",
 		},
 	}
 }

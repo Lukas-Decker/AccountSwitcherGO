@@ -14,7 +14,7 @@ import (
 
 // PlatformsJSONRawURL is the canonical remote Platforms.json used for background updates.
 // TODO: switch refs/heads/go to refs/heads/main when the go branch is merged to main.
-const PlatformsJSONRawURL = "https://raw.githubusercontent.com/TCNOco/TcNo-Acc-Switcher/refs/heads/go/Platforms.json"
+const PlatformsJSONRawURL = "https://raw.githubusercontent.com/TCNOco/Account-Switcher/refs/heads/go/Platforms.json"
 
 const maxPlatformsJSONBytes = 4 << 20
 

@@ -86,7 +86,7 @@ func TestInitDataPathsMigratesLegacyStatistics(t *testing.T) {
 }
 
 func TestIsUnderSkippedUserData(t *testing.T) {
-	src := filepath.Join(`C:\`, "TcNo Account Switcher")
+	src := filepath.Join(`C:\`, "Account Switcher")
 	cases := []struct {
 		path string
 		want bool

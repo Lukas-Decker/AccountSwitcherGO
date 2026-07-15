@@ -10,7 +10,7 @@ import (
 )
 
 // HomeDesktopShortcutName is the fixed .lnk basename for the app home shortcut.
-const HomeDesktopShortcutName = "TcNo Account Switcher.lnk"
+const HomeDesktopShortcutName = "Account Switcher.lnk"
 
 // desktopShortcutSearchDirs returns common user Desktop locations (includes OneDrive Desktop).
 func desktopShortcutSearchDirs() []string {
@@ -84,7 +84,7 @@ func SetHomeDesktopShortcut(create bool) error {
 	}
 	out := filepath.Join(dir, HomeDesktopShortcutName)
 	workDir := filepath.Dir(self)
-	desc := "TcNo Account Switcher — Home"
+	desc := "Account Switcher — Home"
 	icon := self + ",0"
 	return WriteShortcutLnk(out, self, "", workDir, desc, icon, ShortcutAppUserModelID("home"))
 }

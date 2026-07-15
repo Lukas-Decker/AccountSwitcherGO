@@ -8,9 +8,6 @@ import { pushToast } from "../stores/toast";
 const defaultAllowedHosts = new Set([
   "crowdin.com",
   "github.com",
-  "ko-fi.com",
-  "patreon.com",
-  "tcno.co",
 ]);
 
 export interface OpenExternalUrlOptions {

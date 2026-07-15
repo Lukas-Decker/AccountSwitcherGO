@@ -9,20 +9,20 @@ import (
 
 func TestGitHubAssetMatcher_explicitWindowsExe(t *testing.T) {
 	assets := []github.ReleaseAsset{
-		{Name: "TcNo-Acc-Switcher.7z"},
-		{Name: "TcNo-Acc-Switcher.exe.sig"},
-		{Name: "TcNo-Acc-Switcher.exe"},
+		{Name: "Account-Switcher.7z"},
+		{Name: "Account-Switcher.exe.sig"},
+		{Name: "Account-Switcher.exe"},
 		{Name: "TcNo.Account.Switcher.-.Installer.exe"},
 	}
 	req := updater.CheckRequest{Platform: "windows", Arch: "amd64"}
 	if got := GitHubAssetMatcher(req, assets); got != 2 {
-		t.Fatalf("got index %d, want 2 (TcNo-Acc-Switcher.exe)", got)
+		t.Fatalf("got index %d, want 2 (Account-Switcher.exe)", got)
 	}
 }
 
 func TestGitHubAssetMatcher_wailsConventionFallback(t *testing.T) {
 	assets := []github.ReleaseAsset{
-		{Name: "TcNo-Acc-Switcher-windows-amd64.zip"},
+		{Name: "Account-Switcher-windows-amd64.zip"},
 	}
 	req := updater.CheckRequest{Platform: "windows", Arch: "amd64"}
 	if got := GitHubAssetMatcher(req, assets); got != 0 {
@@ -31,7 +31,7 @@ func TestGitHubAssetMatcher_wailsConventionFallback(t *testing.T) {
 }
 
 func TestGitHubAssetMatcher_unknownPlatform(t *testing.T) {
-	assets := []github.ReleaseAsset{{Name: "TcNo-Acc-Switcher-linux-amd64.tar.gz"}}
+	assets := []github.ReleaseAsset{{Name: "Account-Switcher-linux-amd64.tar.gz"}}
 	req := updater.CheckRequest{Platform: "linux", Arch: "amd64"}
 	if got := GitHubAssetMatcher(req, assets); got != 0 {
 		t.Fatalf("got index %d, want 0 via DefaultAssetMatcher", got)
@@ -39,7 +39,7 @@ func TestGitHubAssetMatcher_unknownPlatform(t *testing.T) {
 }
 
 func TestGitHubAssetMatcher_unmappedPlatformNoDefault(t *testing.T) {
-	assets := []github.ReleaseAsset{{Name: "TcNo-Acc-Switcher.exe"}}
+	assets := []github.ReleaseAsset{{Name: "Account-Switcher.exe"}}
 	req := updater.CheckRequest{Platform: "linux", Arch: "arm64"}
 	if got := GitHubAssetMatcher(req, assets); got != -1 {
 		t.Fatalf("got index %d, want -1", got)

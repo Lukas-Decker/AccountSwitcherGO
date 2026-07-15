@@ -15,7 +15,7 @@ export type { Route };
 
 export const route = writable<Route>({ page: "home" });
 export const previousPage = writable<Route | null>(null);
-export const appBarTitle = writable("TcNo Account Switcher");
+export const appBarTitle = writable("Account Switcher");
 let historyIndex = 0;
 let historyMaxIndex = 0;
 

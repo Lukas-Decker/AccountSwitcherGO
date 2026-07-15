@@ -441,7 +441,7 @@ func fetchSteamAppNameMapRaw(ctx context.Context, source steamAppNameMapSource) 
 	} else {
 		req.Header.Set("Accept", "application/json")
 	}
-	req.Header.Set("User-Agent", "account-switcher/3 (Steam app names; +https://github.com/TcNo-Acc-Switcher)")
+	req.Header.Set("User-Agent", "account-switcher/3 (Steam app names; +https://github.com/Account-Switcher)")
 	resp, err := appclient.Shared.Do(req)
 	if err != nil {
 		return nil, err

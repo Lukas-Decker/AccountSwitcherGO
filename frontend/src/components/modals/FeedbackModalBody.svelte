@@ -3,14 +3,12 @@
   import { createEventDispatcher } from "svelte";
   import { get } from "svelte/store";
   import * as PlatformService from "../../../bindings/account-switcher/internal/platform/platformservice.js";
-  import { openExternalUrl } from "../../lib/openExternalUrl";
   import { t } from "../../stores/i18n";
   import { cancelActiveModal } from "../../stores/modal";
   import { offlineMode } from "../../stores/offlineMode";
   import { pushToast } from "../../stores/toast";
   import { formatToastWithError } from "../../lib/formatWailsError";
 
-  const DISCORD_URL = "https://s.tcno.co/AccSwitcherDiscord";
   const FEEDBACK_MAX_LENGTH = 2000;
 
   export let mode: "issue" | "suggestion" = "issue";
@@ -47,11 +45,6 @@
 
   function cancel(): void {
     dispatch("resolve", null);
-  }
-
-  function openDiscordLink(e: MouseEvent): void {
-    e.preventDefault();
-    void openExternalUrl(DISCORD_URL);
   }
 
   onMount(() => {
@@ -102,11 +95,6 @@
       on:click={submit}
     >
       {$t("Feedback_Submit")}
-    </button>
-  </div>
-  <div class="modal-feedback-footer">
-    <button type="button" class="fancyLink modal-feedback-discord" on:click={openDiscordLink}>
-      {$t("Feedback_DiscordLink")}
     </button>
   </div>
 </div>

@@ -5,11 +5,11 @@ version: '3'
 
 # This information is used to generate the build assets.
 info:
-  companyName: "TroubleChute (Wesley Pyburn)" # The name of the company
-  productName: "TcNo Account Switcher" # The name of the application
-  productIdentifier: "co.tcno.acc-switcher" # The unique product identifier
+  companyName: "Account Switcher" # The name of the company
+  productName: "Account Switcher" # The name of the application
+  productIdentifier: "com.accountswitcher.app" # The unique product identifier
   description: "A Super-fast account switcher for Steam, Battle.net, Epic Games, Origin, Riot, Ubisoft and many others! " # The application description
-  copyright: "(c) 2026, TroubleChute (Wesley Pyburn)" # Copyright text
+  copyright: "(c) 2026, Account Switcher" # Copyright text
   comments: "Currently an experimental version!" # Comments
   version: "4.0.4" # The application version (semver)
   # cfBundleIconName: "appicon" # The macOS icon name in Assets.car icon bundles (optional)

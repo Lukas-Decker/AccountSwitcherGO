@@ -9,10 +9,10 @@ import (
 
 // Updater release asset basenames on GitHub, keyed by GOOS/GOARCH.
 var updaterReleaseAssets = map[string]string{
-	"windows/amd64": "TcNo-Acc-Switcher.exe",
-	// "darwin/arm64":  "TcNo-Acc-Switcher-macos-universal.zip",
-	// "darwin/amd64":  "TcNo-Acc-Switcher-macos-universal.zip",
-	// "linux/amd64":   "TcNo-Acc-Switcher-linux-amd64.tar.gz",
+	"windows/amd64": "Account-Switcher.exe",
+	// "darwin/arm64":  "Account-Switcher-macos-universal.zip",
+	// "darwin/amd64":  "Account-Switcher-macos-universal.zip",
+	// "linux/amd64":   "Account-Switcher-linux-amd64.tar.gz",
 }
 
 // GitHubAssetMatcher selects the GitHub release asset for the running platform.

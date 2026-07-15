@@ -5,22 +5,22 @@
 	"info": {
 		"0000": {
 			"ProductVersion": "4.0.4",
-			"CompanyName": "TroubleChute (Wesley Pyburn)",
-			"FileDescription": "TcNo Account Switcher",
-			"InternalName": "TcNo Account Switcher",
-			"LegalCopyright": "TroubleChute (Wesley Pyburn) \u00a9 2026",
-			"OriginalFilename": "TcNo Account Switcher.exe",
-			"ProductName": "TcNo Account Switcher",
+			"CompanyName": "Account Switcher",
+			"FileDescription": "Account Switcher",
+			"InternalName": "Account Switcher",
+			"LegalCopyright": "Account Switcher \u00a9 2026",
+			"OriginalFilename": "Account Switcher.exe",
+			"ProductName": "Account Switcher",
 			"Comments": "A Super-fast account switcher for Steam, Battle.net, Epic Games, Origin, Riot, Ubisoft and many others!"
 		},
 		"0409": {
 			"ProductVersion": "4.0.4",
-			"CompanyName": "TroubleChute (Wesley Pyburn)",
-			"FileDescription": "TcNo Account Switcher",
-			"InternalName": "TcNo Account Switcher",
-			"LegalCopyright": "TroubleChute (Wesley Pyburn) \u00a9 2026",
-			"OriginalFilename": "TcNo Account Switcher.exe",
-			"ProductName": "TcNo Account Switcher",
+			"CompanyName": "Account Switcher",
+			"FileDescription": "Account Switcher",
+			"InternalName": "Account Switcher",
+			"LegalCopyright": "Account Switcher \u00a9 2026",
+			"OriginalFilename": "Account Switcher.exe",
+			"ProductName": "Account Switcher",
 			"Comments": "A Super-fast account switcher for Steam, Battle.net, Epic Games, Origin, Riot, Ubisoft and many others!"
 		}
 	}

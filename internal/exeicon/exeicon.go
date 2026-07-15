@@ -34,7 +34,7 @@ func PublicURL(platformKey, exeBase string) string {
 }
 
 // EnsureCached extracts the exe icon to wwwroot/img/shortcuts/<platform>/<exe>.png if missing or stale.
-// wwwroot is the absolute path to the app data wwwroot directory (e.g. .../TcNo Account Switcher/wwwroot).
+// wwwroot is the absolute path to the app data wwwroot directory (e.g. .../Account Switcher/wwwroot).
 func EnsureCached(platformKey, exeFullPath, wwwroot string) (publicURL string, err error) {
 	exeFullPath = filepath.Clean(exeFullPath)
 	base := filepath.Base(exeFullPath)

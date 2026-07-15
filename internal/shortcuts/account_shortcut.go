@@ -75,7 +75,7 @@ func CreateAccountShortcut(platformKey, uniqueID, displayName, stateSuffix, stat
 	}
 
 	workDir := filepath.Dir(self)
-	desc := fmt.Sprintf("TcNo Account Switcher - %s - %s", platformKey, title)
+	desc := fmt.Sprintf("Account Switcher - %s - %s", platformKey, title)
 	appID := winutil.ShortcutAppUserModelID(platformKey, uniqueID, stateSuffix)
 	if err := winutil.WriteShortcutLnk(outPath, self, argv, workDir, desc, icon, appID); err != nil {
 		return "", err

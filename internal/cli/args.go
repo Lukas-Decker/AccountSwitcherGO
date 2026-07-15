@@ -61,14 +61,18 @@ func (p Parsed) EffectiveSlogLevel() slog.Level {
 	return slog.LevelInfo
 }
 
-// NormalizeProtocolArg strips tcno:// and returns the payload path (e.g. "s:765...").
+// ProtocolScheme is the custom URL scheme registered on Windows.
+// Must match winutil.protocolScheme (kept separate due to build constraints).
+const ProtocolScheme = "accswitcher"
+
+// NormalizeProtocolArg strips accswitcher:// and returns the payload path (e.g. "s:765...").
 func NormalizeProtocolArg(s string) string {
 	s = strings.TrimSpace(s)
 	low := strings.ToLower(s)
-	if strings.HasPrefix(low, "tcno://") {
-		s = s[len("tcno://"):]
-	} else if strings.HasPrefix(low, "tcno:") && len(s) > 5 && s[5] == '/' {
-		s = s[5:]
+	if strings.HasPrefix(low, ProtocolScheme+"://") {
+		s = s[len(ProtocolScheme)+len("://"):]
+	} else if strings.HasPrefix(low, ProtocolScheme+":") && len(s) > len(ProtocolScheme)+1 && s[len(ProtocolScheme)+1] == '/' {
+		s = s[len(ProtocolScheme)+1:]
 		if strings.HasPrefix(s, "//") {
 			s = s[2:]
 		}
@@ -91,7 +95,7 @@ func Parse(argv []string, idx *PlatformIndex) (Parsed, error) {
 		if a == "" {
 			continue
 		}
-		if strings.Contains(a, "://") || strings.HasPrefix(strings.ToLower(a), "tcno:") {
+		if strings.Contains(a, "://") || strings.HasPrefix(strings.ToLower(a), ProtocolScheme+":") {
 			a = NormalizeProtocolArg(a)
 		}
 		expanded = append(expanded, a)

@@ -4,7 +4,7 @@ package winutil
 
 import "fmt"
 
-const HomeDesktopShortcutName = "TcNo Account Switcher.lnk"
+const HomeDesktopShortcutName = "Account Switcher.lnk"
 
 func HomeDesktopShortcutExists() bool { return false }
 

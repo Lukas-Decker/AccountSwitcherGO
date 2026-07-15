@@ -23,7 +23,7 @@ func newFlowTestEnv(t *testing.T) *flowTestEnv {
 	exeDir := t.TempDir()
 	instDir := t.TempDir()
 	platform.ResetPathSingletonsForTest(exeDir)
-	paths.ResetForTest(filepath.Join(exeDir, "TcNo Account Switcher"))
+	paths.ResetForTest(filepath.Join(exeDir, "Account Switcher"))
 	return &flowTestEnv{t: t, exeDir: exeDir, instDir: instDir}
 }
 
@@ -46,7 +46,7 @@ func (e *flowTestEnv) flowContext() FlowContext {
 
 func (e *flowTestEnv) cacheDir(accountName string) string {
 	e.t.Helper()
-	return filepath.Join(e.exeDir, "TcNo Account Switcher", "LoginCache", "TestPlatform", accountName)
+	return filepath.Join(e.exeDir, "Account Switcher", "LoginCache", "TestPlatform", accountName)
 }
 
 func mustMkdir(t *testing.T, path string) {
