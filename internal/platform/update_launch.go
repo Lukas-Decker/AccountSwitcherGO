@@ -21,6 +21,10 @@ var (
 	updaterLastErrorStage atomic.Value // updater.Stage
 )
 
+// UpdateChecksEnabled gates all automatic and manual update checks.
+// Disabled internally: this build never contacts an update server.
+const UpdateChecksEnabled = false
+
 const (
 	AppUpdateAvailableEvent = "app-update-available"
 	UpdateCheckFailedEvent  = "update-check-failed"
@@ -60,6 +64,9 @@ func emitUpdateCheckFailed() {
 }
 
 func (*PlatformService) NotifyLaunchUpdateCheck() {
+	if !UpdateChecksEnabled {
+		return
+	}
 	launchCheckOnce.Do(func() {
 		go runLaunchUpdateCheck()
 	})
@@ -96,6 +103,9 @@ func runLaunchUpdateCheck() {
 }
 
 func (*PlatformService) CheckForUpdatesAndInstall() error {
+	if !UpdateChecksEnabled {
+		return nil
+	}
 	defer crashlog.Capture()
 	app := application.Get()
 	if app == nil {
@@ -302,6 +312,9 @@ func runAPIUpdateCheck(ctx context.Context) string {
 // Uses the Wails signed GitHub updater first; falls back to the tcno.co API.
 // Returns "available", "up-to-date", "offline", or "failed".
 func (*PlatformService) CheckForUpdatesManually() string {
+	if !UpdateChecksEnabled {
+		return "up-to-date"
+	}
 	exeDir, err := ResolveExeDir()
 	if err != nil {
 		return "failed"

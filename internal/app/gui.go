@@ -165,7 +165,7 @@ func RunGUI(params RunGUIParams) {
 
 	currentVersion := buildinfo.Version()
 
-	if currentVersion != "" && !guiSettings.OfflineMode {
+	if platform.UpdateChecksEnabled && currentVersion != "" && !guiSettings.OfflineMode {
 		gh, err := github.New(githubUpdaterConfig(guiSettings))
 		if err != nil {
 			wailsApp.Logger.Error("updater: provider", "error", err)
