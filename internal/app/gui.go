@@ -45,7 +45,6 @@ type RunGUIParams struct {
 	StartupToast     string
 	EmbeddedAssets   fs.FS
 	TrayIconPNG      []byte
-	UpdaterPublicKey []byte
 	Done             chan struct{}
 }
 
@@ -60,7 +59,7 @@ func ResolvedLogLevel(p cli.Parsed) slog.Level {
 func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) application.WebviewWindowOptions {
 	winOpts := application.WebviewWindowOptions{
 		Name:      "main",
-		Title:     "TcNo Account Switcher",
+		Title:     "Account Switcher",
 		MinWidth:  760,
 		MinHeight: 520,
 		Mac: application.MacWindow{
@@ -101,7 +100,7 @@ func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) appl
 
 func githubUpdaterConfig(guiSettings platform.AppSettings) github.Config {
 	return github.Config{
-		Repository:    "TCNOco/TcNo-Acc-Switcher",
+		Repository:    "TCNOco/Account-Switcher",
 		Prerelease:    guiSettings.PrereleaseUpdates,
 		ChecksumAsset: "SHA256SUMS",
 		AssetMatcher:  updatecheck.GitHubAssetMatcher,
@@ -137,7 +136,7 @@ func RunGUI(params RunGUIParams) {
 
 	var wailsApp *application.App
 	appOpts := application.Options{
-		Name:        "TcNo Account Switcher",
+		Name:        "Account Switcher",
 		Description: "A Superfast open-source account switcher",
 		LogLevel:    wailsLvl,
 		Logger:      wailsLogger,
@@ -146,7 +145,7 @@ func RunGUI(params RunGUIParams) {
 			Handler: newCompositeAssetHandler(params.EmbeddedAssets),
 		},
 		SingleInstance: &application.SingleInstanceOptions{
-			UniqueID: "co.tcno.acc-switcher",
+			UniqueID: "com.accountswitcher.app",
 			OnSecondInstanceLaunch: func(data application.SecondInstanceData) {
 				handleForwardedCLI(wailsApp, disp, argvWithoutExecutable(data.Args))
 			},
@@ -173,7 +172,7 @@ func RunGUI(params RunGUIParams) {
 	currentVersion := buildinfo.Version()
 
 	if currentVersion != "" && !guiSettings.OfflineMode {
-		gh, err := updatecheck.NewSignedGitHubProvider(githubUpdaterConfig(guiSettings), ".exe.sig")
+		gh, err := github.New(githubUpdaterConfig(guiSettings))
 		if err != nil {
 			wailsApp.Logger.Error("updater: provider", "error", err)
 		} else {
@@ -182,7 +181,6 @@ func RunGUI(params RunGUIParams) {
 			if err := wailsApp.Updater.Init(updater.Config{
 				CurrentVersion: currentVersion,
 				Providers:      []updater.Provider{gh},
-				PublicKey:      params.UpdaterPublicKey,
 				Window:         updaterWindow,
 			}); err != nil {
 				wailsApp.Logger.Error("updater: init", "error", err)

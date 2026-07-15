@@ -34,9 +34,6 @@ var assets embed.FS
 //go:embed build/trayicon.png
 var trayIconPNG []byte
 
-//go:embed updater-key.pub
-var updaterPublicKey []byte
-
 var (
 	platformSvc   = &platform.PlatformService{}
 	basicSvc      = basic.NewBasicService(platformSvc)
@@ -182,7 +179,6 @@ func main() {
 		StartupToast:     parsed.StartupToast,
 		EmbeddedAssets:   assets,
 		TrayIconPNG:      trayIconPNG,
-		UpdaterPublicKey: updaterPublicKey,
 	})
 }
 

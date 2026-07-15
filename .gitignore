@@ -8,7 +8,7 @@ build/linux/appimage/build
 build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
 todo.txt
 /frontend/bindings
-TcNo-Acc-Switcher.exe
+Account-Switcher.exe
 *.af
 *.af~lock~
 *.syso
