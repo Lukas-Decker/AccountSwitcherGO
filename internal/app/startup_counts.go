@@ -6,7 +6,6 @@ import (
 	"account-switcher/internal/basic"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/steam"
 )
 
@@ -16,7 +15,7 @@ func RegisterStartupAccountCounts() {
 	platform.SetStartupTagCountResolver(resolveStartupTagCounts)
 }
 
-func resolveStartupAccountCounts(platformNames []string, statsEnabled bool) map[string]int {
+func resolveStartupAccountCounts(platformNames []string) map[string]int {
 	out := make(map[string]int, len(platformNames))
 	if security.AppLocked() {
 		return out
@@ -25,12 +24,6 @@ func resolveStartupAccountCounts(platformNames []string, statsEnabled bool) map[
 		name = strings.TrimSpace(name)
 		if name == "" {
 			continue
-		}
-		if statsEnabled {
-			if count, ok := stats.LookupPlatformAccountCount(name); ok {
-				out[name] = count
-				continue
-			}
 		}
 		if strings.EqualFold(name, steam.PlatformKey) {
 			out[name] = steam.CountSavedAccounts()
@@ -41,7 +34,7 @@ func resolveStartupAccountCounts(platformNames []string, statsEnabled bool) map[
 	return out
 }
 
-func resolveStartupTagCounts(platformNames []string, statsEnabled bool) map[string]platform.PlatformTagCountInfo {
+func resolveStartupTagCounts(platformNames []string) map[string]platform.PlatformTagCountInfo {
 	out := make(map[string]platform.PlatformTagCountInfo, len(platformNames))
 	if security.AppLocked() {
 		return out

@@ -60,9 +60,6 @@ type AppSettings struct {
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	DiscordRpc bool `json:"discordRpc"`
 
-	// DiscordRpcShare controls whether total switch count is shown in Discord status.
-	DiscordRpcShare bool `json:"discordRpcShare,omitempty"`
-
 	// ExitToTray keeps the app running when the main window is closed; the window is hidden instead.
 	ExitToTray bool `json:"exitToTray,omitempty"`
 
@@ -74,18 +71,6 @@ type AppSettings struct {
 
 	// StartProgramCentered places the main window in the center of the screen when the app opens.
 	StartProgramCentered bool `json:"startProgramCentered,omitempty"`
-
-	// StatsEnabled toggles local anonymous statistics collection.
-	// Stored without omitempty so an explicit opt-out survives a restart.
-	StatsEnabled bool `json:"statsEnabled"`
-
-	// StatsShare toggles anonymous statistics submission.
-	// Stored without omitempty so an explicit opt-out survives a restart.
-	StatsShare bool `json:"statsShare"`
-
-	// CrashReportAutoSubmit uploads pending crash dumps on launch without prompting.
-	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
-	CrashReportAutoSubmit bool `json:"crashReportAutoSubmit"`
 
 	// AppBgImage is the filename (under wwwroot/backgrounds/) of the app-wide background image.
 	AppBgImage string `json:"appBgImage,omitempty"`
@@ -138,12 +123,8 @@ func defaultSettings() AppSettings {
 		PlatformExePaths:         map[string]string{},
 		PlatformOrder:            nil,
 		DisabledPlatforms:        nil,
-		StatsEnabled:             true,
-		StatsShare:               true,
 		PrereleaseUpdates:        defaultPrereleaseUpdates,
-		CrashReportAutoSubmit:    true,
 		DiscordRpc:               true,
-		DiscordRpcShare:          false,
 		AnimationsEnabled:        true,
 		ControllerSupportEnabled: true,
 		CommandPaletteHotkey:     "Ctrl+K",
@@ -165,17 +146,8 @@ func normalizeAppSettingsDefaults(s *AppSettings, raw map[string]json.RawMessage
 	if s.PlatformExePaths == nil {
 		s.PlatformExePaths = map[string]string{}
 	}
-	if _, ok := raw["statsEnabled"]; !ok {
-		s.StatsEnabled = true
-	}
-	if _, ok := raw["statsShare"]; !ok {
-		s.StatsShare = true
-	}
 	if _, ok := raw["prereleaseUpdates"]; !ok {
 		s.PrereleaseUpdates = defaultPrereleaseUpdates
-	}
-	if _, ok := raw["crashReportAutoSubmit"]; !ok {
-		s.CrashReportAutoSubmit = true
 	}
 	if _, ok := raw["discordRpc"]; !ok {
 		s.DiscordRpc = true
@@ -194,12 +166,8 @@ func normalizeAppSettingsDefaults(s *AppSettings, raw map[string]json.RawMessage
 		s.PlatformBgs[key] = background
 	}
 	s.CommandPaletteHotkey = normalizeCommandPaletteHotkey(s.CommandPaletteHotkey)
-	if !s.DiscordRpc {
-		s.DiscordRpcShare = false
-	}
 	if s.OfflineMode {
 		s.DiscordRpc = false
-		s.DiscordRpcShare = false
 	}
 }
 

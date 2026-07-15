@@ -13,7 +13,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/profileimage"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/winutil"
 )
@@ -81,12 +80,6 @@ func (b *BasicService) GetAccounts(platformKey string) ([]AccountDTO, error) {
 		func(row AccountEnrichmentDTO) string { return row.UniqueID },
 		mergeBasicAccountDTO,
 	)
-	if len(out) > 0 {
-		ps, perr := platform.LoadPlatformSettings(platformKey)
-		if perr == nil {
-			syncBasicPlatformCounts(platformKey, len(out), ps)
-		}
-	}
 	return out, nil
 }
 
@@ -389,7 +382,6 @@ func (b *BasicService) AddTagToAccount(platformKey, uniqueID, tagID string) erro
 		if err := writeIdsFile(platformKey, f); err != nil {
 			return err
 		}
-		_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 		return nil
 	}
 	f.AccountTags[uniqueID] = append(cur, tagID)
@@ -397,7 +389,6 @@ func (b *BasicService) AddTagToAccount(platformKey, uniqueID, tagID string) erro
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return nil
 }
 
@@ -475,7 +466,6 @@ func (b *BasicService) AddTagToAccounts(platformKey string, uniqueIDs []string, 
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return zero, err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return TagDefinitionDTO{
 		ID:        tagID,
 		Name:      strings.TrimSpace(tag.Name),
@@ -505,7 +495,6 @@ func (b *BasicService) ClearAccountTags(platformKey string) error {
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return nil
 }
 
@@ -547,7 +536,6 @@ func (b *BasicService) RemoveTagFromAccount(platformKey, uniqueID, tagID string)
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return nil
 }
 
@@ -588,7 +576,6 @@ func (b *BasicService) CreateTagAndAddToAccount(platformKey, uniqueID, name stri
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return zero, err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return TagDefinitionDTO{ID: id, Name: name, Color: color}, nil
 }
 
@@ -627,7 +614,6 @@ func (b *BasicService) RemoveTagFromAllAccounts(platformKey, tagID string) error
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return nil
 }
 
@@ -674,7 +660,6 @@ func (b *BasicService) PruneExpiredTags(platformKey string) (bool, error) {
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return false, err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return true, nil
 }
 
@@ -730,7 +715,6 @@ func (b *BasicService) ApplySpecialTag(platformKey, uniqueID, specialID string) 
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return zero, err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return TagDefinitionDTO{
 		ID:        tagID,
 		Name:      strings.TrimSpace(tag.Name),

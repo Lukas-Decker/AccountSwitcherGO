@@ -21,7 +21,6 @@
   import BackgroundDropZones from './components/BackgroundDropZones.svelte'
   import ActionBar from './components/ActionBar.svelte'
   import { route, applyNavigateJSON, navigateBackLikeButton, navigateForward } from './stores/nav'
-  import { installPageStatsTracking } from "./lib/pageStatsTrack";
   import { loadPageModule, prefetchCommonPages } from "./lib/pageLoaders";
   import { actionBarStatus } from './stores/fileDrop'
   import { t } from "./stores/i18n";
@@ -30,7 +29,6 @@
   import { pushToast } from "./stores/toast";
   import { formatToastWithError } from "./lib/formatWailsError";
   import { registerSvgRenderBridge } from "./lib/svgRenderBridge";
-  import { runCrashReportPromptIfNeeded } from "./lib/crashReportPrompt";
   import { activeModal, openConfirm } from "./stores/modal";
   import { contextMenu } from "./stores/contextMenu";
   import {
@@ -306,7 +304,6 @@
       appBgInfo.set(info);
     }).catch(() => {});
 
-    const offPageStats = installPageStatsTracking();
     const offSvgBridge = registerSvgRenderBridge();
     const offInputModality = installInputModalityTracking();
     let cleanupAnimationsClass = () => {};
@@ -324,7 +321,6 @@
       applyNavigateJSON(raw);
     });
     void NotifyLaunchUpdateCheck();
-    void runCrashReportPromptIfNeeded();
 
     const schedulePrefetch = (): void => {
       prefetchCommonPages();
@@ -415,7 +411,6 @@
       window.removeEventListener("keydown", onGlobalHistoryKeydownCapture, true);
       window.removeEventListener("mouseup", onGlobalHistoryMouseUpCapture, true);
       window.removeEventListener("contextmenu", preventUnmodifiedBrowserContextMenu, true);
-      offPageStats();
       off?.();
       offNav?.();
       offUpdateFail?.();

@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"account-switcher/internal/appclient"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/winutil"
 )
 
@@ -196,25 +195,6 @@ func (p *PlatformService) SetProtocolEnabled(enabled bool) error {
 	return nil
 }
 
-func (p *PlatformService) SetStatsEnabled(enabled bool) error {
-	err := p.withSettingsWrite(func(s *AppSettings) error {
-		s.StatsEnabled = enabled
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-	stats.SetStatsCollectionEnabled(enabled)
-	return nil
-}
-
-func (p *PlatformService) SetStatsShare(enabled bool) error {
-	return p.withSettingsWrite(func(s *AppSettings) error {
-		s.StatsShare = enabled
-		return nil
-	})
-}
-
 func (p *PlatformService) SetPrereleaseUpdates(enabled bool) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		s.PrereleaseUpdates = enabled
@@ -227,7 +207,6 @@ func (p *PlatformService) SetOfflineMode(enabled bool) error {
 		s.OfflineMode = enabled
 		if enabled {
 			s.DiscordRpc = false
-			s.DiscordRpcShare = false
 		}
 		return nil
 	})
@@ -245,24 +224,6 @@ func (p *PlatformService) SetDiscordRpc(enabled bool) error {
 			enabled = false
 		}
 		s.DiscordRpc = enabled
-		if !enabled {
-			s.DiscordRpcShare = false
-		}
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-	TriggerDiscordPresenceRefresh()
-	return nil
-}
-
-func (p *PlatformService) SetDiscordRpcShare(enabled bool) error {
-	err := p.withSettingsWrite(func(s *AppSettings) error {
-		if s.OfflineMode || !s.DiscordRpc {
-			enabled = false
-		}
-		s.DiscordRpcShare = enabled
 		return nil
 	})
 	if err != nil {

@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"account-switcher/internal/stats"
 )
 
 const maxTagNameLen = 64
@@ -237,7 +236,6 @@ func ForgetAccountTagAssignments(platformKey, uniqueID string) error {
 	if err := writeIdsFile(platformKey, f); err != nil {
 		return err
 	}
-	_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	return nil
 }
 
@@ -474,7 +472,6 @@ func BuildAccountTagMap(platformKey string) (map[string][]AccountTagDTO, error) 
 		if err := writeIdsFile(platformKey, f); err != nil {
 			return nil, err
 		}
-		_ = stats.SyncPlatformTagCounts(platformKey, len(f.Tags), countTaggedAccounts(f))
 	}
 	m := make(map[string][]AccountTagDTO)
 	for uid := range f.AccountTags {

@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+func dumpWritten(t *testing.T) bool {
+	t.Helper()
+	p, err := crashDumpPath()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = os.Stat(p)
+	return err == nil
+}
+
 func TestCapture_DoesNotExit(t *testing.T) {
 	dir := t.TempDir()
 	origResolver := crashDumpDirResolver
@@ -36,7 +46,7 @@ func TestCapture_DoesNotExit(t *testing.T) {
 	default:
 	}
 
-	if !HasPending() {
+	if !dumpWritten(t) {
 		t.Fatal("expected crash dump to be written")
 	}
 }
@@ -74,35 +84,8 @@ func TestCaptureFatal_Exits(t *testing.T) {
 		t.Fatal("CaptureFatal() did not call os.Exit")
 	}
 
-	if !HasPending() {
+	if !dumpWritten(t) {
 		t.Fatal("expected crash dump to be written")
 	}
 }
 
-func TestHasPendingAndDiscardPending(t *testing.T) {
-	dir := t.TempDir()
-	orig := crashDumpDirResolver
-	crashDumpDirResolver = func() (string, error) { return dir, nil }
-	t.Cleanup(func() { crashDumpDirResolver = orig })
-
-	if HasPending() {
-		t.Fatal("expected no pending crash dump")
-	}
-
-	dumpPath, err := crashDumpPath()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(dumpPath, []byte(`{"error":"test"}`), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	if !HasPending() {
-		t.Fatal("expected pending crash dump")
-	}
-	if err := DiscardPending(); err != nil {
-		t.Fatal(err)
-	}
-	if HasPending() {
-		t.Fatal("expected crash dump to be discarded")
-	}
-}

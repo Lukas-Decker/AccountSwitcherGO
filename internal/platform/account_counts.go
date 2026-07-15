@@ -2,33 +2,33 @@ package platform
 
 // startupAccountCountResolver returns per-platform saved account totals for UI skeleton hints.
 // When nil, GetStartup omits disk-backed counts.
-var startupAccountCountResolver func(platformNames []string, statsEnabled bool) map[string]int
+var startupAccountCountResolver func(platformNames []string) map[string]int
 
 // SetStartupAccountCountResolver wires startup account totals from basic/steam (registered from main).
-func SetStartupAccountCountResolver(fn func(platformNames []string, statsEnabled bool) map[string]int) {
+func SetStartupAccountCountResolver(fn func(platformNames []string) map[string]int) {
 	startupAccountCountResolver = fn
 }
 
-func resolveStartupAccountCounts(platformNames []string, statsEnabled bool) map[string]int {
+func resolveStartupAccountCounts(platformNames []string) map[string]int {
 	if startupAccountCountResolver == nil {
 		return map[string]int{}
 	}
-	return startupAccountCountResolver(platformNames, statsEnabled)
+	return startupAccountCountResolver(platformNames)
 }
 
 
 
 // startupTagCountResolver returns per-platform tag & tagged-account totals for UI skeleton hints.
-var startupTagCountResolver func(platformNames []string, statsEnabled bool) map[string]PlatformTagCountInfo
+var startupTagCountResolver func(platformNames []string) map[string]PlatformTagCountInfo
 
 // SetStartupTagCountResolver wires startup tag totals from basic/steam (registered from main).
-func SetStartupTagCountResolver(fn func(platformNames []string, statsEnabled bool) map[string]PlatformTagCountInfo) {
+func SetStartupTagCountResolver(fn func(platformNames []string) map[string]PlatformTagCountInfo) {
 	startupTagCountResolver = fn
 }
 
-func resolveStartupTagCounts(platformNames []string, statsEnabled bool) map[string]PlatformTagCountInfo {
+func resolveStartupTagCounts(platformNames []string) map[string]PlatformTagCountInfo {
 	if startupTagCountResolver == nil {
 		return map[string]PlatformTagCountInfo{}
 	}
-	return startupTagCountResolver(platformNames, statsEnabled)
+	return startupTagCountResolver(platformNames)
 }

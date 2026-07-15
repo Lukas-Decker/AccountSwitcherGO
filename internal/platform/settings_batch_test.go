@@ -7,29 +7,15 @@ import (
 
 func TestApplySettingsBatchUpdateOfflineDisablesDiscord(t *testing.T) {
 	on := true
-	settings := AppSettings{DiscordRpc: true, DiscordRpcShare: true}
+	settings := AppSettings{DiscordRpc: true}
 
 	effects := applySettingsBatchUpdate(&settings, SettingsBatchUpdate{OfflineMode: &on})
 
-	if !settings.OfflineMode || settings.DiscordRpc || settings.DiscordRpcShare {
+	if !settings.OfflineMode || settings.DiscordRpc {
 		t.Fatalf("offline update left settings inconsistent: %#v", settings)
 	}
 	if effects.offlineMode == nil || !*effects.offlineMode || !effects.discordPresenceRefresh || !effects.dirty {
 		t.Fatalf("offline update effects = %#v", effects)
-	}
-}
-
-func TestApplySettingsBatchUpdateGuardsDiscordShare(t *testing.T) {
-	on := true
-	settings := AppSettings{DiscordRpc: false}
-
-	effects := applySettingsBatchUpdate(&settings, SettingsBatchUpdate{DiscordRpcShare: &on})
-
-	if settings.DiscordRpcShare {
-		t.Fatal("discord share should stay disabled when Discord RPC is disabled")
-	}
-	if !effects.discordPresenceRefresh || !effects.dirty {
-		t.Fatalf("discord share effects = %#v", effects)
 	}
 }
 
@@ -52,57 +38,6 @@ func TestApplySettingsBatchUpdateSanitizesThemeAndAccent(t *testing.T) {
 	}
 	if settings.ThemeAccentPreset != "" || settings.ThemeAccentCustom != "" {
 		t.Fatalf("accent fields = (%q, %q), want both cleared", settings.ThemeAccentPreset, settings.ThemeAccentCustom)
-	}
-}
-
-func TestApplySettingsBatchUpdateStatsEffect(t *testing.T) {
-	off := false
-	settings := AppSettings{StatsEnabled: true}
-
-	effects := applySettingsBatchUpdate(&settings, SettingsBatchUpdate{StatsEnabled: &off})
-
-	if settings.StatsEnabled {
-		t.Fatal("StatsEnabled should be false")
-	}
-	if effects.statsEnabled == nil || *effects.statsEnabled {
-		t.Fatalf("stats effect = %#v", effects.statsEnabled)
-	}
-}
-
-func TestCrashReportAutoSubmitDefaultsOnWhenMissing(t *testing.T) {
-	settings := AppSettings{}
-
-	normalizeAppSettingsDefaults(&settings, map[string]json.RawMessage{})
-
-	if !settings.CrashReportAutoSubmit {
-		t.Fatal("CrashReportAutoSubmit should default to true when the key is absent")
-	}
-}
-
-func TestCrashReportAutoSubmitPreservesExplicitFalse(t *testing.T) {
-	settings := AppSettings{CrashReportAutoSubmit: false}
-
-	normalizeAppSettingsDefaults(&settings, map[string]json.RawMessage{
-		"crashReportAutoSubmit": json.RawMessage("false"),
-	})
-
-	if settings.CrashReportAutoSubmit {
-		t.Fatal("CrashReportAutoSubmit should preserve explicit false")
-	}
-}
-
-func TestCrashReportAutoSubmitFalseMarshals(t *testing.T) {
-	data, err := json.Marshal(AppSettings{CrashReportAutoSubmit: false})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var raw map[string]json.RawMessage
-	if err := json.Unmarshal(data, &raw); err != nil {
-		t.Fatal(err)
-	}
-	if _, ok := raw["crashReportAutoSubmit"]; !ok {
-		t.Fatal("CrashReportAutoSubmit false should be written so it can round-trip")
 	}
 }
 

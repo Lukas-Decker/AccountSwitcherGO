@@ -1,14 +1,12 @@
 package discordrpc
 
 import (
-	"fmt"
 	"log/slog"
 	"strings"
 	"sync"
 	"time"
 
 	"account-switcher/internal/platform"
-	"account-switcher/internal/stats"
 
 	richgo "github.com/hugolgst/rich-go/client"
 )
@@ -102,14 +100,6 @@ func (m *Manager) Refresh() {
 		SmallImage: discordSmallImageKey,
 		SmallText:  "Account Switcher",
 		Timestamps: &richgo.Timestamps{Start: &m.startedAt},
-	}
-
-	if settings.StatsEnabled && settings.DiscordRpcShare {
-		if report, err := stats.GetReportData(); err == nil {
-			activity.State = fmt.Sprintf("Accounts Switched: %d", report.TotalSwitches)
-		} else {
-			logRPC().Warn("stats unavailable for rpc share state", "err", err)
-		}
 	}
 
 	if activity.Details == m.lastDetails && activity.State == m.lastState {

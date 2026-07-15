@@ -9,7 +9,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/profileimage"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 )
 
 // AccountListItemDTO is the fast account list payload (ids, names, order, live session).
@@ -59,7 +58,6 @@ func (b *BasicService) buildAccountListContext(platformKey string) (*accountList
 		if err := writeIdsFile(platformKey, idf); err != nil {
 			return nil, err
 		}
-		_ = stats.SyncPlatformTagCounts(platformKey, len(idf.Tags), countTaggedAccounts(idf))
 	}
 	order, err := readOrder(platformKey)
 	if err != nil {
@@ -129,9 +127,6 @@ func (b *BasicService) GetAccountsList(platformKey string) ([]AccountListItemDTO
 			CurrentSession:  ctx.liveUID != "" && strings.EqualFold(ctx.liveUID, uid),
 			SavedDataBroken: encrypted && !security.AccountBlobValid(ctx.platformKey, uid),
 		})
-	}
-	if len(out) > 0 {
-		syncBasicPlatformCounts(ctx.platformKey, len(out), ctx.ps)
 	}
 	return out, nil
 }
@@ -209,7 +204,3 @@ func mergeBasicAccountDTO(list AccountListItemDTO, enrich AccountEnrichmentDTO) 
 	}
 }
 
-func syncBasicPlatformCounts(platformKey string, accountCount int, ps platform.PlatformSettings) {
-	sc, hot := accountlist.ShortcutCounts(ps.Shortcuts)
-	_ = stats.SyncPlatformCounts(platformKey, accountCount, sc, hot)
-}

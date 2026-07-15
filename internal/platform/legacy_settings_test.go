@@ -1,51 +1,13 @@
 package platform
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"slices"
 	"testing"
 )
 
-func TestStatsOptOutRoundTrips(t *testing.T) {
-	setTestAppData(t)
-	exeDir := filepath.Join(t.TempDir(), "bin")
-	if err := os.MkdirAll(exeDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-
-	ResetPathSingletonsForTest(exeDir)
-	settings := defaultSettings()
-	settings.StatsEnabled = false
-	settings.StatsShare = false
-	if err := SaveAppSettings(exeDir, settings); err != nil {
-		t.Fatal(err)
-	}
-
-	path, ok := settingsFilePathForTest(exeDir)
-	if !ok {
-		t.Fatal("saved settings file was not found")
-	}
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Contains(raw, []byte(`"statsEnabled": false`)) || !bytes.Contains(raw, []byte(`"statsShare": false`)) {
-		t.Fatalf("explicit stats opt-outs were omitted: %s", raw)
-	}
-
-	ResetPathSingletonsForTest(exeDir)
-	loaded, err := LoadAppSettings(exeDir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if loaded.StatsEnabled || loaded.StatsShare {
-		t.Fatalf("stats opt-out did not survive reload: enabled=%v share=%v", loaded.StatsEnabled, loaded.StatsShare)
-	}
-}
-
-func TestLegacyWindowSettingsMigratesPlatformsAndStats(t *testing.T) {
+func TestLegacyWindowSettingsMigratesPlatforms(t *testing.T) {
 	setTestAppData(t)
 	exeDir := filepath.Join(t.TempDir(), "bin")
 	if err := os.MkdirAll(exeDir, 0o755); err != nil {
@@ -61,9 +23,7 @@ func TestLegacyWindowSettingsMigratesPlatformsAndStats(t *testing.T) {
 
 	legacySettings := []byte(`{
   "DisabledPlatforms": [],
-  "EnabledBasicPlatforms": ["e"],
-  "CollectStats": false,
-  "ShareAnonymousStats": false
+  "EnabledBasicPlatforms": ["e"]
 }`)
 	if err := os.WriteFile(filepath.Join(userDataDir, legacyWindowSettingsFileName), legacySettings, 0o644); err != nil {
 		t.Fatal(err)
@@ -86,9 +46,6 @@ func TestLegacyWindowSettingsMigratesPlatformsAndStats(t *testing.T) {
 	settings, err := LoadAppSettings(exeDir)
 	if err != nil {
 		t.Fatal(err)
-	}
-	if settings.StatsEnabled || settings.StatsShare {
-		t.Fatalf("legacy stats opt-out was lost: enabled=%v share=%v", settings.StatsEnabled, settings.StatsShare)
 	}
 	if slices.Contains(settings.DisabledPlatforms, "Steam") {
 		t.Fatalf("legacy enabled Steam was disabled: %v", settings.DisabledPlatforms)
@@ -135,9 +92,7 @@ func TestExistingSettingsTakePrecedenceOverLegacyWindowSettings(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(userDataDir, settingsFileName), []byte(`{
   "version": 1,
   "language": "en-US",
-  "disabledPlatforms": ["Steam"],
-  "statsEnabled": false,
-  "statsShare": false
+  "disabledPlatforms": ["Steam"]
 }`), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -150,59 +105,4 @@ func TestExistingSettingsTakePrecedenceOverLegacyWindowSettings(t *testing.T) {
 	if !slices.Contains(settings.DisabledPlatforms, "Steam") {
 		t.Fatalf("legacy settings overwrote current settings: %v", settings.DisabledPlatforms)
 	}
-}
-
-func TestInstallerStatsPreferenceIsConsumed(t *testing.T) {
-	setTestAppData(t)
-	exeDir := filepath.Join(t.TempDir(), "bin")
-	if err := os.MkdirAll(exeDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	userDataDir, err := DefaultUserDataDir()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(userDataDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	marker := filepath.Join(userDataDir, "SendAnonymousStats.no")
-	if err := os.WriteFile(marker, nil, 0o644); err != nil {
-		t.Fatal(err)
-	}
-
-	ResetPathSingletonsForTest(exeDir)
-	if err := SaveAppSettings(exeDir, defaultSettings()); err != nil {
-		t.Fatal(err)
-	}
-	if err := InitDataPaths(exeDir); err != nil {
-		t.Fatal(err)
-	}
-	settings, err := LoadAppSettings(exeDir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if settings.StatsEnabled || settings.StatsShare {
-		t.Fatalf("installer send preference applied incorrectly: enabled=%v share=%v", settings.StatsEnabled, settings.StatsShare)
-	}
-	if _, err := os.Stat(marker); !os.IsNotExist(err) {
-		t.Fatalf("installer marker was not consumed: %v", err)
-	}
-}
-
-func settingsFilePathForTest(exeDir string) (string, bool) {
-	for _, candidate := range append(settingsSearchDirsForTest(exeDir), exeDir) {
-		path := filepath.Join(candidate, settingsFileName)
-		if st, err := os.Stat(path); err == nil && !st.IsDir() {
-			return path, true
-		}
-	}
-	return "", false
-}
-
-func settingsSearchDirsForTest(exeDir string) []string {
-	dirs := []string{PortableUserDataDir(exeDir)}
-	if dir, err := DefaultUserDataDir(); err == nil {
-		dirs = append(dirs, dir)
-	}
-	return dirs
 }

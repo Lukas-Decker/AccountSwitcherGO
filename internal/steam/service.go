@@ -20,7 +20,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/profileimage"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/winutil"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -274,7 +273,6 @@ func (s *SteamService) GetSteamAccounts() ([]AccountDTO, error) {
 		func(row SteamAccountEnrichmentDTO) string { return row.SteamID64 },
 		mergeSteamAccountDTO,
 	)
-	syncSteamPlatformCounts(len(out))
 	return out, nil
 }
 
@@ -851,7 +849,6 @@ func (s *SteamService) LoginAndLaunchGame(steamID64 string, personaState int, ap
 	if err := winutil.Start("cmd.exe", []string{"/c", "start", "", url}, winutil.StartOpts{}); err != nil {
 		return err
 	}
-	_ = stats.IncrementGamesLaunched(PlatformKey)
 	return nil
 }
 

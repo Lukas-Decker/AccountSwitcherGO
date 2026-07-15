@@ -6,9 +6,8 @@ import { pushToast } from "../stores/toast";
 import { formatToastWithError } from "./formatWailsError";
 import { parentDisplayPath } from "./fsPaths";
 import { checkForUpdatesManually } from "./checkForUpdates";
-import { FOLDER_PICKER_APPDATA, FOLDER_PICKER_PORTABLE, openAlertNoButton, openFolderPicker } from "../stores/modal";
+import { FOLDER_PICKER_APPDATA, FOLDER_PICKER_PORTABLE, openFolderPicker } from "../stores/modal";
 import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
-import StatsReportModalBody from "../components/modals/StatsReportModalBody.svelte";
 
 export async function openUserDataFolder(): Promise<void> {
   try {
@@ -66,18 +65,5 @@ export async function onCheckForUpdates(loading: Writable<boolean>): Promise<voi
     await checkForUpdatesManually();
   } finally {
     loading.set(false);
-  }
-}
-
-export async function openStatsModal(): Promise<void> {
-  try {
-    const report = await PlatformService.GetStatsReport();
-    void openAlertNoButton({
-      title: get(t)("Settings_ViewStats"),
-      bodyComponent: StatsReportModalBody,
-      bodyProps: { initialReport: report },
-    });
-  } catch (e) {
-    pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_StatsReportFailed"), e), duration: 8000 });
   }
 }

@@ -20,7 +20,6 @@ import (
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
 	"account-switcher/internal/stability"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/steam"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/winutil"
@@ -41,8 +40,6 @@ var (
 	controllerSvc = controllerinput.NewService()
 	securitySvc   = security.NewService()
 	discordRPC    = discordrpc.NewManager()
-
-	crashSubmitted bool
 )
 
 func init() {
@@ -116,11 +113,7 @@ func main() {
 
 	startupSettings, _ := loadStartupSettings()
 	syncOfflineModeFromSettings(startupSettings)
-	stats.SetStatsCollectionEnabled(startupSettings.StatsEnabled)
 
-	if crashlog.HasPending() && !startupSettings.OfflineMode && startupSettings.CrashReportAutoSubmit {
-		crashSubmitted = crashlog.SubmitPending()
-	}
 	defer crashlog.CaptureFatal()
 
 	if parsed.Kind == cli.KindHelp || parsed.Help {
@@ -175,7 +168,6 @@ func main() {
 		Services:         serviceList(),
 		Dispatch:         disp,
 		DiscordRPC:       discordRPC,
-		CrashSubmitted:   crashSubmitted,
 		StartupToast:     parsed.StartupToast,
 		EmbeddedAssets:   assets,
 		TrayIconPNG:      trayIconPNG,

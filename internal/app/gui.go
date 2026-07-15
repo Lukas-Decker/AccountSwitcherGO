@@ -21,7 +21,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/steam"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/updatecheck"
@@ -41,7 +40,6 @@ type RunGUIParams struct {
 	Services         []application.Service
 	Dispatch         *Dispatch
 	DiscordRPC       *discordrpc.Manager
-	CrashSubmitted   bool
 	StartupToast     string
 	EmbeddedAssets   fs.FS
 	TrayIconPNG      []byte
@@ -118,10 +116,6 @@ func RunGUI(params RunGUIParams) {
 
 	syncProtocolRegistration()
 
-	if err := stats.IncrementLaunchCount(); err != nil {
-		log.Printf("stats launch count: %v", err)
-	}
-	go stats.MustTryUploadDaily(guiSettings.StatsEnabled, guiSettings.StatsShare, guiSettings.OfflineMode)
 	params.DiscordRPC.Start()
 
 	wailsLvl := ResolvedLogLevel(parsed)
@@ -191,9 +185,6 @@ func RunGUI(params RunGUIParams) {
 
 	}
 
-	if params.CrashSubmitted {
-		EmitToast("success", "i18n:Toast_CrashReported", "", 0)
-	}
 	if toast := strings.TrimSpace(params.StartupToast); toast != "" {
 		EmitToast("success", toast, "", 6000)
 	}

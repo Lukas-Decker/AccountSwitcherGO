@@ -69,24 +69,6 @@ func (p *PlatformService) GetOfflineMode() (bool, error) {
 	return val, err
 }
 
-func (p *PlatformService) GetStatsEnabled() (bool, error) {
-	var val bool
-	err := p.withSettingsRead(func(s *AppSettings) error {
-		val = s.StatsEnabled
-		return nil
-	})
-	return val, err
-}
-
-func (p *PlatformService) GetStatsShare() (bool, error) {
-	var val bool
-	err := p.withSettingsRead(func(s *AppSettings) error {
-		val = s.StatsShare
-		return nil
-	})
-	return val, err
-}
-
 func (p *PlatformService) GetPrereleaseUpdates() (bool, error) {
 	var val bool
 	err := p.withSettingsRead(func(s *AppSettings) error {
@@ -100,15 +82,6 @@ func (p *PlatformService) GetDiscordRpc() (bool, error) {
 	var val bool
 	err := p.withSettingsRead(func(s *AppSettings) error {
 		val = s.DiscordRpc
-		return nil
-	})
-	return val, err
-}
-
-func (p *PlatformService) GetDiscordRpcShare() (bool, error) {
-	var val bool
-	err := p.withSettingsRead(func(s *AppSettings) error {
-		val = s.DiscordRpc && s.DiscordRpcShare
 		return nil
 	})
 	return val, err

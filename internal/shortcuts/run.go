@@ -10,7 +10,6 @@ import (
 	"account-switcher/internal/exeicon"
 	"account-switcher/internal/paths"
 	"account-switcher/internal/platform"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/winutil"
 )
 
@@ -44,7 +43,6 @@ func RunShortcut(platformKey, fileName string, admin bool) error {
 		startErr = winutil.Start("cmd.exe", []string{"/C", "start", "", full}, winutil.StartOpts{})
 	}
 	if startErr == nil {
-		_ = stats.IncrementGamesLaunched(platformKey)
 	}
 	return startErr
 }

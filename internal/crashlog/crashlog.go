@@ -1,11 +1,9 @@
 package crashlog
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -13,8 +11,6 @@ import (
 	"time"
 
 	buildinfo "account-switcher/build"
-	"account-switcher/internal/api"
-	"account-switcher/internal/appclient"
 	"account-switcher/internal/fsutil"
 	"account-switcher/internal/logsanitize"
 	"account-switcher/internal/paths"
@@ -142,74 +138,3 @@ func captureAndWrite(r any) {
 	}
 }
 
-// HasPending reports whether a crash dump from a previous run is waiting locally.
-func HasPending() bool {
-	path, err := crashDumpPath()
-	if err != nil {
-		return false
-	}
-	st, err := os.Stat(path)
-	return err == nil && !st.IsDir()
-}
-
-// DiscardPending removes a pending crash dump without submitting it.
-func DiscardPending() error {
-	path, err := crashDumpPath()
-	if err != nil {
-		return err
-	}
-	err = os.Remove(path)
-	if err != nil && os.IsNotExist(err) {
-		return nil
-	}
-	return err
-}
-
-// SubmitPending checks for a crash dump from a previous run and submits it.
-// Returns true if a crash dump was found and successfully submitted.
-func SubmitPending() bool {
-	if appclient.IsOfflineMode() {
-		return false
-	}
-
-	path, err := crashDumpPath()
-	if err != nil {
-		slog.Warn("crashlog: resolving dump path", "err", err)
-		return false
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-		slog.Warn("crashlog: reading pending dump", "err", err)
-		return false
-	}
-
-	req, err := http.NewRequest(http.MethodPost, api.CrashURL(), bytes.NewReader(data))
-	if err != nil {
-		slog.Warn("crashlog: building submit request", "err", err)
-		return false
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", api.UserAgent(buildinfo.Version()))
-
-	resp, err := appclient.Shared.Do(req)
-	if err != nil {
-		slog.Warn("crashlog: submitting dump", "err", err)
-		return false
-	}
-	resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		slog.Warn("crashlog: submission rejected", "status", resp.StatusCode)
-		return false
-	}
-
-	if err := os.Remove(path); err != nil {
-		slog.Warn("crashlog: removing submitted dump", "err", err)
-	}
-
-	return true
-}

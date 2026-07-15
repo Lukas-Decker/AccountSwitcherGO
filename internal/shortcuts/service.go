@@ -12,7 +12,6 @@ import (
 	"account-switcher/internal/paths"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 	"account-switcher/internal/steam"
 	"account-switcher/internal/winutil"
 
@@ -74,7 +73,6 @@ func (s *Service) emitUpdated(platformKey string) {
 			hot++
 		}
 	}
-	_ = stats.SyncPlatformCounts(platformKey, -1, sc, hot)
 	app.Event.Emit(UpdatedEvent, ListPayload{PlatformKey: platformKey, Shortcuts: list})
 }
 

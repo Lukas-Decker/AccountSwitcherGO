@@ -16,8 +16,6 @@ const legacyWindowSettingsFileName = "WindowSettings.json"
 type legacyWindowSettings struct {
 	DisabledPlatforms     []string `json:"DisabledPlatforms"`
 	EnabledBasicPlatforms []string `json:"EnabledBasicPlatforms"`
-	CollectStats          *bool    `json:"CollectStats"`
-	ShareAnonymousStats   *bool    `json:"ShareAnonymousStats"`
 }
 
 func migrateLegacyWindowSettings(exeDir string) (AppSettings, string, bool, error) {
@@ -37,12 +35,6 @@ func migrateLegacyWindowSettings(exeDir string) (AppSettings, string, bool, erro
 		}
 
 		settings := defaultSettings()
-		if legacy.CollectStats != nil {
-			settings.StatsEnabled = *legacy.CollectStats
-		}
-		if legacy.ShareAnonymousStats != nil {
-			settings.StatsShare = *legacy.ShareAnonymousStats
-		}
 
 		catalog, err := legacyMigrationCatalog(dir)
 		if err != nil {
@@ -180,33 +172,3 @@ func containsNormalizedAlias(values map[string]struct{}, aliases []string) bool 
 	return false
 }
 
-func applyStatsInstallerPreference(settings *AppSettings) (bool, error) {
-	dir, err := DefaultUserDataDir()
-	if err != nil {
-		return false, err
-	}
-	if _, err := os.Stat(filepath.Join(dir, "SendAnonymousStats.no")); err == nil {
-		settings.StatsEnabled = false
-		settings.StatsShare = false
-		return true, nil
-	} else if !errors.Is(err, os.ErrNotExist) {
-		return false, err
-	}
-	if _, err := os.Stat(filepath.Join(dir, "SendAnonymousStats.yes")); err == nil {
-		settings.StatsEnabled = true
-		settings.StatsShare = true
-		return true, nil
-	} else if !errors.Is(err, os.ErrNotExist) {
-		return false, err
-	}
-	return false, nil
-}
-
-func clearStatsInstallerPreference() {
-	dir, err := DefaultUserDataDir()
-	if err != nil {
-		return
-	}
-	_ = os.Remove(filepath.Join(dir, "SendAnonymousStats.no"))
-	_ = os.Remove(filepath.Join(dir, "SendAnonymousStats.yes"))
-}

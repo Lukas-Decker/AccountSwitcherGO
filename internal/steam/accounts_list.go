@@ -5,12 +5,10 @@ import (
 	"log/slog"
 	"strings"
 
-	"account-switcher/internal/accountlist"
 	"account-switcher/internal/basic"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/profileimage"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stats"
 )
 
 // SteamAccountListItemDTO is the fast Steam account list payload.
@@ -153,9 +151,6 @@ func (s *SteamService) GetSteamAccountsList() ([]SteamAccountListItemDTO, error)
 			CurrentSession: ctx.activeSteamID != "" && u.SteamID64 == ctx.activeSteamID,
 		})
 	}
-	if len(out) > 0 {
-		syncSteamPlatformCounts(len(out))
-	}
 	return out, nil
 }
 
@@ -260,13 +255,4 @@ func mergeSteamAccountDTO(list SteamAccountListItemDTO, enrich SteamAccountEnric
 		Tags:               enrich.Tags,
 		ManualProfileImage: enrich.ManualProfileImage,
 	}
-}
-
-func syncSteamPlatformCounts(accountCount int) {
-	psPlat, perr := platform.LoadPlatformSettings(PlatformKey)
-	sc, hot := 0, 0
-	if perr == nil {
-		sc, hot = accountlist.ShortcutCounts(psPlat.Shortcuts)
-	}
-	_ = stats.SyncPlatformCounts(PlatformKey, accountCount, sc, hot)
 }

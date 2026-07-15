@@ -10,7 +10,6 @@ import (
 	"sync"
 
 	"account-switcher/internal/appclient"
-	"account-switcher/internal/stats"
 )
 
 type platformsFile struct {
@@ -33,16 +32,12 @@ type PlatformStartup struct {
 	ProtocolEnabled          bool   `json:"protocolEnabled"`
 	ExitToTray               bool   `json:"exitToTray"`
 	DiscordRpc               bool   `json:"discordRpc"`
-	DiscordRpcShare          bool   `json:"discordRpcShare"`
 	MinimizeOnSwitch         bool   `json:"minimizeOnSwitch"`
 	StartTrayWithWindows     bool   `json:"startTrayWithWindows"`
 	StartProgramCentered     bool   `json:"startProgramCentered"`
 	AnimationsEnabled        bool   `json:"animationsEnabled"`
 	ControllerSupportEnabled bool   `json:"controllerSupportEnabled"`
-	StatsEnabled             bool   `json:"statsEnabled"`
-	StatsShare               bool   `json:"statsShare"`
 	PrereleaseUpdates        bool   `json:"prereleaseUpdates"`
-	CrashReportAutoSubmit    bool   `json:"crashReportAutoSubmit"`
 	CommandPaletteHotkey     string `json:"commandPaletteHotkey"`
 	ThemeAccentPreset        string `json:"themeAccentPreset"`
 	ThemeAccentCustom        string `json:"themeAccentCustom"`
@@ -117,16 +112,12 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				ProtocolEnabled:          settings.ProtocolEnabled,
 				ExitToTray:               settings.ExitToTray,
 				DiscordRpc:               settings.DiscordRpc,
-				DiscordRpcShare:          settings.DiscordRpcShare,
 				MinimizeOnSwitch:         settings.MinimizeOnSwitch,
 				StartTrayWithWindows:     settings.StartTrayWithWindows,
 				StartProgramCentered:     settings.StartProgramCentered,
 				AnimationsEnabled:        settings.AnimationsEnabled,
 				ControllerSupportEnabled: settings.ControllerSupportEnabled,
-				StatsEnabled:             settings.StatsEnabled,
-				StatsShare:               settings.StatsShare,
 				PrereleaseUpdates:        settings.PrereleaseUpdates,
-				CrashReportAutoSubmit:    settings.CrashReportAutoSubmit,
 				CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 				ThemeAccentPreset:        settings.ThemeAccentPreset,
 				ThemeAccentCustom:        settings.ThemeAccentCustom,
@@ -155,8 +146,8 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 	}
 	sortStringsFold(disList)
 	nav := ConsumeStartupNavigateHint()
-	accountCounts := resolveStartupAccountCounts(names, settings.StatsEnabled)
-	tagCounts := resolveStartupTagCounts(names, settings.StatsEnabled)
+	accountCounts := resolveStartupAccountCounts(names)
+	tagCounts := resolveStartupTagCounts(names)
 	return PlatformStartup{
 		HomePlatformOrder:        home,
 		AllPlatformNames:         names,
@@ -171,16 +162,12 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		ProtocolEnabled:          settings.ProtocolEnabled,
 		ExitToTray:               settings.ExitToTray,
 		DiscordRpc:               settings.DiscordRpc,
-		DiscordRpcShare:          settings.DiscordRpcShare,
 		MinimizeOnSwitch:         settings.MinimizeOnSwitch,
 		StartTrayWithWindows:     settings.StartTrayWithWindows,
 		StartProgramCentered:     settings.StartProgramCentered,
 		AnimationsEnabled:        settings.AnimationsEnabled,
 		ControllerSupportEnabled: settings.ControllerSupportEnabled,
-		StatsEnabled:             settings.StatsEnabled,
-		StatsShare:               settings.StatsShare,
 		PrereleaseUpdates:        settings.PrereleaseUpdates,
-		CrashReportAutoSubmit:    settings.CrashReportAutoSubmit,
 		CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 		ThemeAccentPreset:        settings.ThemeAccentPreset,
 		ThemeAccentCustom:        settings.ThemeAccentCustom,
@@ -197,16 +184,12 @@ type SettingsBatchUpdate struct {
 	ProtocolEnabled          *bool   `json:"protocolEnabled,omitempty"`
 	ExitToTray               *bool   `json:"exitToTray,omitempty"`
 	DiscordRpc               *bool   `json:"discordRpc,omitempty"`
-	DiscordRpcShare          *bool   `json:"discordRpcShare,omitempty"`
 	MinimizeOnSwitch         *bool   `json:"minimizeOnSwitch,omitempty"`
 	StartTrayWithWindows     *bool   `json:"startTrayWithWindows,omitempty"`
 	StartProgramCentered     *bool   `json:"startProgramCentered,omitempty"`
 	AnimationsEnabled        *bool   `json:"animationsEnabled,omitempty"`
 	ControllerSupportEnabled *bool   `json:"controllerSupportEnabled,omitempty"`
-	StatsEnabled             *bool   `json:"statsEnabled,omitempty"`
-	StatsShare               *bool   `json:"statsShare,omitempty"`
 	PrereleaseUpdates        *bool   `json:"prereleaseUpdates,omitempty"`
-	CrashReportAutoSubmit    *bool   `json:"crashReportAutoSubmit,omitempty"`
 	Language                 *string `json:"language,omitempty"`
 	Theme                    *string `json:"theme,omitempty"`
 	ThemeAccentPreset        *string `json:"themeAccentPreset,omitempty"`
@@ -231,9 +214,6 @@ func (p *PlatformService) UpdateSettings(req SettingsBatchUpdate) error {
 	}
 	if err := saveSettingsAtomic(exeDir, s); err != nil {
 		return err
-	}
-	if effects.statsEnabled != nil {
-		stats.SetStatsCollectionEnabled(*effects.statsEnabled)
 	}
 	if effects.offlineMode != nil {
 		appclient.SetOfflineMode(*effects.offlineMode)

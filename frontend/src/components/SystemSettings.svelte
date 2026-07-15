@@ -37,7 +37,7 @@
   } from "../stores/controllerSupport";
   import { formatAppVersion } from "../lib/checkForUpdates";
   import { createToggle } from "../lib/useToggleSetting";
-  import { openMoveUserDataModal, openUserDataFolder, onCheckForUpdates, openStatsModal } from "../lib/settingsOperations";
+  import { openMoveUserDataModal, openUserDataFolder, onCheckForUpdates } from "../lib/settingsOperations";
 
   let isWindows = false;
   let currentVersion = "";
@@ -106,19 +106,6 @@
     () => PlatformService.GetStartProgramCentered(),
     (v) => PlatformService.SetStartProgramCentered(v),
     get(t)("Settings_StartCentered"),
-  );
-
-  const statsEnabled = createToggle(
-    () => PlatformService.GetStatsEnabled(),
-    (v) => PlatformService.SetStatsEnabled(v),
-    get(t)("Settings_CollectStats"),
-  );
-
-  const crashReportAutoSubmit = createToggle(
-    () => PlatformService.GetCrashReportAutoSubmit(),
-    (v) => PlatformService.SetCrashReportAutoSubmit(v),
-    get(t)("Settings_CrashReportAutoSubmit"),
-    () => !get(offlineMode),
   );
 
   const protocol = createToggle(
@@ -208,7 +195,6 @@
     try {
       await PlatformService.SetDiscordRpc(next);
       discordRpc.value.set(next);
-      if (!next) discordRpcShare.value.set(false);
       pushToast({ type: "success", message: get(t)("Toast_SavedItem", { item: get(t)("Settings_DiscordRpc") }), duration: 4000 });
     } catch (e) {
       pushToast({ type: "error", message: formatToastWithError($t("Toast_SaveFailed"), e), duration: 8000 });
@@ -217,24 +203,10 @@
     }
   };
 
-  const statsShare = createToggle(
-    () => PlatformService.GetStatsShare(),
-    (v) => PlatformService.SetStatsShare(v),
-    get(t)("Settings_ShareStats"),
-    () => get(statsEnabled.value),
-  );
-
   const prereleaseUpdates = createToggle(
     () => PlatformService.GetPrereleaseUpdates(),
     (v) => PlatformService.SetPrereleaseUpdates(v),
     get(t)("Settings_PrereleaseUpdates"),
-  );
-
-  const discordRpcShare = createToggle(
-    () => PlatformService.GetDiscordRpcShare(),
-    (v) => PlatformService.SetDiscordRpcShare(v),
-    get(t)("Settings_DiscordRpcShare"),
-    () => !get(offlineMode) && get(discordRpc.value),
   );
 
   type SettingsSnapshot = Awaited<ReturnType<typeof PlatformService.ReadSettings>>;
@@ -243,12 +215,8 @@
     offlineMode.set(settings.offlineMode);
     protocol.value.set(settings.protocolEnabled);
     exitToTray.value.set(settings.exitToTray);
-    statsEnabled.value.set(settings.statsEnabled);
-    statsShare.value.set(settings.statsShare);
     prereleaseUpdates.value.set(settings.prereleaseUpdates);
-    crashReportAutoSubmit.value.set(settings.crashReportAutoSubmit);
     discordRpc.value.set(settings.discordRpc);
-    discordRpcShare.value.set(settings.discordRpcShare);
     minimizeOnSwitch.value.set(settings.minimizeOnSwitch);
     startTrayWithWindows.value.set(settings.startTrayWithWindows);
     startProgramCentered.value.set(settings.startProgramCentered);
@@ -262,12 +230,8 @@
   async function initSettingsIndividually(): Promise<void> {
     void protocol.init();
     void exitToTray.init();
-    void statsEnabled.init();
-    void statsShare.init();
     void prereleaseUpdates.init();
-    void crashReportAutoSubmit.init();
     void discordRpc.init();
-    void discordRpcShare.init();
     void minimizeOnSwitch.init();
     void startProgramCentered.init();
     void animations.init();
@@ -297,7 +261,6 @@
       await setUserOfflineMode(next);
       if (next) {
         discordRpc.value.set(false);
-        discordRpcShare.value.set(false);
       }
       pushToast({ type: "success", message: next ? $t("Toast_OfflineModeEnabled") : $t("Toast_OfflineModeDisabled"), duration: 6000 });
     } catch (e) {
@@ -688,37 +651,7 @@
   </div>
 </div>
 
-<h2 class="SettingsHeader">{$t("Settings_Header_StatsSharing")}</h2>
-
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="gs-crash-report-auto-submit"
-      type="checkbox"
-      checked={$crashReportAutoSubmit.value}
-      disabled={$crashReportAutoSubmit.loading || $offlineMode}
-      on:change={() => void crashReportAutoSubmit.toggle()}
-    />
-    <label class="form-check-label" for="gs-crash-report-auto-submit"></label>
-  </div>
-  <label for="gs-crash-report-auto-submit">{$t("Settings_CrashReportAutoSubmit")}</label>
-</div>
-
-<div class="rowSetting">
-  <div class="form-check">
-    <input id="gs-stats-enabled" type="checkbox" checked={$statsEnabled.value} disabled={$statsEnabled.loading} on:change={() => void statsEnabled.toggle()} />
-    <label class="form-check-label" for="gs-stats-enabled"></label>
-  </div>
-  <label for="gs-stats-enabled">{$t("Settings_CollectStats")}</label>
-  <div class="form-check">
-    <input id="gs-stats-share" type="checkbox" checked={$statsShare.value} disabled={$statsShare.loading || !$statsEnabled.value} on:change={() => void statsShare.toggle()} />
-    <label class="form-check-label" for="gs-stats-share"></label>
-  </div>
-  <label for="gs-stats-share">{$t("Settings_ShareStats")}</label>
-  <button type="button" class="btnicontext" on:click={() => void openStatsModal()}>
-    {$t("Settings_ViewStats")}
-  </button>
-</div>
+<h2 class="SettingsHeader">{$t("Settings_DiscordRpc")}</h2>
 
 <div class="rowSetting">
   <div class="form-check">
@@ -726,11 +659,6 @@
     <label class="form-check-label" for="gs-discord-rpc"></label>
   </div>
   <label for="gs-discord-rpc">{$t("Settings_DiscordRpc")}</label>
-  <div class="form-check">
-    <input id="gs-discord-rpc-share" type="checkbox" checked={$discordRpcShare.value} disabled={$discordRpcShare.loading || $offlineMode || !$discordRpc.value} on:change={() => void discordRpcShare.toggle()} />
-    <label class="form-check-label" for="gs-discord-rpc-share"></label>
-  </div>
-  <label for="gs-discord-rpc-share">{$t("Settings_DiscordRpcShare")}</label>
 </div>
 
 <style lang="scss">
