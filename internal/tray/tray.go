@@ -126,6 +126,8 @@ func (m *Manager) Start(iconPNG []byte) {
 		m.systray.SetIcon(iconPNG)
 	}
 	m.systray.SetLabel("Account Switcher")
+	// SetLabel is a no-op on Windows; the hover text comes from the tooltip.
+	m.systray.SetTooltip("Account Switcher")
 	m.rebuildMenuLocked()
 
 	m.systray.OnDoubleClick(func() {
