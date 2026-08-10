@@ -71,6 +71,7 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 		s.ThemeAccentCustom = sanitizeHexColor(*req.ThemeAccentCustom)
 		effects.dirty = true
 	}
+	applyBool(&s.RoundedCorners, req.RoundedCorners)
 	if req.ThemeHueRotate != nil {
 		s.ThemeHueRotate = normalizeThemeHueRotate(*req.ThemeHueRotate)
 		effects.dirty = true

@@ -16,8 +16,13 @@ func testExeDirWithPortable(t *testing.T) string {
 	return dir
 }
 
+// The settings paths and the settings cache are process-global, which is right
+// for an app with one data folder but means a test that repoints them cannot run
+// beside another that does the same: whichever calls ResetPathSingletonsForTest
+// last owns the paths, and the other reads or writes the wrong folder. That
+// raced roughly one run in four.
+
 func TestAppSettingsJSON_RoundTripTrayFields(t *testing.T) {
-	t.Parallel()
 	dir := testExeDirWithPortable(t)
 	s := AppSettings{
 		Version:          1,
@@ -39,7 +44,6 @@ func TestAppSettingsJSON_RoundTripTrayFields(t *testing.T) {
 }
 
 func TestAppSettingsJSON_UnknownFieldsIgnored(t *testing.T) {
-	t.Parallel()
 	dir := testExeDirWithPortable(t)
 	p := filepath.Join(PortableUserDataDir(dir), settingsFileName)
 	raw := []byte(`{"version":1,"language":"en-US","futureUnknown":42}`)
@@ -56,8 +60,6 @@ func TestAppSettingsJSON_UnknownFieldsIgnored(t *testing.T) {
 }
 
 func TestAppSettingsJSON_AnimationsEnabled(t *testing.T) {
-	t.Parallel()
-
 	// Round-trip: save false, reload, expect false
 	dir := testExeDirWithPortable(t)
 	s := AppSettings{
@@ -94,8 +96,6 @@ func TestAppSettingsJSON_AnimationsEnabled(t *testing.T) {
 }
 
 func TestAppSettingsJSON_PrereleaseUpdates(t *testing.T) {
-	t.Parallel()
-
 	dir := testExeDirWithPortable(t)
 	s := defaultSettings()
 	s.PrereleaseUpdates = false

@@ -1,6 +1,6 @@
 package platform
 
-import "sync"
+
 
 // WindowGeometry is the main window's remembered size, position and maximised
 // state.
@@ -20,7 +20,6 @@ const (
 	minRememberedWindowHeight = 520
 )
 
-var windowGeometryMu sync.Mutex
 
 // Valid reports whether a remembered size is usable. Position is allowed to be
 // anything, including negative, because a second monitor left of the primary one
@@ -45,29 +44,23 @@ func WindowGeometryFromSettings(s AppSettings) WindowGeometry {
 // Callers hand this the window's last known bounds when it settles, not on every
 // frame of a drag: each call rewrites the settings file.
 func SaveWindowGeometry(g WindowGeometry) error {
-	windowGeometryMu.Lock()
-	defer windowGeometryMu.Unlock()
-
-	exeDir, err := ResolveExeDir()
-	if err != nil {
-		return err
-	}
-	s, err := loadSettings(exeDir)
-	if err != nil {
-		return err
-	}
-	// A maximised window reports the maximised size; keeping it would lose the
-	// size to restore to, so only the flag is updated in that case.
-	if !g.Maximised {
-		if !g.Valid() {
-			return nil
+	// Goes through the shared settings mutation so a resize cannot write its
+	// copy of the settings back over a change the user made in the meantime.
+	// This runs on a timer whenever the window moves, so it would win that race
+	// often.
+	return mutateSettings(func(s *AppSettings) error {
+		// A maximised window reports the maximised size; keeping it would lose
+		// the size to restore to, so only the flag is updated in that case.
+		if !g.Maximised {
+			if !g.Valid() {
+				return nil
+			}
+			s.WindowWidth = g.Width
+			s.WindowHeight = g.Height
+			s.WindowX = g.X
+			s.WindowY = g.Y
 		}
-		s.WindowWidth = g.Width
-		s.WindowHeight = g.Height
-		s.WindowX = g.X
-		s.WindowY = g.Y
-	}
-	s.WindowMaximised = g.Maximised
-
-	return saveSettingsAtomic(exeDir, s)
+		s.WindowMaximised = g.Maximised
+		return nil
+	})
 }

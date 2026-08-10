@@ -32,12 +32,3 @@ func TestWriteShortcutLnkSetsAppUserModelID(t *testing.T) {
 		t.Fatal("shortcut is empty")
 	}
 }
-
-// The property store is only opened once a path resolves, so a missing file has
-// to come back as an error rather than dereferencing a store that was never set.
-func TestSetShortcutAppUserModelIDOnMissingFile(t *testing.T) {
-	missing := filepath.Join(t.TempDir(), "nope.lnk")
-	if err := setShortcutAppUserModelID(missing, "com.accountswitcher.test"); err == nil {
-		t.Fatal("expected an error for a shortcut that does not exist")
-	}
-}

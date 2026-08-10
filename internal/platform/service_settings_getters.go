@@ -52,6 +52,15 @@ func (p *PlatformService) GetThemeHueRotate() (int, error) {
 	return val, err
 }
 
+func (p *PlatformService) GetRoundedCorners() (bool, error) {
+	var val bool
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = s.RoundedCorners
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetWindowsAccentColor() string {
 	return CurrentWindowsAccentColor()
 }

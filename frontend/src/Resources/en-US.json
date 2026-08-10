@@ -570,5 +570,6 @@
   "Toast_GamesLoadFailed": "Could not load the games list",
   "Settings_ThemeHue": "Colour rotation",
   "Settings_ThemeHueReset": "Reset",
-  "Settings_ThemeHue_Hint": "Turns the theme's colours around the colour wheel. Pictures and logos are left alone."
+  "Settings_ThemeHue_Hint": "Turns the theme's colours around the colour wheel. Pictures and logos are left alone.",
+  "Settings_RoundedCorners": "Rounded corners"
 }

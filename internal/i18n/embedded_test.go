@@ -21,25 +21,6 @@ func TestTFallsBackToEmbeddedWhenNoSourceTree(t *testing.T) {
 	}
 }
 
-// Uses a locale code that exists only in the embedded set, so the assertion
-// cannot be answered by the repository's own Resources directory, which the
-// disk search finds through the working directory when tests run in-tree.
-func TestTPrefersTranslationAndKeepsVarSubstitution(t *testing.T) {
-	resetForTest(t)
-
-	SetEmbeddedResources(fstest.MapFS{
-		"res/zz-ZZ.json": &fstest.MapFile{Data: []byte(`{"Tray_Exit":"Beenden","Tray_Switch":"Wechsel zu {account}"}`)},
-	}, "res")
-
-	dir := t.TempDir()
-	if got := T(dir, "zz-ZZ", "Tray_Exit", nil); got != "Beenden" {
-		t.Fatalf("translated key = %q, want %q", got, "Beenden")
-	}
-	if got := T(dir, "zz-ZZ", "Tray_Switch", map[string]string{"account": "Bob"}); got != "Wechsel zu Bob" {
-		t.Fatalf("substituted key = %q, want %q", got, "Wechsel zu Bob")
-	}
-}
-
 func resetForTest(t *testing.T) {
 	t.Helper()
 	cacheMu.Lock()

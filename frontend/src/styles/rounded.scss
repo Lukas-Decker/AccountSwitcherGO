@@ -1,0 +1,59 @@
+/*
+    Optional rounded corners.
+
+    The window itself is already rounded while most surfaces inside it are
+    square, so this rounds the rest to match. It is opt-in: the class is put on
+    the root element when the setting is on.
+
+    Only surfaces are listed. A blanket rule would also hit avatars, which are
+    circles, and the artwork that is meant to fill its frame.
+*/
+
+:root.rounded-corners {
+  --ui-radius: 8px;
+  --ui-radius-small: 5px;
+  --ui-radius-large: 12px;
+
+  button,
+  .button,
+  .btnicontext,
+  button.square,
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    border-radius: var(--ui-radius-small);
+  }
+
+  // A link styled as text has no box to round.
+  button.fancyLink {
+    border-radius: 0;
+  }
+
+  // Platform cards on the home screen, and the account tiles.
+  .platform_tile_ctx,
+  label.acc,
+  .acc_list_item--skeleton,
+  .placeHolderAcc {
+    border-radius: var(--ui-radius);
+  }
+
+  // Panels and floating surfaces.
+  .modal,
+  .modal-content,
+  .contextMenu,
+  .context-menu,
+  .toast,
+  .search-overlay,
+  .searchOverlay,
+  .tooltip {
+    border-radius: var(--ui-radius);
+  }
+
+  .actionbar,
+  .acc_list_actionbar {
+    border-radius: var(--ui-radius) var(--ui-radius) 0 0;
+  }
+}

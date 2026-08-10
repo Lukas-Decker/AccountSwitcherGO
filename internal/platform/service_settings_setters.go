@@ -53,6 +53,13 @@ func (p *PlatformService) SetThemeHueRotate(deg int) error {
 	})
 }
 
+func (p *PlatformService) SetRoundedCorners(enabled bool) error {
+	return p.withSettingsWrite(func(s *AppSettings) error {
+		s.RoundedCorners = enabled
+		return nil
+	})
+}
+
 func (p *PlatformService) SaveHomeOrder(order []string) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		exeDir, err := ResolveExeDir()

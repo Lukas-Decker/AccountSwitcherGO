@@ -25,6 +25,7 @@ import {
 } from "./dom";
 import { supportsWindowsThemeAccent } from "./dom";
 import { applyHueRotation, normalizeHueDegrees } from "./hue";
+import { buildAccentOverlayCss } from "./color";
 import { currentThemeId, currentThemeBgUrl, currentThemeAccentKey, currentThemeCustomAccentColor, currentWindowsThemeAccentColor, currentThemeHueRotate } from "./stores";
 
 const THEME_STORAGE_KEY = "tcno:theme";
@@ -57,7 +58,7 @@ async function loadStoredHueRotate(): Promise<number> {
 export async function setThemeHueRotate(deg: number): Promise<void> {
   const rotation = normalizeHueDegrees(deg);
   currentThemeHueRotate.set(rotation);
-  applyHueRotation(rotation);
+  applyHueRotation(rotation, buildAccentOverlayCss);
   try {
     localStorage.setItem(THEME_HUE_STORAGE_KEY, String(rotation));
   } catch {
@@ -73,7 +74,7 @@ export async function setThemeHueRotate(deg: number): Promise<void> {
 
 /** Re-applies the current rotation, for after a theme swap replaces the palette. */
 export function reapplyThemeHueRotation(): void {
-  applyHueRotation(get(currentThemeHueRotate));
+  applyHueRotation(get(currentThemeHueRotate), buildAccentOverlayCss);
 }
 
 let activeThemeRequestId = 0;

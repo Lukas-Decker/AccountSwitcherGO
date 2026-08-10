@@ -30,6 +30,10 @@ type AppSettings struct {
 	// author wrote it.
 	ThemeHueRotate int `json:"themeHueRotate,omitempty"`
 
+	// RoundedCorners rounds the surfaces inside the window to match the window's
+	// own rounded corners.
+	RoundedCorners bool `json:"roundedCorners,omitempty"`
+
 	// AnimationsEnabled controls whether UI motion is active.
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	AnimationsEnabled bool `json:"animationsEnabled"`

@@ -7,6 +7,7 @@
   import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { appBgInfo, platformBgInfo, userOverriddenAppBg, setUserOverride } from "../stores/backgroundImage";
   import { currentThemeBgUrl, currentThemeHueRotate, setThemeHueRotate } from "../lib/themes";
+  import { roundedCorners, setRoundedCorners } from "../stores/roundedCorners";
   import ThemePickerControls from "./ThemePickerControls.svelte";
   import BackgroundSettings from "./BackgroundSettings.svelte";
 
@@ -90,6 +91,19 @@
   </button>
 </div>
 <p class="hue-hint">{$t("Settings_ThemeHue_Hint")}</p>
+
+<div class="rowSetting">
+  <div class="form-check">
+    <input
+      id="settings-rounded-corners"
+      type="checkbox"
+      checked={$roundedCorners}
+      on:change={(e) => void setRoundedCorners(e.currentTarget.checked)}
+    />
+    <label class="form-check-label" for="settings-rounded-corners"></label>
+  </div>
+  <label for="settings-rounded-corners">{$t("Settings_RoundedCorners")}</label>
+</div>
 
 {#if $appBgInfo.hasImage || showResetToThemeBg}
   <div class="bg-settings-row">

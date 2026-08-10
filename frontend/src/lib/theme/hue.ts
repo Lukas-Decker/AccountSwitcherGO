@@ -225,29 +225,46 @@ export function removeHueOverlay(): void {
 }
 
 /**
+ * Rebuilds the accent family around a turned accent colour.
+ *
+ * The accent is not kept as a colour but as pieces of one - "190, 100%" for hue
+ * and saturation, "128, 254, 234" for the channels - and most of the interface
+ * is painted from those pieces rather than from --accent itself. They carry no
+ * colour syntax, so rotating declarations alone leaves every heading, border and
+ * highlight on the original hue while the rest of the theme turns.
+ */
+function buildRotatedAccentCss(deg: number, buildAccentCss: (color: string) => string): string {
+  if (typeof document === "undefined") return "";
+  const current = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+  if (!current) return "";
+  const rotated = rotateCssValueHue(current, deg);
+  if (!rotated || rotated === current) return "";
+  return buildAccentCss(rotated);
+}
+
+/**
  * Applies the rotation to the page. Called again whenever the theme changes, so
  * the overlay is rebuilt from whatever palette is now in force.
  */
-export function applyHueRotation(deg: number): void {
+export function applyHueRotation(deg: number, buildAccentCss?: (color: string) => string): void {
   if (typeof document === "undefined") return;
   removeHueOverlay();
   const rotation = normalizeHueDegrees(deg);
   if (rotation === 0) return;
 
   const props = collectRootCustomProperties(Array.from(document.styleSheets) as CSSStyleSheet[]);
-  const css = buildHueOverlayCss(props, rotation);
-  if (!css) return;
+  let css = buildHueOverlayCss(props, rotation);
+  if (buildAccentCss) {
+    css += buildRotatedAccentCss(rotation, buildAccentCss);
+  }
+  if (!css.trim()) return;
 
   const style = document.createElement("style");
   style.id = HUE_OVERLAY_STYLE_ID;
   style.setAttribute(HUE_OVERLAY_STYLE_ATTR, "");
   style.textContent = css;
-  // Appended before the accent overlay so an accent the user picked explicitly
-  // still wins over the palette-wide turn.
-  const accent = document.getElementById("theme-accent-overlay");
-  if (accent?.parentNode) {
-    accent.parentNode.insertBefore(style, accent);
-  } else {
-    document.head.appendChild(style);
-  }
+  // Last in the head, so it also turns the accent overlay's own declarations.
+  // Leaving the accent untouched left every heading, border and highlight
+  // painted from it on the theme's original hue.
+  document.head.appendChild(style);
 }

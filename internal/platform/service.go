@@ -42,6 +42,7 @@ type PlatformStartup struct {
 	ThemeAccentPreset        string `json:"themeAccentPreset"`
 	ThemeAccentCustom        string `json:"themeAccentCustom"`
 	ThemeHueRotate           int    `json:"themeHueRotate"`
+	RoundedCorners           bool   `json:"roundedCorners"`
 	AppVersion               string `json:"appVersion"`
 }
 
@@ -72,6 +73,21 @@ func (p *PlatformService) withSettingsRead(fn func(s *AppSettings) error) error 
 func (p *PlatformService) withSettingsWrite(fn func(s *AppSettings) error) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	return mutateSettings(fn)
+}
+
+// settingsWriteMu serialises the read-modify-write of the settings file.
+//
+// The service mutex only covers writers that go through the service. Anything
+// else doing load-change-save on its own can read the file, be overtaken by a
+// setting the user just changed, and then write its stale copy back over it -
+// the change disappears with no error anywhere. Every writer takes this.
+var settingsWriteMu sync.Mutex
+
+func mutateSettings(fn func(s *AppSettings) error) error {
+	settingsWriteMu.Lock()
+	defer settingsWriteMu.Unlock()
+
 	exeDir, err := ResolveExeDir()
 	if err != nil {
 		return err
@@ -123,6 +139,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				ThemeAccentPreset:        settings.ThemeAccentPreset,
 				ThemeAccentCustom:        settings.ThemeAccentCustom,
 				ThemeHueRotate:           settings.ThemeHueRotate,
+				RoundedCorners:           settings.RoundedCorners,
 				AppVersion:               appVersionFromBuildConfig(),
 			}, nil
 		}
@@ -174,6 +191,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		ThemeAccentPreset:        settings.ThemeAccentPreset,
 		ThemeAccentCustom:        settings.ThemeAccentCustom,
 		ThemeHueRotate:           settings.ThemeHueRotate,
+		RoundedCorners:           settings.RoundedCorners,
 		AppVersion:               appVersionFromBuildConfig(),
 	}, nil
 }
@@ -198,6 +216,7 @@ type SettingsBatchUpdate struct {
 	ThemeAccentPreset        *string `json:"themeAccentPreset,omitempty"`
 	ThemeAccentCustom        *string `json:"themeAccentCustom,omitempty"`
 	ThemeHueRotate           *int    `json:"themeHueRotate,omitempty"`
+	RoundedCorners           *bool   `json:"roundedCorners,omitempty"`
 	CommandPaletteHotkey     *string `json:"commandPaletteHotkey,omitempty"`
 }
 

@@ -7,16 +7,19 @@ import './styles/overlayReceivers.scss'
 import './styles/UI.scss'
 import './styles/modal-primary.scss'
 import './styles/acclist.scss'
+import './styles/rounded.scss'
 import './styles/rtl.scss'
 import { initI18n } from './stores/i18n'
 import { initOfflineMode } from './stores/offlineMode'
 import { resolveInitialRoute, installHashSync } from './stores/nav'
 import { initTheme } from './lib/themes'
+import { initRoundedCorners } from './stores/roundedCorners'
 
 const app = void (async () => {
   await initI18n()
   await initOfflineMode()
   await initTheme()
+  await initRoundedCorners()
   await resolveInitialRoute()
   installHashSync()
   new App({ target: document.getElementById('app')! })
