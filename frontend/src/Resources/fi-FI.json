@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "Käyttäjänimet, tunnukset ja vastaavat tiedot poistetaan lokista ennen lähetystä niin hyvin kuin mahdollista.",
   "Feedback_DiscordLink": "Liity yhteisön Discordiin",
   "Toast_FeedbackThanks": "Kiitos palautteestasi.",
-  "Toast_FeedbackSubmitFailed": "Palautteen lähetys epäonnistui."
+  "Toast_FeedbackSubmitFailed": "Palautteen lähetys epäonnistui.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

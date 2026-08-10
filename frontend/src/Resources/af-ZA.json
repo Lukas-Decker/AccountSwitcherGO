@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "Gebruikersname, ID’s en soortgelyke besonderhede word so goed moontlik uit die logboek verwyder voordat dit gestuur word.",
   "Feedback_DiscordLink": "Sluit aan by die gemeenskap Discord",
   "Toast_FeedbackThanks": "Dankie vir jou terugvoer.",
-  "Toast_FeedbackSubmitFailed": "Kon nie terugvoer indien nie."
+  "Toast_FeedbackSubmitFailed": "Kon nie terugvoer indien nie.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

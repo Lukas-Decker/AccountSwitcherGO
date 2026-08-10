@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "Nazwy użytkowników, ID i podobne szczegóły są usuwane z logu najlepiej, jak to możliwe, przed wysłaniem.",
   "Feedback_DiscordLink": "Dołącz do społeczności na Discordzie",
   "Toast_FeedbackThanks": "Dziękujemy za opinię.",
-  "Toast_FeedbackSubmitFailed": "Nie można przesłać opinii."
+  "Toast_FeedbackSubmitFailed": "Nie można przesłać opinii.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

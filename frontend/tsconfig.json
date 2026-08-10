@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "wails-shortcuts-service": [
-        "bindings/Account-Switcher/internal/shortcuts/service.js"
+        "bindings/account-switcher/internal/shortcuts/service.js"
       ]
     },
     "target": "ESNext",

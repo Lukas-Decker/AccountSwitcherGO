@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "Brugernavne, IDer og lignende detaljer fjernes fra loggen så godt som muligt, før den sendes.",
   "Feedback_DiscordLink": "Deltag i community Discord",
   "Toast_FeedbackThanks": "Tak for din feedback.",
-  "Toast_FeedbackSubmitFailed": "Kunne ikke indsende feedback."
+  "Toast_FeedbackSubmitFailed": "Kunne ikke indsende feedback.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "使用者名稱、ID 和類似詳細資訊會在送出前盡可能從記錄中移除。",
   "Feedback_DiscordLink": "加入社群 Discord",
   "Toast_FeedbackThanks": "感謝你的意見回饋。",
-  "Toast_FeedbackSubmitFailed": "無法提交意見回饋。"
+  "Toast_FeedbackSubmitFailed": "無法提交意見回饋。",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

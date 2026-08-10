@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "사용자 이름, ID 및 유사한 세부 정보는 전송 전에 가능한 한 로그에서 제거됩니다.",
   "Feedback_DiscordLink": "커뮤니티 Discord에 참여하세요",
   "Toast_FeedbackThanks": "피드백을 보내주셔서 감사합니다.",
-  "Toast_FeedbackSubmitFailed": "피드백을 제출할 수 없습니다."
+  "Toast_FeedbackSubmitFailed": "피드백을 제출할 수 없습니다.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

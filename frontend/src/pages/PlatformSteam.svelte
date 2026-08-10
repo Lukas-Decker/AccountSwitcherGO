@@ -4,6 +4,8 @@
   import { Events } from "@wailsio/runtime";
   import SteamAccountAvatar from "../components/SteamAccountAvatar.svelte";
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
+  import SteamGamesView from "../components/SteamGamesView.svelte";
+  import { steamPageTab } from "../stores/steamPageTab";
   import type { PlatformAccountAdapter, SharedMenuItems } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
@@ -272,6 +274,36 @@
 </script>
 
 <div class="main-content platform-accounts-root" bind:this={steamMainEl}>
+  <div class="steam-tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="steam-tab"
+      class:active={$steamPageTab === "accounts"}
+      aria-selected={$steamPageTab === "accounts"}
+      on:click={() => steamPageTab.set("accounts")}
+    >
+      {$t("Steam_Tab_Accounts")}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="steam-tab"
+      class:active={$steamPageTab === "games"}
+      aria-selected={$steamPageTab === "games"}
+      on:click={() => steamPageTab.set("games")}
+    >
+      {$t("Steam_Tab_Games")}
+    </button>
+  </div>
+
+  <!-- Both stay mounted: rebuilding the account list on every tab switch throws
+       away its avatars and enrichment, and the games grid its artwork. -->
+  <div class="steam-tab-panel" class:hidden={$steamPageTab !== "games"}>
+    <SteamGamesView />
+  </div>
+
+  <div class="steam-tab-panel" class:hidden={$steamPageTab !== "accounts"}>
   <PlatformAccountsBase {name} {adapter}>
     <svelte:fragment slot="account-avatar" let:acc let:epoch let:fallback>
       <SteamAccountAvatar account={acc} {epoch} {fallback} boundary={steamMainEl} />
@@ -300,4 +332,42 @@
       {/if}
     </svelte:fragment>
   </PlatformAccountsBase>
+  </div>
 </div>
+
+<style lang="scss">
+  .steam-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0 0 0.25rem;
+    border-bottom: 1px solid var(--border-bar-bg, #444);
+  }
+
+  .steam-tab {
+    padding: 0.45rem 1.1rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      opacity: 0.9;
+    }
+
+    &.active {
+      opacity: 1;
+      border-bottom-color: var(--accent, #f90);
+    }
+  }
+
+  .steam-tab-panel.hidden {
+    display: none;
+  }
+</style>

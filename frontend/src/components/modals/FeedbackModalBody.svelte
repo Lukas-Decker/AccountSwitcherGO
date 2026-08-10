@@ -130,12 +130,4 @@
     line-height: 1.35;
   }
 
-  .modal-feedback-footer {
-    margin-top: 0.35rem;
-    text-align: center;
-  }
-
-  .modal-feedback-discord {
-    font-size: 0.95rem;
-  }
 </style>

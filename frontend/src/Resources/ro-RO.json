@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "Numele de utilizator, ID-urile și detaliile similare sunt eliminate din jurnal cât de bine putem înainte de trimitere.",
   "Feedback_DiscordLink": "Alătură-te serverului Discord al comunității",
   "Toast_FeedbackThanks": "Mulțumim pentru feedback.",
-  "Toast_FeedbackSubmitFailed": "Nu s-a putut trimite feedback-ul."
+  "Toast_FeedbackSubmitFailed": "Nu s-a putut trimite feedback-ul.",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }

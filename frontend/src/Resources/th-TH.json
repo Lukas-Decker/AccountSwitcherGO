@@ -558,5 +558,14 @@
   "Feedback_AttachLog_Hint": "ชื่อผู้ใช้, ID และรายละเอียดที่คล้ายกันจะถูกลบออกจากบันทึกให้ดีที่สุดเท่าที่ทำได้ก่อนส่ง",
   "Feedback_DiscordLink": "เข้าร่วมชุมชน Discord",
   "Toast_FeedbackThanks": "ขอบคุณสำหรับความคิดเห็นของคุณ",
-  "Toast_FeedbackSubmitFailed": "ไม่สามารถส่งความคิดเห็นได้"
+  "Toast_FeedbackSubmitFailed": "ไม่สามารถส่งความคิดเห็นได้",
+  "Steam_Tab_Accounts": "Accounts",
+  "Steam_Tab_Games": "Games",
+  "Games_Search": "Search games",
+  "Games_LaunchAfterSwitch": "Launch game after switching",
+  "Games_NoGames": "No games yet. A game shows up here once an account has played it on this PC.",
+  "Games_NotPlayedHere": "Installed, no account yet",
+  "Games_NoOwners": "No account has played this game on this PC yet.",
+  "Games_OwnerCount": "{count} accounts",
+  "Toast_GamesLoadFailed": "Could not load the games list"
 }
