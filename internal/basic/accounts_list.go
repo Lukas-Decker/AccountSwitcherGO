@@ -55,9 +55,7 @@ func (b *BasicService) buildAccountListContext(platformKey string) (*accountList
 		return nil, err
 	}
 	if pruneExpiredTagsInFile(&idf, time.Now().UTC()) {
-		if err := writeIdsFile(platformKey, idf); err != nil {
-			return nil, err
-		}
+		persistPrunedTags(platformKey, idf)
 	}
 	order, err := readOrder(platformKey)
 	if err != nil {

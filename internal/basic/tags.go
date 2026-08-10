@@ -5,12 +5,29 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"log/slog"
 	"math"
 	"sort"
 	"strings"
 	"time"
-
 )
+
+// persistPrunedTags writes back an ids file whose expired tags have just been
+// pruned in memory.
+//
+// This runs on read paths — building the account list and the tag map — where
+// the caller's pruned copy is already correct and persisting is only
+// housekeeping. A failed write must therefore not fail the read: ids.json is
+// written through an atomic rename that Windows file scanners are known to
+// interrupt here, and a transient lock on it should never leave the user
+// staring at an empty account list. The expired tags simply get pruned again on
+// the next read.
+func persistPrunedTags(platformKey string, f idsFile) {
+	if err := writeIdsFile(platformKey, f); err != nil {
+		slog.Warn("tag expiry prune could not be persisted; continuing with pruned data",
+			"platform", platformKey, "err", err)
+	}
+}
 
 const maxTagNameLen = 64
 
@@ -469,9 +486,7 @@ func BuildAccountTagMap(platformKey string) (map[string][]AccountTagDTO, error) 
 	}
 	normalizeTagMaps(&f)
 	if pruneExpiredTagsInFile(&f, time.Now().UTC()) {
-		if err := writeIdsFile(platformKey, f); err != nil {
-			return nil, err
-		}
+		persistPrunedTags(platformKey, f)
 	}
 	m := make(map[string][]AccountTagDTO)
 	for uid := range f.AccountTags {

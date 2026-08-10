@@ -151,12 +151,27 @@ func resolveSteamAvatarDisplay(staticURL, primaryURL string) (imageURL, fallback
 	return imageURL, fallbackStatic
 }
 
+// resolveManualAvatarDisplay resolves the display fields for a user-set avatar.
+// A leftover <id>_static is the Steam avatar from before the drop - the list
+// build must not offer it as this avatar's static form - so the manual image is
+// its own fallback, or none at all when it is a video.
+//
+// Every producer of a manual account's row has to go through this. The list
+// build and the background refresh both write imageUrl/staticImageUrl for the
+// same account, and any disagreement between them bumps the frontend's avatar
+// epoch on every window focus, refetching the image and blanking the tile.
+func resolveManualAvatarDisplay(manualURL string) (imageURL, fallbackStatic string) {
+	return resolveSteamAvatarDisplay("", manualURL)
+}
+
 func steamAvatarPending(steamID64, miniProfileHTML string, useMiniProfile bool, maxAgeDays int, isManual bool) bool {
+	// A manual avatar is never re-downloaded - the refresh short-circuits to the
+	// cached file and the expiry sweep skips it - so its age says nothing about
+	// work still to come. Ageing one out marked it pending on every list build
+	// while the refresh kept answering "not pending", and the two producers
+	// flipped the flag against each other on every window focus.
 	if isManual {
-		if p, ok := profileimage.CachedFilePath(PlatformKey, steamID64); ok {
-			return profileimage.FileOlderThanDays(p, maxAgeDays)
-		}
-		return true
+		return false
 	}
 	if useMiniProfile {
 		staticPath, hasStatic := profileimage.CachedFilePath(PlatformKey, steamStaticAvatarID(steamID64))
@@ -193,7 +208,8 @@ func downloadSteamAccountAvatars(
 	}
 	if profileimage.HasManualProfileMarker(PlatformKey, steamID64) {
 		if u, ok := profileimage.FindCached(PlatformKey, steamID64); ok {
-			return u, u, nil
+			imageURL, staticURL = resolveManualAvatarDisplay(u)
+			return imageURL, staticURL, nil
 		}
 		return "", "", fmt.Errorf("manual profile marker without cached file")
 	}
@@ -619,8 +635,7 @@ func (s *SteamService) runProfileRefresh() {
 
 			if profileimage.HasManualProfileMarker(PlatformKey, u.SteamID64) {
 				if cachedURL, hit := profileimage.FindCached(PlatformKey, u.SteamID64); hit {
-					patch.ImageURL = cachedURL
-					patch.StaticImageURL = cachedURL
+					patch.ImageURL, patch.StaticImageURL = resolveManualAvatarDisplay(cachedURL)
 					patch.AvatarPending = false
 					patch.Error = ""
 					s.emit(patch)

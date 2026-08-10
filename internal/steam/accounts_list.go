@@ -168,8 +168,11 @@ func (s *SteamService) GetSteamAccountsEnrichment() ([]SteamAccountEnrichmentDTO
 		v := ctx.vacMap[u.SteamID64]
 		primaryURL, _ := profileimage.FindCached(PlatformKey, u.SteamID64)
 		staticURL, _ := profileimage.FindCached(PlatformKey, steamStaticAvatarID(u.SteamID64))
-		displayURL, fallbackStatic := resolveSteamAvatarDisplay(staticURL, primaryURL)
 		isManualAvatar := profileimage.HasManualProfileMarker(PlatformKey, u.SteamID64)
+		displayURL, fallbackStatic := resolveSteamAvatarDisplay(staticURL, primaryURL)
+		if isManualAvatar {
+			displayURL, fallbackStatic = resolveManualAvatarDisplay(primaryURL)
+		}
 		miniHTMLForName := ReadCachedMiniprofileHTML(u.SteamID64)
 		var avatarPending bool
 		if ctx.effectiveCollect {
