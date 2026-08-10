@@ -2,6 +2,7 @@ package i18n
 
 import (
 	"encoding/json"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -69,7 +70,45 @@ func readMessages(exeDir, language string) map[string]string {
 			return messages
 		}
 	}
+	// Nothing on disk: an installed copy has no source tree beside it, and
+	// without this the caller would render raw keys such as "Tray_Exit".
+	if messages, ok := readEmbeddedResource(language); ok {
+		return messages
+	}
 	return map[string]string{}
+}
+
+var (
+	embeddedMu        sync.RWMutex
+	embeddedResources fs.FS
+	embeddedRoot      string
+)
+
+// SetEmbeddedResources supplies the locale files compiled into the binary, used
+// when no source tree is present next to the executable. Call once at startup.
+func SetEmbeddedResources(files fs.FS, root string) {
+	embeddedMu.Lock()
+	embeddedResources = files
+	embeddedRoot = strings.Trim(strings.ReplaceAll(root, "\\", "/"), "/")
+	embeddedMu.Unlock()
+}
+
+func readEmbeddedResource(language string) (map[string]string, bool) {
+	embeddedMu.RLock()
+	files, root := embeddedResources, embeddedRoot
+	embeddedMu.RUnlock()
+	if files == nil {
+		return nil, false
+	}
+	name := language + ".json"
+	if root != "" {
+		name = root + "/" + name
+	}
+	data, err := fs.ReadFile(files, name)
+	if err != nil {
+		return nil, false
+	}
+	return parseResourceBytes(data)
 }
 
 func resourceSearchRoots(exeDir string) []string {
@@ -108,6 +147,10 @@ func readResourceFile(path string) (map[string]string, bool) {
 	if err != nil {
 		return nil, false
 	}
+	return parseResourceBytes(data)
+}
+
+func parseResourceBytes(data []byte) (map[string]string, bool) {
 	var messages map[string]string
 	if err := json.Unmarshal(data, &messages); err != nil {
 		return nil, false

@@ -433,13 +433,16 @@ input.acc:checked + label.acc {
   label.acc.currentAcc::after {
     // Thick enough that a gradient turning inside it is actually legible; the
     // tile's own border is only ~1.6px, which read as a flat line.
-    --acc-ring-width: 3px;
+    --acc-ring-width: 4px;
     --acc-ring-base: var(--acc-ring-color, var(--shortcut-active-border, var(--green)));
     --acc-ring-glint: var(--acc-ring-highlight, #ffffff);
 
     content: "";
     position: absolute;
-    inset: calc(-1 * var(--acc-ring-width));
+    // Drawn inside the tile rather than around it. Hanging outside put the ring
+    // under the account list's own overflow clipping, which sheared the top and
+    // left edges off the first tiles.
+    inset: 0;
     padding: var(--acc-ring-width);
     border-radius: inherit;
     // A solid ring in the theme's active colour, with a bright glint travelling
@@ -469,7 +472,7 @@ input.acc:checked + label.acc {
     pointer-events: none;
     // Motion is a hint, not the signal: with animations off the angle simply
     // settles and the ring stays fully painted, so the account is still marked.
-    animation: acc-ring-spin 2.5s linear infinite;
+    animation: acc-ring-spin 6s linear infinite;
   }
 }
 

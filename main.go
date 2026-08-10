@@ -15,6 +15,7 @@ import (
 	"account-switcher/internal/controllerinput"
 	"account-switcher/internal/crashlog"
 	"account-switcher/internal/discordrpc"
+	"account-switcher/internal/i18n"
 	"account-switcher/internal/ipc"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
@@ -33,6 +34,13 @@ var assets embed.FS
 //go:embed build/trayicon.png
 var trayIconPNG []byte
 
+// The tray menu and other native surfaces translate in Go, reading these JSON
+// files. An installed copy has no source tree beside the exe, so without them
+// compiled in the tray falls back to raw keys like "Tray_Exit".
+//
+//go:embed frontend/src/Resources/*.json
+var localeResources embed.FS
+
 var (
 	platformSvc   = &platform.PlatformService{}
 	basicSvc      = basic.NewBasicService(platformSvc)
@@ -44,6 +52,7 @@ var (
 
 func init() {
 	winutil.SetEmbeddedFrontendFS(assets)
+	i18n.SetEmbeddedResources(localeResources, "frontend/src/Resources")
 
 	application.RegisterEvent[string]("navigate")
 
