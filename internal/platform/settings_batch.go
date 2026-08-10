@@ -71,12 +71,22 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 		s.ThemeAccentCustom = sanitizeHexColor(*req.ThemeAccentCustom)
 		effects.dirty = true
 	}
+	if req.ThemeHueRotate != nil {
+		s.ThemeHueRotate = normalizeThemeHueRotate(*req.ThemeHueRotate)
+		effects.dirty = true
+	}
 	if req.CommandPaletteHotkey != nil {
 		s.CommandPaletteHotkey = normalizeCommandPaletteHotkey(*req.CommandPaletteHotkey)
 		effects.dirty = true
 	}
 
 	return effects
+}
+
+// normalizeThemeHueRotate wraps the angle into a single turn, so a stored value
+// always means the same rotation and 360 reads as no rotation at all.
+func normalizeThemeHueRotate(deg int) int {
+	return ((deg % 360) + 360) % 360
 }
 
 func normalizeCommandPaletteHotkey(value string) string {

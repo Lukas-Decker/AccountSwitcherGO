@@ -6,3 +6,6 @@ export const currentThemeBgUrl = writable<string>("");
 export const currentThemeAccentKey = writable<string>("");
 export const currentThemeCustomAccentColor = writable<string>("");
 export const currentWindowsThemeAccentColor = writable<string>("");
+
+/** Degrees the active theme's palette is turned by. 0 is the theme as authored. */
+export const currentThemeHueRotate = writable<number>(0);

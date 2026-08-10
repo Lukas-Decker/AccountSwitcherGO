@@ -567,5 +567,8 @@
   "Games_NotPlayedHere": "Installed, no account yet",
   "Games_NoOwners": "No account has played this game on this PC yet.",
   "Games_OwnerCount": "{count} accounts",
-  "Toast_GamesLoadFailed": "Could not load the games list"
+  "Toast_GamesLoadFailed": "Could not load the games list",
+  "Settings_ThemeHue": "Colour rotation",
+  "Settings_ThemeHueReset": "Reset",
+  "Settings_ThemeHue_Hint": "Turns the theme's colours around the colour wheel. Pictures and logos are left alone."
 }

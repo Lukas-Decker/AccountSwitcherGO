@@ -25,6 +25,11 @@ type AppSettings struct {
 	ThemeAccentPreset string `json:"themeAccentPreset,omitempty"`
 	ThemeAccentCustom string `json:"themeAccentCustom,omitempty"`
 
+	// ThemeHueRotate turns the whole palette by this many degrees, so a theme can
+	// be recoloured without shipping a variant of it. 0 leaves the theme as its
+	// author wrote it.
+	ThemeHueRotate int `json:"themeHueRotate,omitempty"`
+
 	// AnimationsEnabled controls whether UI motion is active.
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	AnimationsEnabled bool `json:"animationsEnabled"`

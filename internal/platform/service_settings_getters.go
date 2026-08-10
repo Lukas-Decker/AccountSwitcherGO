@@ -43,6 +43,15 @@ func (p *PlatformService) GetThemeAccentCustom() (string, error) {
 	return val, err
 }
 
+func (p *PlatformService) GetThemeHueRotate() (int, error) {
+	var val int
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = normalizeThemeHueRotate(s.ThemeHueRotate)
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetWindowsAccentColor() string {
 	return CurrentWindowsAccentColor()
 }

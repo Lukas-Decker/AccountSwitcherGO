@@ -8,6 +8,7 @@ export {
   currentThemeAccentKey,
   currentThemeCustomAccentColor,
   currentWindowsThemeAccentColor,
+  currentThemeHueRotate,
 } from "./theme/stores";
 export {
   resolveThemeAccent,
@@ -15,4 +16,5 @@ export {
   setUserTheme,
   setUserThemeAccentPreset,
   setUserThemeAccentCustom,
+  setThemeHueRotate,
 } from "./theme/persistence";

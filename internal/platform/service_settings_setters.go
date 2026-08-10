@@ -46,6 +46,13 @@ func (p *PlatformService) SetThemeAccentCustom(color string) error {
 	})
 }
 
+func (p *PlatformService) SetThemeHueRotate(deg int) error {
+	return p.withSettingsWrite(func(s *AppSettings) error {
+		s.ThemeHueRotate = normalizeThemeHueRotate(deg)
+		return nil
+	})
+}
+
 func (p *PlatformService) SaveHomeOrder(order []string) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		exeDir, err := ResolveExeDir()

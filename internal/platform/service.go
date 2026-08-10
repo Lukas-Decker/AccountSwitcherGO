@@ -41,6 +41,7 @@ type PlatformStartup struct {
 	CommandPaletteHotkey     string `json:"commandPaletteHotkey"`
 	ThemeAccentPreset        string `json:"themeAccentPreset"`
 	ThemeAccentCustom        string `json:"themeAccentCustom"`
+	ThemeHueRotate           int    `json:"themeHueRotate"`
 	AppVersion               string `json:"appVersion"`
 }
 
@@ -121,6 +122,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 				ThemeAccentPreset:        settings.ThemeAccentPreset,
 				ThemeAccentCustom:        settings.ThemeAccentCustom,
+				ThemeHueRotate:           settings.ThemeHueRotate,
 				AppVersion:               appVersionFromBuildConfig(),
 			}, nil
 		}
@@ -171,6 +173,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 		ThemeAccentPreset:        settings.ThemeAccentPreset,
 		ThemeAccentCustom:        settings.ThemeAccentCustom,
+		ThemeHueRotate:           settings.ThemeHueRotate,
 		AppVersion:               appVersionFromBuildConfig(),
 	}, nil
 }
@@ -194,6 +197,7 @@ type SettingsBatchUpdate struct {
 	Theme                    *string `json:"theme,omitempty"`
 	ThemeAccentPreset        *string `json:"themeAccentPreset,omitempty"`
 	ThemeAccentCustom        *string `json:"themeAccentCustom,omitempty"`
+	ThemeHueRotate           *int    `json:"themeHueRotate,omitempty"`
 	CommandPaletteHotkey     *string `json:"commandPaletteHotkey,omitempty"`
 }
 

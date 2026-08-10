@@ -24,11 +24,57 @@ import {
   ensureWindowsAccentSubscription,
 } from "./dom";
 import { supportsWindowsThemeAccent } from "./dom";
-import { currentThemeId, currentThemeBgUrl, currentThemeAccentKey, currentThemeCustomAccentColor, currentWindowsThemeAccentColor } from "./stores";
+import { applyHueRotation, normalizeHueDegrees } from "./hue";
+import { currentThemeId, currentThemeBgUrl, currentThemeAccentKey, currentThemeCustomAccentColor, currentWindowsThemeAccentColor, currentThemeHueRotate } from "./stores";
 
 const THEME_STORAGE_KEY = "tcno:theme";
 const THEME_ACCENT_STORAGE_KEY = "tcno:theme-accent";
 const THEME_ACCENT_CUSTOM_STORAGE_KEY = "tcno:theme-accent-custom";
+const THEME_HUE_STORAGE_KEY = "tcno:theme-hue";
+
+/**
+ * Reads the stored rotation. Kept in localStorage as well as in settings so the
+ * palette is already turned on the first paint, rather than snapping across
+ * once the backend answers.
+ */
+export function loadCachedHueRotate(): number {
+  try {
+    return normalizeHueDegrees(localStorage.getItem(THEME_HUE_STORAGE_KEY));
+  } catch {
+    return 0;
+  }
+}
+
+async function loadStoredHueRotate(): Promise<number> {
+  try {
+    return normalizeHueDegrees(await PlatformService.GetThemeHueRotate());
+  } catch {
+    return loadCachedHueRotate();
+  }
+}
+
+/** Turns the palette now and remembers the angle. */
+export async function setThemeHueRotate(deg: number): Promise<void> {
+  const rotation = normalizeHueDegrees(deg);
+  currentThemeHueRotate.set(rotation);
+  applyHueRotation(rotation);
+  try {
+    localStorage.setItem(THEME_HUE_STORAGE_KEY, String(rotation));
+  } catch {
+    /* private mode */
+  }
+  try {
+    await PlatformService.SetThemeHueRotate(rotation);
+  } catch {
+    /* offline / early boot */
+  }
+  scheduleUpdaterThemeSync();
+}
+
+/** Re-applies the current rotation, for after a theme swap replaces the palette. */
+export function reapplyThemeHueRotation(): void {
+  applyHueRotation(get(currentThemeHueRotate));
+}
 
 let activeThemeRequestId = 0;
 
@@ -161,18 +207,30 @@ async function applyTheme(id: string): Promise<void> {
   currentThemeId.set(id);
   currentThemeBgUrl.set(getThemeOptionById(id).backgroundUrl ?? "");
   syncThemeGoogleFonts(id);
+  // The new theme brought its own palette, so the rotation has to be rebuilt
+  // from it rather than left pointing at the old colours.
+  reapplyThemeHueRotation();
   scheduleUpdaterThemeSync();
 }
 
 export async function initTheme(): Promise<void> {
-  let [id, storedAccent] = await Promise.all([loadStoredThemeId(), loadStoredAccentState()]);
+  // Seed from the cached angle first so the very first paint is already turned.
+  currentThemeHueRotate.set(loadCachedHueRotate());
+
+  let [id, storedAccent, hue] = await Promise.all([
+    loadStoredThemeId(),
+    loadStoredAccentState(),
+    loadStoredHueRotate(),
+  ]);
   if (!isKnownThemeId(id)) {
     id = DEFAULT_THEME_ID;
   }
+  currentThemeHueRotate.set(hue);
   ensureWindowsAccentSubscription();
   await refreshWindowsThemeAccentColor();
   await applyTheme(id);
   applyResolvedAccent(id, storedAccent.accentKey, storedAccent.customColor);
+  reapplyThemeHueRotation();
 }
 
 export async function setUserTheme(id: string): Promise<void> {
