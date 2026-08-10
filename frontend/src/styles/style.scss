@@ -71,6 +71,9 @@ body {
     padding-top: var(--main-padding, .75rem);
     padding-right: var(--main-padding, .75rem);
     padding-left: var(--main-padding, .75rem);
+    /* These pages scroll, so the last row needs room under it; without this it
+       ends flush against the window edge and reads as cut off. */
+    padding-bottom: var(--main-padding-bottom, 1.5rem);
 }
 
 ::selection {

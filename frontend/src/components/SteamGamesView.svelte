@@ -170,7 +170,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    padding: 0.5rem 0.25rem 1rem;
+    /* The Steam page is a bare .main-content with no spacing class, so the grid
+       would otherwise run under the scrollbar and off the right edge. */
+    padding: 0.5rem 0.75rem 1.5rem;
     min-height: 0;
   }
 

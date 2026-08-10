@@ -72,6 +72,19 @@ type AppSettings struct {
 	// StartProgramCentered places the main window in the center of the screen when the app opens.
 	StartProgramCentered bool `json:"startProgramCentered,omitempty"`
 
+	// WindowWidth/WindowHeight/WindowX/WindowY remember the main window's last
+	// geometry so it reopens where and how the user left it. Zero means "not
+	// recorded yet", which is why these are omitempty: an absent key has to be
+	// distinguishable from a deliberate 0.
+	WindowWidth  int `json:"windowWidth,omitempty"`
+	WindowHeight int `json:"windowHeight,omitempty"`
+	WindowX      int `json:"windowX,omitempty"`
+	WindowY      int `json:"windowY,omitempty"`
+
+	// WindowMaximised reopens the window maximised. Stored separately from the
+	// size so un-maximising restores the size the user had before.
+	WindowMaximised bool `json:"windowMaximised,omitempty"`
+
 	// AppBgImage is the filename (under wwwroot/backgrounds/) of the app-wide background image.
 	AppBgImage string `json:"appBgImage,omitempty"`
 

@@ -355,6 +355,7 @@ label.acc.currentAcc
     {
         border-color: #9ece6a;
         border-style: dashed;
+        --acc-ring-color: #9ece6a;
     }
 
 @include overlay.overlay-component-overrides;

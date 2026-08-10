@@ -634,6 +634,7 @@ button#LocateProgramExe,
   label.acc.currentAcc {
     border-style: solid;
     border-color: $nordAuora3;
+    --acc-ring-color: #{$nordAuora3};
     border-bottom: none;
   }
 

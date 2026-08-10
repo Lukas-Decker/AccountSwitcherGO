@@ -394,9 +394,19 @@ label.acc {
   }
 }
 
-input.acc:checked + label.acc.currentAcc {
-  border-color: var(--shortcut-active-border, var(--green));
-  border-style: solid;
+// The angle behind the signed-in account's ring. A plain custom property is an
+// untyped token to the animator and would jump from 0deg to 360deg; registering
+// it as an <angle> is what makes it interpolate, so the ring can spin.
+@property --acc-ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes acc-ring-spin {
+  to {
+    --acc-ring-angle: 360deg;
+  }
 }
 
 input.acc:checked + label.acc {
@@ -404,9 +414,51 @@ input.acc:checked + label.acc {
   background: var(--button-bg);
 }
 
-label.acc.currentAcc {
-  border-color: var(--shortcut-active-border, var(--green));
-  border-style: dashed;
+// The account currently signed in. The ring is drawn by a pseudo-element rather
+// than by border-color so it can hold a gradient, and so selecting the account
+// keeps its own checked background underneath.
+//
+// Skipped entirely in forced-colors mode, where the OS palette replaces our
+// colours and a plain solid border is both what the user asked for and the only
+// thing that survives; normalize.scss keeps that border.
+@media not (forced-colors: active) {
+  label.acc.currentAcc,
+  input.acc:checked + label.acc.currentAcc {
+    position: relative;
+    border-style: solid;
+    // Themes set their own colour here; the ring carries it instead now.
+    border-color: transparent !important;
+  }
+
+  label.acc.currentAcc::after {
+    content: "";
+    position: absolute;
+    // Sit on the border box, and make the ring exactly the border's thickness.
+    inset: -0.1em;
+    padding: 0.1em;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--acc-ring-angle),
+      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 0deg,
+      var(--acc-ring-highlight, var(--accent, #f90)) 90deg,
+      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 180deg,
+      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 360deg
+    );
+    // Punch the middle out so only the ring itself paints. Two identical layers,
+    // one clipped to the content box, subtracted from each other.
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    // Motion is a hint, not the signal: with animations off the angle simply
+    // settles and the ring stays fully painted, so the account is still marked.
+    animation: acc-ring-spin 4s linear infinite;
+  }
 }
 
 .acc_list_actionbar {

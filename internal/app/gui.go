@@ -83,8 +83,19 @@ func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) appl
 			application.PermissionClipboardRead: application.PermissionDeny,
 		},
 	}
+	// Reopen at the size the user left, so resizing the window sticks.
+	geometry := platform.WindowGeometryFromSettings(guiSettings)
+	if geometry.Valid() {
+		winOpts.Width = geometry.Width
+		winOpts.Height = geometry.Height
+	}
+
 	if guiSettings.StartProgramCentered {
 		winOpts.InitialPosition = application.WindowCentered
+	} else if geometry.Valid() {
+		winOpts.InitialPosition = application.WindowXY
+		winOpts.X = geometry.X
+		winOpts.Y = geometry.Y
 	} else {
 		winOpts.InitialPosition = application.WindowXY
 		winOpts.X = 96
@@ -208,6 +219,7 @@ func RunGUI(params RunGUIParams) {
 
 	winOpts := mainWindowOptions(guiSettings, parsed)
 	win := wailsApp.Window.NewWithOptions(winOpts)
+	rememberWindowGeometry(win, guiSettings)
 	registerNotificationResponseHandler(wailsApp, win, notifier)
 	win.OnWindowEvent(events.Common.WindowFilesDropped, func(event *application.WindowEvent) {
 		files := event.Context().DroppedFiles()
