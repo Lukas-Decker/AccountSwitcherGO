@@ -336,6 +336,14 @@
 </div>
 
 <style lang="scss">
+  /* This element is the page's scroll container, so its vertical scrollbar eats
+     into the right-hand side and the games grid ends up sitting closer to the
+     right edge than the left. Reserving the gutter on both edges keeps the two
+     margins equal whether or not the scrollbar is showing. */
+  .platform-accounts-root {
+    scrollbar-gutter: stable both-edges;
+  }
+
   .steam-tabs {
     display: flex;
     gap: 0.25rem;

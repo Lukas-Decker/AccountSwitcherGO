@@ -431,19 +431,31 @@ input.acc:checked + label.acc {
   }
 
   label.acc.currentAcc::after {
+    // Thick enough that a gradient turning inside it is actually legible; the
+    // tile's own border is only ~1.6px, which read as a flat line.
+    --acc-ring-width: 3px;
+    --acc-ring-base: var(--acc-ring-color, var(--shortcut-active-border, var(--green)));
+    --acc-ring-glint: var(--acc-ring-highlight, #ffffff);
+
     content: "";
     position: absolute;
-    // Sit on the border box, and make the ring exactly the border's thickness.
-    inset: -0.1em;
-    padding: 0.1em;
+    inset: calc(-1 * var(--acc-ring-width));
+    padding: var(--acc-ring-width);
     border-radius: inherit;
+    // A solid ring in the theme's active colour, with a bright glint travelling
+    // around it. The ring itself never disappears, so the account stays marked
+    // even at the moment the glint is on the far side.
     background: conic-gradient(
       from var(--acc-ring-angle),
-      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 0deg,
-      var(--acc-ring-highlight, var(--accent, #f90)) 90deg,
-      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 180deg,
-      var(--acc-ring-color, var(--shortcut-active-border, var(--green))) 360deg
+      var(--acc-ring-base) 0deg,
+      var(--acc-ring-base) 190deg,
+      var(--acc-ring-glint) 250deg,
+      #ffffff 270deg,
+      var(--acc-ring-glint) 290deg,
+      var(--acc-ring-base) 350deg,
+      var(--acc-ring-base) 360deg
     );
+    filter: drop-shadow(0 0 3px var(--acc-ring-base));
     // Punch the middle out so only the ring itself paints. Two identical layers,
     // one clipped to the content box, subtracted from each other.
     mask:
@@ -457,7 +469,7 @@ input.acc:checked + label.acc {
     pointer-events: none;
     // Motion is a hint, not the signal: with animations off the angle simply
     // settles and the ring stays fully painted, so the account is still marked.
-    animation: acc-ring-spin 4s linear infinite;
+    animation: acc-ring-spin 2.5s linear infinite;
   }
 }
 
