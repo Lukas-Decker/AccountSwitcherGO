@@ -127,6 +127,10 @@ func RunGUI(params RunGUIParams) {
 
 	syncProtocolRegistration()
 
+	// Drop shipped assets an older version left in the data folder, so the app's
+	// own images cannot be shadowed by stale copies of themselves.
+	pruneStaleWwwrootAssets(params.EmbeddedAssets)
+
 	params.DiscordRPC.Start()
 
 	wailsLvl := ResolvedLogLevel(parsed)

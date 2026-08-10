@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"account-switcher/internal/exeicon"
+	"account-switcher/internal/winutil"
 )
 
 func (p *PlatformService) LaunchPlatform(platformKey string) error {
@@ -122,6 +123,12 @@ func (p *PlatformService) getPlatformInstallFolderUnlocked(platformKey string) (
 	}
 
 	if found, ok := findExeViaStartMenuShortcuts(entry, exeName); ok {
+		return filepath.Dir(found), nil
+	}
+
+	// Same hunt the launch path does: registry, then the known layout on other
+	// drives, then a bounded sweep.
+	if found, ok := winutil.LocateExe(exeName, entry.ExeLocationDefault, autoLocateBudget); ok {
 		return filepath.Dir(found), nil
 	}
 

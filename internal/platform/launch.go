@@ -6,7 +6,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
+
+	"account-switcher/internal/winutil"
 )
+
+// autoLocateBudget caps the shallow filesystem sweep that runs when the registry
+// and the known layouts come up empty, so a miss cannot stall the click that
+// triggered it.
+const autoLocateBudget = 2 * time.Second
 
 // Launch hooks are set from main to avoid an import cycle with internal/steam.
 var (
@@ -133,6 +141,30 @@ func (p *PlatformService) ResolvePlatformLaunch(platformKey string) (ResolvePlat
 			FoundViaShortcut: true,
 			SoughtExeName:    exeName,
 			InitialPath:      filepath.Dir(found),
+		}, nil
+	}
+
+	// Nothing declared where this is, so go looking: the registry, the same
+	// layout on another drive, then a shallow sweep of the usual folders.
+	// Asking the user to find it by hand is the last resort, not the second one.
+	if found, ok := winutil.LocateExe(exeName, entry.ExeLocationDefault, autoLocateBudget); ok {
+		if strings.EqualFold(platformKey, "Steam") && saveSteamFolderFromExe != nil {
+			if err := saveSteamFolderFromExe(found); err != nil {
+				return ResolvePlatformLaunchResult{}, err
+			}
+		} else {
+			if settings.PlatformExePaths == nil {
+				settings.PlatformExePaths = map[string]string{}
+			}
+			settings.PlatformExePaths[platformKey] = found
+			if err := saveSettingsAtomic(exeDir, settings); err != nil {
+				return ResolvePlatformLaunchResult{}, err
+			}
+		}
+		return ResolvePlatformLaunchResult{
+			Ok:            true,
+			SoughtExeName: exeName,
+			InitialPath:   filepath.Dir(found),
 		}, nil
 	}
 
