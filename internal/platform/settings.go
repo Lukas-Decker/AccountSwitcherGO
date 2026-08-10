@@ -69,6 +69,14 @@ type AppSettings struct {
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	DiscordRpc bool `json:"discordRpc"`
 
+	// DiscordAppID is the Discord application this presence is published as.
+	//
+	// Discord takes the name it shows - the "Playing ..." line - from the
+	// application the id belongs to, not from anything sent at runtime, so this
+	// is the only way to control it. Empty means no presence is published:
+	// borrowing someone else's application would advertise their name.
+	DiscordAppID string `json:"discordAppId,omitempty"`
+
 	// ExitToTray keeps the app running when the main window is closed; the window is hidden instead.
 	ExitToTray bool `json:"exitToTray,omitempty"`
 

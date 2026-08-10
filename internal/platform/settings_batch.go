@@ -72,6 +72,11 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 		effects.dirty = true
 	}
 	applyBool(&s.RoundedCorners, req.RoundedCorners)
+	if req.DiscordAppID != nil {
+		s.DiscordAppID = sanitizeDiscordAppID(*req.DiscordAppID)
+		effects.discordPresenceRefresh = true
+		effects.dirty = true
+	}
 	if req.ThemeHueRotate != nil {
 		s.ThemeHueRotate = normalizeThemeHueRotate(*req.ThemeHueRotate)
 		effects.dirty = true
@@ -82,6 +87,21 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 	}
 
 	return effects
+}
+
+// sanitizeDiscordAppID keeps only a plain numeric snowflake. Discord ids are
+// digits, and anything else here would just fail to connect.
+func sanitizeDiscordAppID(id string) string {
+	id = strings.TrimSpace(id)
+	if id == "" {
+		return ""
+	}
+	for _, r := range id {
+		if r < '0' || r > '9' {
+			return ""
+		}
+	}
+	return id
 }
 
 // normalizeThemeHueRotate wraps the angle into a single turn, so a stored value

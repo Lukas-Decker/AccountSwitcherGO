@@ -60,6 +60,18 @@ func (p *PlatformService) SetRoundedCorners(enabled bool) error {
 	})
 }
 
+func (p *PlatformService) SetDiscordAppID(id string) error {
+	err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.DiscordAppID = sanitizeDiscordAppID(id)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	TriggerDiscordPresenceRefresh()
+	return nil
+}
+
 func (p *PlatformService) SaveHomeOrder(order []string) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		exeDir, err := ResolveExeDir()

@@ -61,6 +61,15 @@ func (p *PlatformService) GetRoundedCorners() (bool, error) {
 	return val, err
 }
 
+func (p *PlatformService) GetDiscordAppID() (string, error) {
+	var val string
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = sanitizeDiscordAppID(s.DiscordAppID)
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetWindowsAccentColor() string {
 	return CurrentWindowsAccentColor()
 }

@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	clientID             = "973188269405765682"
 	refreshPeriod        = 30 * time.Second
 	discordLargeImageKey = "switcher"
 	discordSmallImageKey = "switcher_small"
@@ -23,6 +22,7 @@ type Manager struct {
 	refreshMu sync.Mutex
 
 	initialized bool
+	appID       string
 	startedAt   time.Time
 	stopCh      chan struct{}
 
@@ -87,7 +87,15 @@ func (m *Manager) Refresh() {
 		m.shutdown()
 		return
 	}
-	if err := m.ensureStarted(); err != nil {
+	// Discord names the presence after whoever owns the application id, so
+	// without one of our own there is nothing to publish under.
+	appID := strings.TrimSpace(settings.DiscordAppID)
+	if appID == "" {
+		logRPC().Info("refresh gate: no Discord application id configured")
+		m.shutdown()
+		return
+	}
+	if err := m.ensureStarted(appID); err != nil {
 		logRPC().Warn("refresh skipped: rpc start failed", "err", err)
 		return
 	}
@@ -118,25 +126,33 @@ func (m *Manager) Refresh() {
 	logRPC().Debug("activity updated", "details", activity.Details, "state", activity.State)
 }
 
-func (m *Manager) ensureStarted() error {
+func (m *Manager) ensureStarted(appID string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if m.initialized {
+	if m.initialized && m.appID == appID {
 		return nil
 	}
-	if err := richgo.Login(clientID); err != nil {
+	if m.initialized {
+		// A different application means a different name in Discord, so the old
+		// connection has to go before the new one is opened.
+		richgo.Logout()
+		m.initialized = false
+	}
+	if err := richgo.Login(appID); err != nil {
 		return err
 	}
 	now := time.Now()
 	m.startedAt = now
 	m.initialized = true
-	logRPC().Info("rpc client initialized", "clientID", clientID)
+	m.appID = appID
+	logRPC().Info("rpc client initialized", "appID", appID)
 	return nil
 }
 
 func (m *Manager) shutdown() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	m.appID = ""
 	if !m.initialized {
 		return
 	}

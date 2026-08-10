@@ -211,8 +211,23 @@
 
   type SettingsSnapshot = Awaited<ReturnType<typeof PlatformService.ReadSettings>>;
 
+  // Discord names the presence after the application the id belongs to, so this
+  // is the only way to control what shows up in Discord.
+  let discordAppId = "";
+
+  async function saveDiscordAppId(value: string): Promise<void> {
+    const next = value.trim();
+    discordAppId = next;
+    try {
+      await PlatformService.SetDiscordAppID(next);
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_SaveFailed"), e), duration: 8000 });
+    }
+  }
+
   function applySettingsSnapshot(settings: SettingsSnapshot): void {
     offlineMode.set(settings.offlineMode);
+    discordAppId = settings.discordAppId ?? "";
     protocol.value.set(settings.protocolEnabled);
     exitToTray.value.set(settings.exitToTray);
     prereleaseUpdates.value.set(settings.prereleaseUpdates);
@@ -232,6 +247,9 @@
     void exitToTray.init();
     void prereleaseUpdates.init();
     void discordRpc.init();
+    void PlatformService.GetDiscordAppID()
+      .then((v) => { discordAppId = v || ""; })
+      .catch(() => {});
     void minimizeOnSwitch.init();
     void startProgramCentered.init();
     void animations.init();
@@ -661,7 +679,45 @@
   <label for="gs-discord-rpc">{$t("Settings_DiscordRpc")}</label>
 </div>
 
+<div class="rowSetting discord-appid-row">
+  <label for="gs-discord-app-id">{$t("Settings_DiscordAppId")}</label>
+  <input
+    id="gs-discord-app-id"
+    class="modal-input discord-appid-input"
+    type="text"
+    inputmode="numeric"
+    spellcheck="false"
+    autocomplete="off"
+    placeholder="000000000000000000"
+    value={discordAppId}
+    disabled={$offlineMode}
+    on:change={(e) => void saveDiscordAppId(e.currentTarget.value)}
+  />
+</div>
+<p class="discord-appid-hint">{$t("Settings_DiscordAppId_Hint")}</p>
+
 <style lang="scss">
+  .discord-appid-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .discord-appid-input {
+    flex: 1 1 14rem;
+    min-width: 10rem;
+    max-width: 22rem;
+    padding: 0.35rem 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .discord-appid-hint {
+    margin: 0.15rem 0 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+
   button:not(.fancyLink) {
     position: relative;
     height: 38px;

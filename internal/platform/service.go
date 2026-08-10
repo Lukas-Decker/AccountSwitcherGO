@@ -43,6 +43,7 @@ type PlatformStartup struct {
 	ThemeAccentCustom        string `json:"themeAccentCustom"`
 	ThemeHueRotate           int    `json:"themeHueRotate"`
 	RoundedCorners           bool   `json:"roundedCorners"`
+	DiscordAppID             string `json:"discordAppId"`
 	AppVersion               string `json:"appVersion"`
 }
 
@@ -140,6 +141,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				ThemeAccentCustom:        settings.ThemeAccentCustom,
 				ThemeHueRotate:           settings.ThemeHueRotate,
 				RoundedCorners:           settings.RoundedCorners,
+				DiscordAppID:             settings.DiscordAppID,
 				AppVersion:               appVersionFromBuildConfig(),
 			}, nil
 		}
@@ -192,6 +194,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		ThemeAccentCustom:        settings.ThemeAccentCustom,
 		ThemeHueRotate:           settings.ThemeHueRotate,
 		RoundedCorners:           settings.RoundedCorners,
+		DiscordAppID:             settings.DiscordAppID,
 		AppVersion:               appVersionFromBuildConfig(),
 	}, nil
 }
@@ -217,6 +220,7 @@ type SettingsBatchUpdate struct {
 	ThemeAccentCustom        *string `json:"themeAccentCustom,omitempty"`
 	ThemeHueRotate           *int    `json:"themeHueRotate,omitempty"`
 	RoundedCorners           *bool   `json:"roundedCorners,omitempty"`
+	DiscordAppID             *string `json:"discordAppId,omitempty"`
 	CommandPaletteHotkey     *string `json:"commandPaletteHotkey,omitempty"`
 }
 
