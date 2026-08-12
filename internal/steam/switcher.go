@@ -10,7 +10,6 @@ import (
 	"account-switcher/internal/fsutil"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stability"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/winutil"
 )
@@ -100,7 +99,6 @@ func SwapToAccount(steamID64 string, personaState int, extraLaunchArgs []string)
 	}
 
 	RecordTrayRecentAfterSwap(steamID64)
-	stability.OnSuccessfulSwitch("Steam")
 	platform.TriggerDiscordPresenceRefresh()
 
 	if !st.AutoStart {

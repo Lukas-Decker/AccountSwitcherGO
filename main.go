@@ -22,7 +22,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
-	"account-switcher/internal/stability"
 	"account-switcher/internal/steam"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/winutil"
@@ -59,7 +58,6 @@ func init() {
 	application.RegisterEvent[string]("navigate")
 
 	application.RegisterEvent[app.ToastPayload]("toast")
-	application.RegisterEvent[stability.StabilityPromptPayload]("stability-prompt")
 	application.RegisterEvent[string](controllerinput.EventName)
 	application.RegisterEvent[steam.AccountPatch](steam.AccountUpdatedEvent)
 	application.RegisterEvent[basic.AccountImagePatch](basic.AccountImageUpdatedEvent)

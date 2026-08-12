@@ -8,7 +8,7 @@
   import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { offlineMode, setUserOfflineMode } from "../stores/offlineMode";
   import { setAutoStreamerMode, setStreamerMode, streamerState } from "../stores/streamerMode";
-  import { openConfirm, openFeedbackModal, openPasswordSetupModal, openPrompt } from "../stores/modal";
+  import { openConfirm, openPasswordSetupModal, openPrompt } from "../stores/modal";
   import { animationsEnabled, loadAnimationsEnabled, setAnimationsEnabled } from "../stores/animationSettings";
   import {
     deleteQuarantine,
@@ -705,9 +705,6 @@
     on:click={() => void onCheckForUpdates(updateCheckLoading)}
   >
     {$t("Button_CheckForUpdates")}
-  </button>
-  <button type="button" class="btnicontext" on:click={() => void openFeedbackModal({ mode: "suggestion" })}>
-    {$t("Settings_SuggestFeature")}
   </button>
   <div>
     <div class="form-check">

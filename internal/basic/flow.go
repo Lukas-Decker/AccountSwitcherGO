@@ -15,7 +15,6 @@ import (
 	"account-switcher/internal/platform"
 	"account-switcher/internal/profileimage"
 	"account-switcher/internal/security"
-	"account-switcher/internal/stability"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/winutil"
 
@@ -828,7 +827,6 @@ func SwapTo(deps FlowDeps, platformKey, uniqueID string, extraLaunchArgs []strin
 	}
 	_ = touchLastUsed(fc.PlatformKey, uniqueID)
 	recordBasicTrayRecent(platformKey, uniqueID)
-	stability.OnSuccessfulSwitch(platformKey)
 	platform.TriggerDiscordPresenceRefresh()
 	if !ps.AutoStart {
 		tray.MaybeHideMainWindow()

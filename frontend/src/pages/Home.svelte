@@ -6,7 +6,7 @@
   import { route, appBarTitle } from "../stores/nav";
   import { platformListSort, type PlatformSortKind } from "../stores/platformListSort";
   import { t } from "../stores/i18n";
-  import { openConfirm, openFeedbackModal, openFolderPicker } from "../stores/modal";
+  import { openConfirm, openFolderPicker } from "../stores/modal";
   import { pushToast } from "../stores/toast";
   import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import type { PlatformStartup } from "../../bindings/account-switcher/internal/platform/models.js";
@@ -234,11 +234,6 @@
         id: "check-updates",
         title: tr("Command_CheckForUpdates"),
         run: () => checkForUpdatesManually(),
-      },
-      {
-        id: "suggest-feature",
-        title: tr("Command_SuggestFeature"),
-        run: () => openFeedbackModal({ mode: "suggestion" }),
       },
     ];
     for (const platformName of homeOrder) {
