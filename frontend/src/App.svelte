@@ -4,6 +4,7 @@
   import { fade } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import { Events } from "@wailsio/runtime";
+  import { initStreamerMode } from "./stores/streamerMode";
   import { motionEnabled } from "./lib/animation";
   import { applyAnimationClass } from "./lib/animationClass";
   import { installInputModalityTracking } from "./lib/inputModality";
@@ -298,6 +299,10 @@
   onMount(() => {
     void loadSecurityStatus();
     void loadAnimationsEnabled();
+    // Resolves after the first paint; the html class it sets is what censors the
+    // account lists, so hydrate it before any of them can mount.
+    let offStreamerMode: (() => void) | undefined;
+    void initStreamerMode().then((off) => { offStreamerMode = off; });
     void loadCommandPaletteHotkey();
     // Load initial app background state.
     void PlatformService.GetAppBackground().then((info) => {
@@ -417,6 +422,7 @@
       offPlatformsFound?.();
       offPlatformsUpdated?.();
       offUserDataMoveProgress?.();
+      offStreamerMode?.();
       offSvgBridge?.();
       offInputModality();
       offAnimationsClass();

@@ -39,7 +39,7 @@ var salt struct {
 
 // MachineSalt returns a stable, machine-local hex string mixed into every avatar
 // seed. Derived from the primary physical MAC address, so the same account name or
-// SteamID64 produces a different avatar on a different computer — someone watching
+// SteamID64 produces a different avatar on a different computer - someone watching
 // a stream cannot regenerate a viewer's avatar to confirm who they are.
 //
 // A NIC swap changes the salt and therefore the generated avatars. That is cosmetic:

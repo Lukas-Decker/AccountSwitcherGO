@@ -3,6 +3,7 @@
   import { get } from "svelte/store";
   import * as SteamService from "../../bindings/account-switcher/internal/steam/steamservice.js";
   import { t } from "../stores/i18n";
+  import { censoredName } from "../stores/streamerMode";
   import { pushToast } from "../stores/toast";
   import { formatToastWithError } from "../lib/formatWailsError";
   import { reportLaunchFailure } from "../lib/adminFlow";
@@ -143,7 +144,7 @@
               {#if game.owners.length === 0}
                 {$t("Games_NotPlayedHere")}
               {:else if game.owners.length === 1}
-                {ownerName(game.owners[0])}
+                {$censoredName(ownerName(game.owners[0]))}
               {:else}
                 {$t("Games_OwnerCount", { count: game.owners.length })}
               {/if}
@@ -154,7 +155,7 @@
             <div class="game-owner-picker">
               {#each game.owners as id (id)}
                 <button type="button" class="game-owner" on:click={() => void switchTo(game, id)}>
-                  {ownerName(id)}
+                  {$censoredName(ownerName(id))}
                 </button>
               {/each}
             </div>

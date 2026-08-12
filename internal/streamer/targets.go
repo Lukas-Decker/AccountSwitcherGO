@@ -6,8 +6,8 @@ import "strings"
 // to an audience". Lowercase, matched against the process image base name.
 //
 // The list is deliberately narrow. Capture helpers that sit resident on millions of
-// machines that never stream — NVIDIA Share / NVIDIA app, Radeon Software, Xbox Game
-// Bar, ShareX, Stream Deck, Discord — are excluded on purpose: a streamer mode that
+// machines that never stream - NVIDIA Share / NVIDIA app, Radeon Software, Xbox Game
+// Bar, ShareX, Stream Deck, Discord - are excluded on purpose: a streamer mode that
 // is permanently on is the same as no streamer mode at all. Everything here is
 // something a person opens when they are about to broadcast or record.
 var broadcastExes = []string{
@@ -38,7 +38,7 @@ var broadcastExes = []string{
 	"manycam.exe",
 	"splitcam.exe",
 
-	// Screen recorders — same exposure, same need.
+	// Screen recorders - same exposure, same need.
 	"bdcam.exe",
 	"action.exe",
 	"camtasiarecorder.exe",

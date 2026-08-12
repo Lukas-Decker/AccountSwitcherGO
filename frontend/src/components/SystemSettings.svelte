@@ -7,6 +7,7 @@
   import { tooltip } from "../lib/actions/tooltip";
   import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { offlineMode, setUserOfflineMode } from "../stores/offlineMode";
+  import { setAutoStreamerMode, setStreamerMode, streamerState } from "../stores/streamerMode";
   import { openConfirm, openFeedbackModal, openPasswordSetupModal, openPrompt } from "../stores/modal";
   import { animationsEnabled, loadAnimationsEnabled, setAnimationsEnabled } from "../stores/animationSettings";
   import {
@@ -106,6 +107,20 @@
     () => PlatformService.GetStartProgramCentered(),
     (v) => PlatformService.SetStartProgramCentered(v),
     get(t)("Settings_StartCentered"),
+  );
+
+  // Named ...Toggle so the local settings control does not shadow the streamerMode
+  // store the rest of the app reads.
+  const streamerModeToggle = createToggle(
+    () => PlatformService.GetStreamerMode(),
+    (v) => setStreamerMode(v),
+    get(t)("Settings_StreamerMode"),
+  );
+
+  const autoStreamerModeToggle = createToggle(
+    () => PlatformService.GetAutoStreamerMode(),
+    (v) => setAutoStreamerMode(v),
+    get(t)("Settings_AutoStreamerMode"),
   );
 
   const protocol = createToggle(
@@ -235,6 +250,8 @@
     minimizeOnSwitch.value.set(settings.minimizeOnSwitch);
     startTrayWithWindows.value.set(settings.startTrayWithWindows);
     startProgramCentered.value.set(settings.startProgramCentered);
+    streamerModeToggle.value.set(settings.streamerMode);
+    autoStreamerModeToggle.value.set(settings.autoStreamerMode);
     animationsEnabled.set(settings.animationsEnabled);
     animations.value.set(settings.animationsEnabled);
     controllerSupport.value.set(applyControllerSupportEnabled(settings.controllerSupportEnabled));
@@ -252,6 +269,8 @@
       .catch(() => {});
     void minimizeOnSwitch.init();
     void startProgramCentered.init();
+    void streamerModeToggle.init();
+    void autoStreamerModeToggle.init();
     void animations.init();
     void controllerSupport.init();
     void loadCommandPaletteHotkey();
@@ -558,6 +577,26 @@
 
 <div class="rowSetting">
   <div class="form-check">
+    <input id="gs-streamer-mode" type="checkbox" checked={$streamerModeToggle.value} disabled={$streamerModeToggle.loading} on:change={() => void streamerModeToggle.toggle()} />
+    <label class="form-check-label" for="gs-streamer-mode"></label>
+  </div>
+  <label for="gs-streamer-mode" use:tooltip={$t("Settings_StreamerMode_Tooltip")}>{$t("Settings_StreamerMode")}</label>
+</div>
+
+<div class="rowSetting">
+  <div class="form-check">
+    <input id="gs-auto-streamer-mode" type="checkbox" checked={$autoStreamerModeToggle.value} disabled={$autoStreamerModeToggle.loading} on:change={() => void autoStreamerModeToggle.toggle()} />
+    <label class="form-check-label" for="gs-auto-streamer-mode"></label>
+  </div>
+  <label for="gs-auto-streamer-mode" use:tooltip={$t("Settings_AutoStreamerMode_Tooltip")}>{$t("Settings_AutoStreamerMode")}</label>
+</div>
+
+{#if $streamerState.autoEnabled && $streamerState.autoActive}
+  <p class="streamer-active-note">{$t("Settings_AutoStreamerMode_Active", { app: $streamerState.detectedExe })}</p>
+{/if}
+
+<div class="rowSetting">
+  <div class="form-check">
     <input id="gs-min-switch" type="checkbox" checked={$minimizeOnSwitch.value} disabled={$minimizeOnSwitch.loading} on:change={() => void minimizeOnSwitch.toggle()} />
     <label class="form-check-label" for="gs-min-switch"></label>
   </div>
@@ -713,6 +752,12 @@
   }
 
   .discord-appid-hint {
+    margin: 0.15rem 0 0.75rem;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+
+  .streamer-active-note {
     margin: 0.15rem 0 0.75rem;
     font-size: 0.85rem;
     opacity: 0.75;
