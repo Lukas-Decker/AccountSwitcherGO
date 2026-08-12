@@ -10,6 +10,7 @@ import (
 	"account-switcher/internal/actionlog"
 	"account-switcher/internal/app"
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/applog"
 	"account-switcher/internal/basic"
 	"account-switcher/internal/cli"
 	"account-switcher/internal/controllerinput"
@@ -17,6 +18,7 @@ import (
 	"account-switcher/internal/discordrpc"
 	"account-switcher/internal/i18n"
 	"account-switcher/internal/ipc"
+	"account-switcher/internal/paths"
 	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
@@ -117,7 +119,17 @@ func main() {
 	}
 
 	lvl := app.ResolvedLogLevel(parsed)
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: lvl})))
+	// The GUI build has no console of its own, so stderr only reaches anyone when
+	// the app was started from a terminal. Attach to that terminal if there is one.
+	winutil.AttachParentConsole()
+	if dataRoot, derr := paths.DataRoot(); derr == nil {
+		if lerr := applog.Init(dataRoot, lvl); lerr != nil {
+			fmt.Fprintln(os.Stderr, "log file:", lerr)
+		}
+		defer applog.Close()
+	} else {
+		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: lvl})))
+	}
 	actionlog.Init()
 
 	startupSettings, _ := loadStartupSettings()

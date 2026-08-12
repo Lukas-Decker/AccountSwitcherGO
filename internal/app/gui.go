@@ -11,6 +11,7 @@ import (
 	"time"
 
 	buildinfo "account-switcher/build"
+	"account-switcher/internal/applog"
 	"account-switcher/internal/basic"
 	"account-switcher/internal/buildmode"
 	"account-switcher/internal/cli"
@@ -149,7 +150,9 @@ func RunGUI(params RunGUIParams) {
 	if !parsed.LogLevelSet && wailsLvl < slog.LevelInfo {
 		wailsLvl = slog.LevelInfo
 	}
-	wailsLogger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: wailsLvl}))
+	// Same sink as the app's own logger, so a Wails-side failure is in the file
+	// next to whatever the app was doing when it happened.
+	wailsLogger := slog.New(slog.NewTextHandler(applog.Writer(), &slog.HandlerOptions{Level: wailsLvl}))
 	notifier := notifications.New()
 	platform.SetNativeNotifier(notifier)
 	services := append([]application.Service{}, params.Services...)
