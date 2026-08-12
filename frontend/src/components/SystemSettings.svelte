@@ -123,6 +123,12 @@
     get(t)("Settings_AutoStreamerMode"),
   );
 
+  const hideFromScreenshots = createToggle(
+    () => PlatformService.GetHideFromScreenshots(),
+    (v) => PlatformService.SetHideFromScreenshots(v),
+    get(t)("Settings_HideFromScreenshots"),
+  );
+
   const protocol = createToggle(
     () => PlatformService.GetProtocolEnabled(),
     (v) => PlatformService.SetProtocolEnabled(v),
@@ -252,6 +258,7 @@
     startProgramCentered.value.set(settings.startProgramCentered);
     streamerModeToggle.value.set(settings.streamerMode);
     autoStreamerModeToggle.value.set(settings.autoStreamerMode);
+    hideFromScreenshots.value.set(settings.hideFromScreenshots);
     animationsEnabled.set(settings.animationsEnabled);
     animations.value.set(settings.animationsEnabled);
     controllerSupport.value.set(applyControllerSupportEnabled(settings.controllerSupportEnabled));
@@ -271,6 +278,7 @@
     void startProgramCentered.init();
     void streamerModeToggle.init();
     void autoStreamerModeToggle.init();
+    void hideFromScreenshots.init();
     void animations.init();
     void controllerSupport.init();
     void loadCommandPaletteHotkey();
@@ -589,6 +597,14 @@
     <label class="form-check-label" for="gs-auto-streamer-mode"></label>
   </div>
   <label for="gs-auto-streamer-mode" use:tooltip={$t("Settings_AutoStreamerMode_Tooltip")}>{$t("Settings_AutoStreamerMode")}</label>
+</div>
+
+<div class="rowSetting">
+  <div class="form-check">
+    <input id="gs-hide-screenshots" type="checkbox" checked={$hideFromScreenshots.value} disabled={$hideFromScreenshots.loading} on:change={() => void hideFromScreenshots.toggle()} />
+    <label class="form-check-label" for="gs-hide-screenshots"></label>
+  </div>
+  <label for="gs-hide-screenshots" use:tooltip={$t("Settings_HideFromScreenshots_Tooltip")}>{$t("Settings_HideFromScreenshots")}</label>
 </div>
 
 {#if $streamerState.autoEnabled && $streamerState.autoActive}

@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "يفعّل وضع البث أثناء تشغيل OBS Studio أو XSplit أو Streamlabs أو برامج بث مشابهة، ويعطّله مجددًا عند إغلاقها.",
   "Settings_AutoStreamerMode_Active": "وضع البث مفعّل: {app} قيد التشغيل.",
   "StreamerMode_HiddenAccount": "حساب مخفي",
+  "Settings_HideFromScreenshots": "إخفاء هذا التطبيق دائمًا من لقطات الشاشة",
+  "Settings_HideFromScreenshots_Tooltip": "يستثني نوافذ التطبيق من التقاط الشاشة، كما هو الحال دائمًا مع نوافذ Steam Guard. تظهر التسجيلات ومشاركات الشاشة والجلسات البعيدة مستطيلًا فارغًا؛ بينما تبدو النافذة طبيعية على شاشتك. هذا يمنع أيضًا لقطات الشاشة التي تلتقطها بنفسك.",
   "Settings_ExitToTray": "تصغير البرنامج إلى القائمة المخفية في شريط المهام",
   "Settings_DesktopShortcut": "اختصار على سطح المكتب",
   "Settings_Tray_StartWindows": "بدء التشغيل مع Windows في شريط المهام",

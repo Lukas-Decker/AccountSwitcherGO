@@ -11,6 +11,7 @@ type settingsBatchEffects struct {
 	controllerSupport      *bool
 	streamerMode           *bool
 	autoStreamerMode       *bool
+	hideFromScreenshots    *bool
 	discordPresenceRefresh bool
 }
 
@@ -52,6 +53,10 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 		manual, auto := s.StreamerMode, s.AutoStreamerMode
 		effects.streamerMode = &manual
 		effects.autoStreamerMode = &auto
+	}
+	applyBool(&s.HideFromScreenshots, req.HideFromScreenshots)
+	if req.HideFromScreenshots != nil {
+		effects.hideFromScreenshots = req.HideFromScreenshots
 	}
 	applyBool(&s.AnimationsEnabled, req.AnimationsEnabled)
 	applyBool(&s.ControllerSupportEnabled, req.ControllerSupportEnabled)

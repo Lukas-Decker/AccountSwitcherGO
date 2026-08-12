@@ -19,6 +19,7 @@ import (
 	"account-switcher/internal/ipc"
 	"account-switcher/internal/paths"
 	"account-switcher/internal/platform"
+	"account-switcher/internal/screenprivacy"
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
 	"account-switcher/internal/steam"
@@ -84,6 +85,10 @@ func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) appl
 			application.PermissionClipboardRead: application.PermissionDeny,
 		},
 	}
+	// Stamped at creation rather than after: a window that opens capturable and is
+	// protected a frame later has already been recorded.
+	screenprivacy.Apply(&winOpts)
+
 	// Reopen at the size the user left, so resizing the window sticks.
 	geometry := platform.WindowGeometryFromSettings(guiSettings)
 	if geometry.Valid() {
@@ -137,6 +142,7 @@ func RunGUI(params RunGUIParams) {
 	// Before the window exists, so a broadcaster that is already running has been
 	// adopted by the time the first account list paints.
 	platform.InitStreamerMode(guiSettings)
+	screenprivacy.SetEnabled(guiSettings.HideFromScreenshots)
 	defer streamer.Shutdown()
 
 	wailsLvl := ResolvedLogLevel(parsed)
@@ -229,6 +235,7 @@ func RunGUI(params RunGUIParams) {
 
 	winOpts := mainWindowOptions(guiSettings, parsed)
 	win := wailsApp.Window.NewWithOptions(winOpts)
+	screenprivacy.Follow(win)
 	rememberWindowGeometry(win, guiSettings)
 	registerNotificationResponseHandler(wailsApp, win, notifier)
 	win.OnWindowEvent(events.Common.WindowFilesDropped, func(event *application.WindowEvent) {

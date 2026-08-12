@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Укључује стримерски режим док је покренут OBS Studio, XSplit, Streamlabs или сличан софтвер за емитовање, а искључује га када се затвори.",
   "Settings_AutoStreamerMode_Active": "Стримерски режим је укључен: {app} је покренут.",
   "StreamerMode_HiddenAccount": "Скривени налог",
+  "Settings_HideFromScreenshots": "Увек сакриј ову апликацију са снимака екрана",
+  "Settings_HideFromScreenshots_Tooltip": "Изузима прозоре апликације из снимања екрана, као што су прозори Steam Guard увек изузети. Снимци, дељења екрана и удаљене сесије виде празан правоугаоник; прозор изгледа нормално на вашем екрану. Ово блокира и снимке екрана које сами направите.",
   "Settings_ExitToTray": "Излаз из фиоке је минималан",
   "Settings_DesktopShortcut": "Пречица површи",
   "Settings_Tray_StartWindows": "Покрени системску траку са Windows-ом",

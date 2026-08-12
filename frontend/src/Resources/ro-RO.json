@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Activează modul streamer cât timp rulează OBS Studio, XSplit, Streamlabs sau alt software de transmisiune similar și îl dezactivează când acesta se închide.",
   "Settings_AutoStreamerMode_Active": "Modul streamer este activat: {app} rulează.",
   "StreamerMode_HiddenAccount": "Cont ascuns",
+  "Settings_HideFromScreenshots": "Ascunde întotdeauna această aplicație din capturile de ecran",
+  "Settings_HideFromScreenshots_Tooltip": "Exclude ferestrele aplicației din capturile de ecran, așa cum sunt întotdeauna ferestrele Steam Guard. Înregistrările, partajările de ecran și sesiunile la distanță văd un dreptunghi gol; fereastra arată normal pe propriul tău ecran. Aceasta blochează și capturile de ecran pe care le faci tu însuți.",
   "Settings_ExitToTray": "Ieșirea se reduce la minimum în tavă",
   "Settings_DesktopShortcut": "Comanda rapidă de pe desktop",
   "Settings_Tray_StartWindows": "Porniți tava cu Windows",

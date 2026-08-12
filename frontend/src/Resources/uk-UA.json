@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Вмикає режим стримера, поки запущено OBS Studio, XSplit, Streamlabs чи подібне програмне забезпечення для трансляцій, і вимикає його після їх закриття.",
   "Settings_AutoStreamerMode_Active": "Режим стримера ввімкнено: запущено {app}.",
   "StreamerMode_HiddenAccount": "Прихований обліковий запис",
+  "Settings_HideFromScreenshots": "Завжди приховувати цей застосунок зі скриншотів",
+  "Settings_HideFromScreenshots_Tooltip": "Виключає вікна застосунку із захоплення екрана, як це завжди робиться з вікнами Steam Guard. Записи, демонстрації екрана та віддалені сеанси бачать порожній прямокутник; на вашому власному екрані вікно виглядає звичайно. Це також блокує скриншоти, які ви робите самі.",
   "Settings_ExitToTray": "Вихід згортається в трей",
   "Settings_DesktopShortcut": "Ярлик на робочому столі",
   "Settings_Tray_StartWindows": "Запускати в треї з Windows",

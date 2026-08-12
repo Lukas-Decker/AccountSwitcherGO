@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "מפעיל את מצב הסטרימר כאשר OBS Studio, XSplit, Streamlabs או תוכנת שידור דומה פועלת, ומכבה אותו שוב כשהיא נסגרת.",
   "Settings_AutoStreamerMode_Active": "מצב סטרימר פעיל: {app} פועל.",
   "StreamerMode_HiddenAccount": "חשבון מוסתר",
+  "Settings_HideFromScreenshots": "הסתר תמיד את האפליקציה מצילומי מסך",
+  "Settings_HideFromScreenshots_Tooltip": "מחריג את חלונות האפליקציה מלכידת מסך, כפי שחלונות Steam Guard תמיד מוחרגים. הקלטות, שיתופי מסך והפעלות מרחוק רואים מלבן ריק; החלון נראה רגיל על המסך שלך. זה חוסם גם צילומי מסך שאתה מבצע בעצמך.",
   "Settings_ExitToTray": "יציאה ממזערת למגש",
   "Settings_DesktopShortcut": "קיצור דרך לשולחן העבודה",
   "Settings_Tray_StartWindows": "התחל במגש עם Windows",

@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "OBS Studio, XSplit, Streamlabs veya benzeri yayın yazılımı çalışırken yayıncı modunu açar, kapatıldığında tekrar kapatır.",
   "Settings_AutoStreamerMode_Active": "Yayıncı modu açık: {app} çalışıyor.",
   "StreamerMode_HiddenAccount": "Gizli hesap",
+  "Settings_HideFromScreenshots": "Bu uygulamayı ekran görüntülerinden her zaman gizle",
+  "Settings_HideFromScreenshots_Tooltip": "Steam Guard pencerelerinde her zaman olduğu gibi, uygulamanın pencerelerini ekran yakalamanın dışında tutar. Kayıtlar, ekran paylaşımları ve uzak oturumlar boş bir dikdörtgen görür; pencere kendi ekranınızda normal görünür. Bu, kendi aldığınız ekran görüntülerini de engeller.",
   "Settings_ExitToTray": "Tepsiye çıkışı en aza indirir",
   "Settings_DesktopShortcut": "Masaüstü kısayolu",
   "Settings_Tray_StartWindows": "Tepsiyi Windows ile başlat",

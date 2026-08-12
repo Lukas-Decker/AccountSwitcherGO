@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "هنگام اجرای OBS Studio، XSplit، Streamlabs یا نرم‌افزارهای پخش مشابه، حالت استریمر را روشن می‌کند و با بسته‌شدن آن‌ها دوباره خاموش می‌کند.",
   "Settings_AutoStreamerMode_Active": "حالت استریمر روشن است: {app} در حال اجراست.",
   "StreamerMode_HiddenAccount": "حساب پنهان",
+  "Settings_HideFromScreenshots": "همیشه این برنامه را از اسکرین‌شات‌ها پنهان کن",
+  "Settings_HideFromScreenshots_Tooltip": "پنجره‌های برنامه را از ضبط صفحه مستثنا می‌کند، همان‌طور که پنجره‌های Steam Guard همیشه هستند. ضبط‌ها، اشتراک‌گذاری‌های صفحه و نشست‌های راه دور یک مستطیل خالی می‌بینند؛ پنجره روی صفحه خودتان عادی به نظر می‌رسد. این گزینه اسکرین‌شات‌هایی را که خودتان می‌گیرید نیز مسدود می‌کند.",
   "Settings_ExitToTray": "خروج، برنامه را به ناحیه اعلان کوچک می‌کند",
   "Settings_DesktopShortcut": "میانبر دسکتاپ",
   "Settings_Tray_StartWindows": "شروع در ناحیه اعلان همراه با Windows",

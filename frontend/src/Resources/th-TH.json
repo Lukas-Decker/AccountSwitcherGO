@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "เปิดโหมดสตรีมเมอร์ขณะที่ OBS Studio, XSplit, Streamlabs หรือโปรแกรมถ่ายทอดสดอื่น ๆ กำลังทำงาน และปิดอีกครั้งเมื่อโปรแกรมปิดลง",
   "Settings_AutoStreamerMode_Active": "โหมดสตรีมเมอร์เปิดอยู่: {app} กำลังทำงาน",
   "StreamerMode_HiddenAccount": "บัญชีที่ซ่อนไว้",
+  "Settings_HideFromScreenshots": "ซ่อนแอปนี้จากภาพหน้าจอเสมอ",
+  "Settings_HideFromScreenshots_Tooltip": "ยกเว้นหน้าต่างของแอปจากการจับภาพหน้าจอ เช่นเดียวกับหน้าต่าง Steam Guard การบันทึกวิดีโอ การแชร์หน้าจอ และเซสชันระยะไกลจะเห็นเพียงสี่เหลี่ยมว่างเปล่า แต่หน้าต่างยังแสดงตามปกติบนหน้าจอของคุณเอง ทั้งนี้จะบล็อกภาพหน้าจอที่คุณถ่ายเองด้วย",
   "Settings_ExitToTray": "ออกจากถาดให้น้อยที่สุด",
   "Settings_DesktopShortcut": "ทางลัดไปยังพื้นที่ทำงาน",
   "Settings_Tray_StartWindows": "เริ่มต้นถาดด้วย Windows",

@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Activa el modo streamer mientras OBS Studio, XSplit, Streamlabs u otro software de emisión similar está en ejecución, y lo desactiva de nuevo cuando se cierra.",
   "Settings_AutoStreamerMode_Active": "El modo streamer está activado: {app} está en ejecución.",
   "StreamerMode_HiddenAccount": "Cuenta oculta",
+  "Settings_HideFromScreenshots": "Ocultar siempre esta aplicación en las capturas de pantalla",
+  "Settings_HideFromScreenshots_Tooltip": "Excluye las ventanas de la aplicación de la captura de pantalla, igual que lo están siempre las ventanas de Steam Guard. Las grabaciones, las pantallas compartidas y las sesiones remotas ven un rectángulo en blanco; la ventana se ve normal en tu propia pantalla. Esto también bloquea las capturas que hagas tú mismo.",
   "Settings_ExitToTray": "Cerrar minimiza a la bandeja",
   "Settings_DesktopShortcut": "Atajo de escritorio",
   "Settings_Tray_StartWindows": "Iniciar bandeja con Windows",

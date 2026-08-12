@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "當 OBS Studio、XSplit、Streamlabs 或類似的直播軟體執行時自動開啟直播模式，並在其關閉後自動關閉。",
   "Settings_AutoStreamerMode_Active": "直播模式已開啟：{app} 正在執行。",
   "StreamerMode_HiddenAccount": "隱藏的帳號",
+  "Settings_HideFromScreenshots": "一律在螢幕截圖中隱藏此應用程式",
+  "Settings_HideFromScreenshots_Tooltip": "將本應用程式的視窗排除在螢幕擷取之外，就像 Steam Guard 視窗一樣。錄影、螢幕分享與遠端工作階段只會看到空白矩形；在您自己的螢幕上視窗顯示正常。這也會使您自己拍攝的截圖無法擷取本視窗。",
   "Settings_ExitToTray": "結束時最小化到通知區域",
   "Settings_DesktopShortcut": "桌面捷徑",
   "Settings_Tray_StartWindows": "隨 Windows 啟動通知區域",

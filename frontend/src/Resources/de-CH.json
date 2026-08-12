@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Schaltet dr Streamer-Modus ii, solang OBS Studio, XSplit, Streamlabs oder ähnlichi Broadcast-Software lauft, und wider us, wänn si zue gaht.",
   "Settings_AutoStreamerMode_Active": "Dr Streamer-Modus isch ii: {app} lauft grad.",
   "StreamerMode_HiddenAccount": "Versteckts Konto",
+  "Settings_HideFromScreenshots": "Die App immer vo Screenshots usblände",
+  "Settings_HideFromScreenshots_Tooltip": "Nimmt d Fänschter vo dr App us dr Bildschirmufnahm use, gnau so wie s d Steam Guard Fänschter immer sind. Ufnahme, Bildschirmfreigabe und Remote-Sitzige gsehnd nume es leers Rächteck; uf dim eigene Bildschirm gseht s Fänschter normal us. Das blockiert au Screenshots, wo du sälber machsch.",
   "Settings_ExitToTray": "Beenden minimiert zur Ablage",
   "Settings_DesktopShortcut": "Desktop-Verknüpfung",
   "Settings_Tray_StartWindows": "Tray mit Windows starten",

@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Mengaktifkan mode streamer saat OBS Studio, XSplit, Streamlabs, atau perangkat lunak siaran serupa sedang berjalan, dan menonaktifkannya kembali saat ditutup.",
   "Settings_AutoStreamerMode_Active": "Mode streamer aktif: {app} sedang berjalan.",
   "StreamerMode_HiddenAccount": "Akun tersembunyi",
+  "Settings_HideFromScreenshots": "Selalu sembunyikan aplikasi ini dari tangkapan layar",
+  "Settings_HideFromScreenshots_Tooltip": "Mengecualikan jendela aplikasi dari perekaman layar, seperti halnya jendela Steam Guard. Rekaman, berbagi layar, dan sesi jarak jauh hanya melihat kotak kosong; jendela tetap tampak normal di layar Anda sendiri. Ini juga memblokir tangkapan layar yang Anda ambil sendiri.",
   "Settings_ExitToTray": "Keluar dari nampan untuk meminimalkan",
   "Settings_DesktopShortcut": "Pintasan desktop",
   "Settings_Tray_StartWindows": "Mulai Baki dengan Windows",

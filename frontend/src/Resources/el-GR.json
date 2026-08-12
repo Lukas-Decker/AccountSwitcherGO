@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Ενεργοποιεί τη λειτουργία streamer όταν εκτελείται το OBS Studio, το XSplit, το Streamlabs ή παρόμοιο λογισμικό μετάδοσης, και την απενεργοποιεί ξανά όταν κλείσει.",
   "Settings_AutoStreamerMode_Active": "Η λειτουργία streamer είναι ενεργή: εκτελείται το {app}.",
   "StreamerMode_HiddenAccount": "Κρυφός λογαριασμός",
+  "Settings_HideFromScreenshots": "Πάντα απόκρυψη της εφαρμογής από στιγμιότυπα οθόνης",
+  "Settings_HideFromScreenshots_Tooltip": "Εξαιρεί τα παράθυρα της εφαρμογής από την καταγραφή οθόνης, όπως γίνεται πάντα με τα παράθυρα του Steam Guard. Οι εγγραφές, οι κοινές χρήσεις οθόνης και οι απομακρυσμένες συνεδρίες βλέπουν ένα κενό ορθογώνιο· το παράθυρο φαίνεται κανονικό στη δική σας οθόνη. Αυτό εμποδίζει και τα στιγμιότυπα που τραβάτε εσείς οι ίδιοι.",
   "Settings_ExitToTray": "Η έξοδος ελαχιστοποιείται στο δίσκο",
   "Settings_DesktopShortcut": "Συντόμευση επιφάνειας εργασίας",
   "Settings_Tray_StartWindows": "Εκκίνηση Tray με Windows",

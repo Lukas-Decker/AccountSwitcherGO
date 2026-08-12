@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/screenprivacy"
 	"account-switcher/internal/streamer"
 	"account-switcher/internal/winutil"
 )
@@ -318,6 +319,17 @@ func (p *PlatformService) SetAutoStreamerMode(enabled bool) error {
 		return err
 	}
 	streamer.SetAutoEnabled(enabled)
+	return nil
+}
+
+func (p *PlatformService) SetHideFromScreenshots(enabled bool) error {
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.HideFromScreenshots = enabled
+		return nil
+	}); err != nil {
+		return err
+	}
+	screenprivacy.SetEnabled(enabled)
 	return nil
 }
 

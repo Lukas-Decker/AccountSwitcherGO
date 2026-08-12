@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Kytkee striimaustilan päälle, kun OBS Studio, XSplit, Streamlabs tai vastaava lähetysohjelma on käynnissä, ja pois päältä, kun se suljetaan.",
   "Settings_AutoStreamerMode_Active": "Striimaustila on päällä: {app} on käynnissä.",
   "StreamerMode_HiddenAccount": "Piilotettu tili",
+  "Settings_HideFromScreenshots": "Piilota tämä sovellus aina kuvakaappauksista",
+  "Settings_HideFromScreenshots_Tooltip": "Sulkee sovelluksen ikkunat pois ruudunkaappauksesta samalla tavalla kuin Steam Guard -ikkunat aina ovat. Tallenteissa, näytön jaoissa ja etäistunnoissa näkyy tyhjä suorakulmio; ikkuna näyttää normaalilta omalla näytölläsi. Tämä estää myös itse ottamasi kuvakaappaukset.",
   "Settings_ExitToTray": "Sulkeminen pienentää ilmoitusalueelle",
   "Settings_DesktopShortcut": "Työpöydän pikakuvake",
   "Settings_Tray_StartWindows": "Käynnistä ilmoitusalueelle Windowsin kanssa",

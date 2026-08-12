@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Zapne režim streamera, keď beží OBS Studio, XSplit, Streamlabs alebo podobný vysielací softvér, a po jeho zatvorení ho opäť vypne.",
   "Settings_AutoStreamerMode_Active": "Režim streamera je zapnutý: {app} je spustený.",
   "StreamerMode_HiddenAccount": "Skrytý účet",
+  "Settings_HideFromScreenshots": "Vždy skrývať túto aplikáciu zo snímok obrazovky",
+  "Settings_HideFromScreenshots_Tooltip": "Vylúči okná aplikácie zo zachytávania obrazovky, tak ako sú vždy vylúčené okná Steam Guard. Nahrávky, zdieľania obrazovky a vzdialené relácie vidia prázdny obdĺžnik; na vašej vlastnej obrazovke vyzerá okno normálne. Blokuje to aj snímky obrazovky, ktoré si urobíte sami.",
   "Settings_ExitToTray": "Ukončenie minimalizuje do systémovej lišty",
   "Settings_DesktopShortcut": "Skratka na pracovnej ploche",
   "Settings_Tray_StartWindows": "Spustiť systémovú lištu spolu s Windows",

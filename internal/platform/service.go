@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/screenprivacy"
 	"account-switcher/internal/streamer"
 )
 
@@ -38,6 +39,7 @@ type PlatformStartup struct {
 	StartProgramCentered     bool   `json:"startProgramCentered"`
 	StreamerMode             bool   `json:"streamerMode"`
 	AutoStreamerMode         bool   `json:"autoStreamerMode"`
+	HideFromScreenshots      bool   `json:"hideFromScreenshots"`
 	AnimationsEnabled        bool   `json:"animationsEnabled"`
 	ControllerSupportEnabled bool   `json:"controllerSupportEnabled"`
 	PrereleaseUpdates        bool   `json:"prereleaseUpdates"`
@@ -138,6 +140,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				StartProgramCentered:     settings.StartProgramCentered,
 				StreamerMode:             settings.StreamerMode,
 				AutoStreamerMode:         settings.AutoStreamerMode,
+				HideFromScreenshots:      settings.HideFromScreenshots,
 				AnimationsEnabled:        settings.AnimationsEnabled,
 				ControllerSupportEnabled: settings.ControllerSupportEnabled,
 				PrereleaseUpdates:        settings.PrereleaseUpdates,
@@ -193,6 +196,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		StartProgramCentered:     settings.StartProgramCentered,
 		StreamerMode:             settings.StreamerMode,
 		AutoStreamerMode:         settings.AutoStreamerMode,
+		HideFromScreenshots:      settings.HideFromScreenshots,
 		AnimationsEnabled:        settings.AnimationsEnabled,
 		ControllerSupportEnabled: settings.ControllerSupportEnabled,
 		PrereleaseUpdates:        settings.PrereleaseUpdates,
@@ -220,6 +224,7 @@ type SettingsBatchUpdate struct {
 	StartProgramCentered     *bool   `json:"startProgramCentered,omitempty"`
 	StreamerMode             *bool   `json:"streamerMode,omitempty"`
 	AutoStreamerMode         *bool   `json:"autoStreamerMode,omitempty"`
+	HideFromScreenshots      *bool   `json:"hideFromScreenshots,omitempty"`
 	AnimationsEnabled        *bool   `json:"animationsEnabled,omitempty"`
 	ControllerSupportEnabled *bool   `json:"controllerSupportEnabled,omitempty"`
 	PrereleaseUpdates        *bool   `json:"prereleaseUpdates,omitempty"`
@@ -262,6 +267,9 @@ func (p *PlatformService) UpdateSettings(req SettingsBatchUpdate) error {
 	}
 	if effects.autoStreamerMode != nil {
 		streamer.SetAutoEnabled(*effects.autoStreamerMode)
+	}
+	if effects.hideFromScreenshots != nil {
+		screenprivacy.SetEnabled(*effects.hideFromScreenshots)
 	}
 	if effects.discordPresenceRefresh {
 		TriggerDiscordPresenceRefresh()

@@ -161,6 +161,8 @@
   "Settings_AutoStreamerMode_Tooltip": "Skakel stromermodus aan terwyl OBS Studio, XSplit, Streamlabs of soortgelyke uitsaaisagteware loop, en weer af wanneer dit toemaak.",
   "Settings_AutoStreamerMode_Active": "Stromermodus is aan: {app} loop tans.",
   "StreamerMode_HiddenAccount": "Versteekte rekening",
+  "Settings_HideFromScreenshots": "Versteek hierdie program altyd van skermskote",
+  "Settings_HideFromScreenshots_Tooltip": "Sluit die program se vensters uit skermopnames uit, soos die Steam Guard-vensters altyd is. Opnames, skermdelings en afgeleë sessies sien 'n leë reghoek; die venster lyk normaal op jou eie skerm. Dit blokkeer ook skermskote wat jy self neem.",
   "Settings_ExitToTray": "Uitgang minimaliseer na skinkbord",
   "Settings_DesktopShortcut": "Desktop kortpad",
   "Settings_Tray_StartWindows": "Begin Tray met Windows",

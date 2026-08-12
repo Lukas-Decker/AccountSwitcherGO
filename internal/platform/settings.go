@@ -96,6 +96,10 @@ type AppSettings struct {
 	// running, without touching the StreamerMode override.
 	AutoStreamerMode bool `json:"autoStreamerMode,omitempty"`
 
+	// HideFromScreenshots excludes the app's windows from screen capture for as
+	// long as it is on.
+	HideFromScreenshots bool `json:"hideFromScreenshots,omitempty"`
+
 	// WindowWidth/WindowHeight/WindowX/WindowY remember the main window's last
 	// geometry so it reopens where and how the user left it. Zero means "not
 	// recorded yet", which is why these are omitempty: an absent key has to be
