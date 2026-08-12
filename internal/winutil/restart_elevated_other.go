@@ -2,7 +2,14 @@
 
 package winutil
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+// ErrElevationDeclined exists so callers can test for it without a build tag.
+// Never returned here: there is no UAC prompt to decline.
+var ErrElevationDeclined = errors.New("elevation declined")
 
 var singletonReleaser func()
 

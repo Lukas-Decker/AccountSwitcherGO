@@ -68,5 +68,11 @@ func (p *PlatformService) CheckAdminForPlatform(platformKey string) (AdminCheckR
 // RestartAsAdmin re-execs elevated with args and exits; main should register winutil.RegisterSingletonReleaser first.
 func (p *PlatformService) RestartAsAdmin(args []string) error {
 	_ = p // satisfy staticcheck if receiver unused in future
-	return winutil.RestartElevated(args)
+	err := winutil.RestartElevated(args)
+	if errors.Is(err, winutil.ErrElevationDeclined) {
+		// The user was asked for elevation and said no. Nothing failed, so the UI
+		// should carry on rather than raise an error at them.
+		return nil
+	}
+	return err
 }
