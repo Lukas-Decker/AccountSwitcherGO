@@ -415,6 +415,8 @@
   "Context_Steam_Id": "شناسه استیم [STEAM0:~]",
   "Context_Steam_Id3": "شناسه استیم 3 [U:1:~]",
   "Context_Steam_Id32": "شناسه استیم 32",
+  "Context_Steam_FriendCode": "کد دوستی Steam",
+  "Context_Steam_Cs2FriendCode": "کد دوستی CS2",
   "Context_Steam_Id64": "شناسه استیم 64 7656~",
   "Context_Steam_OpenUserdata": "باز کردن userdata",
   "Context_ManageSubmenu": "مدیریت",

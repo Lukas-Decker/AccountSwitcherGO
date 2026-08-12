@@ -415,6 +415,8 @@
   "Context_Steam_Id": "SteamID [STEAM0:~]",
   "Context_Steam_Id3": "SteamID3 [U:1 :~]",
   "Context_Steam_Id32": "Steam ID32",
+  "Context_Steam_FriendCode": "Steam код на приятел",
+  "Context_Steam_Cs2FriendCode": "CS2 код на приятел",
   "Context_Steam_Id64": "Steam ID64 7656~",
   "Context_Steam_OpenUserdata": "Отваряне на userdata",
   "Context_ManageSubmenu": "Управление",

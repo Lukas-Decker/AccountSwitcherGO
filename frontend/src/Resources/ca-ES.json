@@ -415,6 +415,8 @@
   "Context_Steam_Id": "SteamID [STEAM0:~]",
   "Context_Steam_Id3": "SteamID3 [U:1:~]",
   "Context_Steam_Id32": "SteamID32",
+  "Context_Steam_FriendCode": "Codi d'amic de Steam",
+  "Context_Steam_Cs2FriendCode": "Codi d'amic de CS2",
   "Context_Steam_Id64": "SteamID64 7656~",
   "Context_Steam_OpenUserdata": "Obre userdata",
   "Context_ManageSubmenu": "Gestiona",

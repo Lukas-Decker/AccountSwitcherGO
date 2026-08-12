@@ -415,6 +415,8 @@
   "Context_Steam_Id": "SteamID [STEAM0:~]",
   "Context_Steam_Id3": "SteamID3 [U:1:~]",
   "Context_Steam_Id32": "SteamID32",
+  "Context_Steam_FriendCode": "Steam-vriendkode",
+  "Context_Steam_Cs2FriendCode": "CS2-vriendkode",
   "Context_Steam_Id64": "SteamID64 7656~",
   "Context_Steam_OpenUserdata": "Maak userdata oop",
   "Context_ManageSubmenu": "Bestuur",

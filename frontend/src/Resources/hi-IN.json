@@ -415,6 +415,8 @@
   "Context_Steam_Id": "SteamID [STEAM0:~]",
   "Context_Steam_Id3": "SteamID3 [यू:1: ~]",
   "Context_Steam_Id32": "स्टीमआईडी32",
+  "Context_Steam_FriendCode": "Steam फ्रेंड कोड",
+  "Context_Steam_Cs2FriendCode": "CS2 फ्रेंड कोड",
   "Context_Steam_Id64": "स्टीमआईडी 64 7656 ~",
   "Context_Steam_OpenUserdata": "userdata खोलें",
   "Context_ManageSubmenu": "प्रबंधन करें",
