@@ -121,6 +121,18 @@ func SaveCurrent(deps FlowDeps, platformKey, accountName string) (err error) {
 			return err
 		}
 	}
+	// Checked after the kill, because that is when the platform has written out
+	// whatever it was holding, and before any copying, so the message names every
+	// missing input rather than only whichever one the copy loop reached first.
+	if missing := missingRequiredLoginInputs(fc); len(missing) > 0 {
+		logFlow().Warn("save blocked: login inputs missing",
+			"platform", fc.PlatformKey, "missing", strings.Join(missing, "; "))
+		return fmt.Errorf("%w: %s needs %s, which %s not on this machine. "+
+			"Sign in to %s and close it from its own menu, then try again",
+			ErrLoginInputsMissing, fc.PlatformKey, strings.Join(missing, " and "),
+			pluralIsAre(len(missing)), fc.PlatformKey)
+	}
+
 	platform.EmitActionBarStatusI18n("Status_ActionBar_SavingSession")
 
 	return saveCurrentAfterKill(deps, accountName, fc)
