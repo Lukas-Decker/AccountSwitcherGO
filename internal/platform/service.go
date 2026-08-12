@@ -90,6 +90,10 @@ func (p *PlatformService) withSettingsWrite(fn func(s *AppSettings) error) error
 // the change disappears with no error anywhere. Every writer takes this.
 var settingsWriteMu sync.Mutex
 
+// errNoSettingsChange aborts a mutateSettings call without writing the file, for
+// a batch update that turned out to change nothing.
+var errNoSettingsChange = errors.New("settings: nothing to change")
+
 func mutateSettings(fn func(s *AppSettings) error) error {
 	settingsWriteMu.Lock()
 	defer settingsWriteMu.Unlock()
@@ -241,21 +245,25 @@ type SettingsBatchUpdate struct {
 func (p *PlatformService) UpdateSettings(req SettingsBatchUpdate) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	exeDir, err := ResolveExeDir()
-	if err != nil {
-		return err
-	}
-	s, err := loadSettings(exeDir)
-	if err != nil {
-		return err
-	}
-	effects := applySettingsBatchUpdate(&s, req)
-	if !effects.dirty {
+
+	// Through mutateSettings, not its own load-save pair: a batch that read the
+	// file here could be overtaken by a window-geometry write and then put its
+	// stale copy back, losing whichever change landed in between.
+	var effects settingsBatchEffects
+	err := mutateSettings(func(s *AppSettings) error {
+		effects = applySettingsBatchUpdate(s, req)
+		if !effects.dirty {
+			return errNoSettingsChange
+		}
+		return nil
+	})
+	if errors.Is(err, errNoSettingsChange) {
 		return nil
 	}
-	if err := saveSettingsAtomic(exeDir, s); err != nil {
+	if err != nil {
 		return err
 	}
+
 	if effects.offlineMode != nil {
 		appclient.SetOfflineMode(*effects.offlineMode)
 	}
