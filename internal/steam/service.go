@@ -788,6 +788,12 @@ func (s *SteamService) ForgetSteamAccount(steamID64 string) error {
 }
 
 func (s *SteamService) steamInstallRoot() (string, error) {
+	return steamInstallRoot()
+}
+
+// steamInstallRoot resolves the Steam install folder from settings, for callers
+// that have no service to hang off.
+func steamInstallRoot() (string, error) {
 	exeDir, err := platform.ResolveExeDir()
 	if err != nil {
 		return "", err

@@ -174,6 +174,23 @@ func copyGameIcon(librarycache, appID string) string {
 	return public
 }
 
+// EnsureLocalGameIcon publishes Steam's own artwork for appID into wwwroot and
+// returns the public path, or "" when Steam has nothing cached for it.
+//
+// Disk only, so unlike the games view it is safe to call from a path that must
+// not block on the network.
+func EnsureLocalGameIcon(appID string) string {
+	appID = strings.TrimSpace(appID)
+	if appID == "" {
+		return ""
+	}
+	root, err := steamInstallRoot()
+	if err != nil || strings.TrimSpace(root) == "" {
+		return ""
+	}
+	return copyGameIcon(filepath.Join(root, "appcache", "librarycache"), appID)
+}
+
 // GetOwnedGames lists the games this machine knows about, each with the accounts
 // that have played it, so the games view can switch to an account by game.
 func (s *SteamService) GetOwnedGames() ([]OwnedGameDTO, error) {
