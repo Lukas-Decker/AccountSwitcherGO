@@ -130,6 +130,10 @@ func main() {
 	} else {
 		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: lvl})))
 	}
+	// Chunks of the codebase, the process-killing path among them, still log
+	// through the standard logger. Its default output is the same dead stderr, so
+	// without this those lines are written nowhere no matter what slog does.
+	log.SetOutput(applog.Writer())
 	actionlog.Init()
 
 	startupSettings, _ := loadStartupSettings()

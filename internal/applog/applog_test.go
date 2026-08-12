@@ -1,6 +1,7 @@
 package applog
 
 import (
+	"log"
 	"log/slog"
 	"os"
 	"strings"
@@ -89,6 +90,34 @@ func TestAFailingConsoleDoesNotStopTheFile(t *testing.T) {
 	}
 	if !strings.Contains(string(body), "survives a dead console") {
 		t.Fatalf("a failing console swallowed the log line: %q", body)
+	}
+}
+
+// Chunks of the codebase, the process-killing path among them, log through the
+// standard logger rather than slog. main routes it through Writer; this is that
+// composition, so the redirect cannot quietly stop working.
+func TestStandardLoggerReachesTheFile(t *testing.T) {
+	dir := t.TempDir()
+	t.Cleanup(func() { _ = Close() })
+
+	if err := Init(dir, slog.LevelInfo); err != nil {
+		t.Fatalf("init: %v", err)
+	}
+	previous := log.Writer()
+	log.SetOutput(Writer())
+	defer log.SetOutput(previous)
+
+	log.Printf("winutil: stopping process=%s method=%s", "EpicGamesLauncher.exe", "Combined")
+	if err := Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	body, err := os.ReadFile(Path(dir))
+	if err != nil {
+		t.Fatalf("read log: %v", err)
+	}
+	if !strings.Contains(string(body), "stopping process=EpicGamesLauncher.exe") {
+		t.Fatalf("standard logger output did not reach the file: %q", body)
 	}
 }
 
