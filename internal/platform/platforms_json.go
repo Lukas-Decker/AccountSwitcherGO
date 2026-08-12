@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"account-switcher/internal/updatecheck"
 )
 
 var (
@@ -106,11 +108,64 @@ func seedEmbeddedPlatforms(exeDir string) error {
 	}
 	dest := filepath.Join(ud, "Platforms.json")
 	if st, err := os.Stat(dest); err == nil && !st.IsDir() {
-		return nil
+		return refreshSeededPlatforms(dest)
 	} else if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return err
 	}
 	return atomicWriteBytes(dest, bytes.Clone(embeddedPlatformsJSON), 0o644)
+}
+
+// refreshSeededPlatforms brings an already-seeded Platforms.json up to the
+// descriptors this build ships.
+//
+// Without it the seed is written once and then frozen: the only other refresh
+// path is the remote check, which this fork has switched off, so a descriptor fix
+// shipped in a new build could never reach a machine that had already run an
+// older one.
+//
+// Merged rather than replaced, because the two sides are not the same set: a
+// platform the local file has and this build does not would otherwise vanish,
+// taking the accounts saved under it out of the list. The shipped descriptors win
+// where both define a platform, and everything else is left alone. A custom
+// PlatformsJSONPath is unaffected, since the file written here is not the one
+// that gets read in that case.
+func refreshSeededPlatforms(dest string) error {
+	localRaw, err := os.ReadFile(dest)
+	if err != nil {
+		return err
+	}
+	embeddedVer, err := updatecheck.ParsePlatformsJSONVersion(embeddedPlatformsJSON)
+	if err != nil {
+		// Nothing to compare against; leave the local file as it is.
+		return nil
+	}
+	localVer, err := updatecheck.ParsePlatformsJSONVersion(localRaw)
+	if err != nil {
+		localVer = ""
+	}
+	if !updatecheck.IsVersionNewer(embeddedVer, localVer) {
+		return nil
+	}
+
+	merged, err := mergePlatformsJSON(localRaw, embeddedPlatformsJSON)
+	if err != nil {
+		return err
+	}
+	// Carry the shipped version across, or the same refresh runs on every launch.
+	stamped, err := setPlatformsJSONVersion(merged, embeddedVer)
+	if err != nil {
+		return err
+	}
+	return atomicWriteBytes(dest, stamped, 0o644)
+}
+
+func setPlatformsJSONVersion(raw []byte, version string) ([]byte, error) {
+	var f platformsFile
+	if err := json.Unmarshal(raw, &f); err != nil {
+		return nil, err
+	}
+	f.Version = version
+	return json.Marshal(f)
 }
 
 func mergePlatformsJSON(base, overlay []byte) ([]byte, error) {
