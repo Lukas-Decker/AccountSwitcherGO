@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/streamer"
 )
 
 type platformsFile struct {
@@ -35,6 +36,8 @@ type PlatformStartup struct {
 	MinimizeOnSwitch         bool   `json:"minimizeOnSwitch"`
 	StartTrayWithWindows     bool   `json:"startTrayWithWindows"`
 	StartProgramCentered     bool   `json:"startProgramCentered"`
+	StreamerMode             bool   `json:"streamerMode"`
+	AutoStreamerMode         bool   `json:"autoStreamerMode"`
 	AnimationsEnabled        bool   `json:"animationsEnabled"`
 	ControllerSupportEnabled bool   `json:"controllerSupportEnabled"`
 	PrereleaseUpdates        bool   `json:"prereleaseUpdates"`
@@ -133,6 +136,8 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				MinimizeOnSwitch:         settings.MinimizeOnSwitch,
 				StartTrayWithWindows:     settings.StartTrayWithWindows,
 				StartProgramCentered:     settings.StartProgramCentered,
+				StreamerMode:             settings.StreamerMode,
+				AutoStreamerMode:         settings.AutoStreamerMode,
 				AnimationsEnabled:        settings.AnimationsEnabled,
 				ControllerSupportEnabled: settings.ControllerSupportEnabled,
 				PrereleaseUpdates:        settings.PrereleaseUpdates,
@@ -186,6 +191,8 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		MinimizeOnSwitch:         settings.MinimizeOnSwitch,
 		StartTrayWithWindows:     settings.StartTrayWithWindows,
 		StartProgramCentered:     settings.StartProgramCentered,
+		StreamerMode:             settings.StreamerMode,
+		AutoStreamerMode:         settings.AutoStreamerMode,
 		AnimationsEnabled:        settings.AnimationsEnabled,
 		ControllerSupportEnabled: settings.ControllerSupportEnabled,
 		PrereleaseUpdates:        settings.PrereleaseUpdates,
@@ -211,6 +218,8 @@ type SettingsBatchUpdate struct {
 	MinimizeOnSwitch         *bool   `json:"minimizeOnSwitch,omitempty"`
 	StartTrayWithWindows     *bool   `json:"startTrayWithWindows,omitempty"`
 	StartProgramCentered     *bool   `json:"startProgramCentered,omitempty"`
+	StreamerMode             *bool   `json:"streamerMode,omitempty"`
+	AutoStreamerMode         *bool   `json:"autoStreamerMode,omitempty"`
 	AnimationsEnabled        *bool   `json:"animationsEnabled,omitempty"`
 	ControllerSupportEnabled *bool   `json:"controllerSupportEnabled,omitempty"`
 	PrereleaseUpdates        *bool   `json:"prereleaseUpdates,omitempty"`
@@ -247,6 +256,12 @@ func (p *PlatformService) UpdateSettings(req SettingsBatchUpdate) error {
 	}
 	if effects.controllerSupport != nil {
 		TriggerControllerSupportChanged(*effects.controllerSupport)
+	}
+	if effects.streamerMode != nil {
+		streamer.SetManual(*effects.streamerMode)
+	}
+	if effects.autoStreamerMode != nil {
+		streamer.SetAutoEnabled(*effects.autoStreamerMode)
 	}
 	if effects.discordPresenceRefresh {
 		TriggerDiscordPresenceRefresh()

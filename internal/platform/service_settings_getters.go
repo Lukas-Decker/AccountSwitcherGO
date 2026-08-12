@@ -162,6 +162,24 @@ func (p *PlatformService) GetAnimationsEnabled() (bool, error) {
 	return val, nil
 }
 
+func (p *PlatformService) GetStreamerMode() (bool, error) {
+	var val bool
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = s.StreamerMode
+		return nil
+	})
+	return val, err
+}
+
+func (p *PlatformService) GetAutoStreamerMode() (bool, error) {
+	var val bool
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = s.AutoStreamerMode
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetDesktopHomeShortcutExists() (bool, error) {
 	return winutil.HomeDesktopShortcutExists(), nil
 }

@@ -89,6 +89,13 @@ type AppSettings struct {
 	// StartProgramCentered places the main window in the center of the screen when the app opens.
 	StartProgramCentered bool `json:"startProgramCentered,omitempty"`
 
+	// StreamerMode censors account identifiers and profile images unconditionally.
+	StreamerMode bool `json:"streamerMode,omitempty"`
+
+	// AutoStreamerMode turns censoring on for as long as broadcasting software is
+	// running, without touching the StreamerMode override.
+	AutoStreamerMode bool `json:"autoStreamerMode,omitempty"`
+
 	// WindowWidth/WindowHeight/WindowX/WindowY remember the main window's last
 	// geometry so it reopens where and how the user left it. Zero means "not
 	// recorded yet", which is why these are omitempty: an absent key has to be

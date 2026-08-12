@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/streamer"
 	"account-switcher/internal/winutil"
 )
 
@@ -296,6 +297,28 @@ func (p *PlatformService) SetAnimationsEnabled(enabled bool) error {
 		s.AnimationsEnabled = enabled
 		return nil
 	})
+}
+
+func (p *PlatformService) SetStreamerMode(enabled bool) error {
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.StreamerMode = enabled
+		return nil
+	}); err != nil {
+		return err
+	}
+	streamer.SetManual(enabled)
+	return nil
+}
+
+func (p *PlatformService) SetAutoStreamerMode(enabled bool) error {
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.AutoStreamerMode = enabled
+		return nil
+	}); err != nil {
+		return err
+	}
+	streamer.SetAutoEnabled(enabled)
+	return nil
 }
 
 func (p *PlatformService) SetDesktopHomeShortcut(create bool) error {

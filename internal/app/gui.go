@@ -22,6 +22,7 @@ import (
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
 	"account-switcher/internal/steam"
+	"account-switcher/internal/streamer"
 	"account-switcher/internal/tray"
 	"account-switcher/internal/updatecheck"
 	"account-switcher/internal/updatertheme"
@@ -132,6 +133,11 @@ func RunGUI(params RunGUIParams) {
 	pruneStaleWwwrootAssets(params.EmbeddedAssets)
 
 	params.DiscordRPC.Start()
+
+	// Before the window exists, so a broadcaster that is already running has been
+	// adopted by the time the first account list paints.
+	platform.InitStreamerMode(guiSettings)
+	defer streamer.Shutdown()
 
 	wailsLvl := ResolvedLogLevel(parsed)
 	if !parsed.LogLevelSet && wailsLvl < slog.LevelInfo {

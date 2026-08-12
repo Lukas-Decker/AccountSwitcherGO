@@ -9,6 +9,8 @@ type settingsBatchEffects struct {
 	dirty                  bool
 	offlineMode            *bool
 	controllerSupport      *bool
+	streamerMode           *bool
+	autoStreamerMode       *bool
 	discordPresenceRefresh bool
 }
 
@@ -44,6 +46,13 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 	applyBool(&s.MinimizeOnSwitch, req.MinimizeOnSwitch)
 	applyBool(&s.StartTrayWithWindows, req.StartTrayWithWindows)
 	applyBool(&s.StartProgramCentered, req.StartProgramCentered)
+	applyBool(&s.StreamerMode, req.StreamerMode)
+	applyBool(&s.AutoStreamerMode, req.AutoStreamerMode)
+	if req.StreamerMode != nil || req.AutoStreamerMode != nil {
+		manual, auto := s.StreamerMode, s.AutoStreamerMode
+		effects.streamerMode = &manual
+		effects.autoStreamerMode = &auto
+	}
 	applyBool(&s.AnimationsEnabled, req.AnimationsEnabled)
 	applyBool(&s.ControllerSupportEnabled, req.ControllerSupportEnabled)
 	if req.ControllerSupportEnabled != nil {
