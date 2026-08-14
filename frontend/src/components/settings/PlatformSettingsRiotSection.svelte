@@ -11,11 +11,14 @@
   let storeAvailable = true;
   let keyInput = "";
   let busy = false;
+  let snapshotting = false;
+  let canSnapshot = false;
 
   async function load(): Promise<void> {
     try {
       storeAvailable = await RiotService.CredentialStoreAvailable();
       info = await RiotService.KeyInfo();
+      canSnapshot = await RiotService.SnapshotAvailable();
     } catch (e) {
       pushToast({ type: "error", message: formatToastWithError($t("Riot_LoadFailed"), e), duration: 8000 });
     }
@@ -32,6 +35,31 @@
       pushToast({ type: "error", message: formatToastWithError($t("Riot_KeySaveFailed"), e), duration: 8000 });
     } finally {
       busy = false;
+    }
+  }
+
+  // One round of updates for every linked account. Deliberately a button rather
+  // than something automatic: a development key is never polled on its own, so
+  // this is how its quota gets spent, by being asked.
+  async function snapshotAll(): Promise<void> {
+    if (snapshotting) return;
+    snapshotting = true;
+    try {
+      const r = await RiotService.SnapshotAll();
+      const msg = $t("Riot_Snapshot_Done", {
+        refreshed: r.refreshed,
+        total: r.total,
+        failed: r.failed,
+      });
+      pushToast({
+        type: r.stoppedEarly || r.failed > 0 ? "warning" : "success",
+        message: r.stoppedEarly ? msg + " " + $t("Riot_Snapshot_RateLimited") : msg,
+        duration: 9000,
+      });
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError($t("Riot_Snapshot_Failed"), e), duration: 8000 });
+    } finally {
+      snapshotting = false;
     }
   }
 
@@ -60,9 +88,20 @@
       autocomplete="off"
     />
   </label>
-  <button type="button" class="btnicontext" disabled={busy} on:click={() => void save()}>
-    {keyInput.trim() === "" && info?.present ? $t("Riot_ApiKey_Clear") : $t("Riot_Save")}
-  </button>
+  <div class="riot-key__actions">
+    <button type="button" class="btnicontext" disabled={busy} on:click={() => void save()}>
+      {keyInput.trim() === "" && info?.present ? $t("Riot_ApiKey_Clear") : $t("Riot_Save")}
+    </button>
+    <button
+      type="button"
+      class="btnicontext"
+      disabled={snapshotting || !canSnapshot}
+      title={canSnapshot ? "" : $t("Riot_Snapshot_NeedsKey")}
+      on:click={() => void snapshotAll()}
+    >
+      {snapshotting ? $t("Riot_Snapshot_Running") : $t("Riot_Snapshot")}
+    </button>
+  </div>
 
   {#if info?.present}
     <p class="riot-key__status">
@@ -92,6 +131,12 @@
     gap: 0.45rem;
     max-width: 34rem;
     margin-bottom: 1rem;
+  }
+
+  .riot-key__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 
   .riot-key__field {

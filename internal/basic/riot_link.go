@@ -1,6 +1,10 @@
 package basic
 
-import "strings"
+import (
+	"strings"
+
+	"account-switcher/internal/profileimage"
+)
 
 // Riot links live in the same per-platform record as tags, so an account that is
 // deleted or superseded takes its link with it rather than leaving an entry
@@ -101,4 +105,29 @@ func WriteRiotAccountLink(platformKey, uniqueID string, link RiotAccountLink) er
 		f.RiotAccounts[uniqueID] = link
 	}
 	return writeIdsFile(platformKey, f)
+}
+
+// RefreshPlatformProfileImage re-fetches an account's avatar from whatever the
+// platform hook names as its source.
+//
+// Exported because the automated image path only runs as part of a save. An
+// account whose picture changed since it was last saved has no other way back to
+// the current one, short of switching to it and saving again.
+//
+// Honours the manual marker, so a picture the user chose stays chosen.
+func RefreshPlatformProfileImage(platformKey, uniqueID string) bool {
+	platformKey = strings.TrimSpace(platformKey)
+	uniqueID = strings.TrimSpace(uniqueID)
+	if platformKey == "" || uniqueID == "" {
+		return false
+	}
+	if profileimage.HasManualProfileMarker(platformKey, uniqueID) {
+		return false
+	}
+	url := platformProfileImageURL(platformKey, uniqueID)
+	if url == "" {
+		return false
+	}
+	queueProfileImageDownload(platformKey, uniqueID, url, 0)
+	return true
 }

@@ -138,10 +138,15 @@ func (s *Service) fillFromRunningClient(card *CardDTO, want riot.ID) bool {
 	card.Source = "client"
 	card.CapturedAt = ""
 	card.Level = summoner.SummonerLevel
+	card.IconID = summoner.ProfileIconID
 	card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(summoner.ProfileIconID))
 
 	if entries, rerr := client.CurrentRankedStats(ctx); rerr == nil {
 		s.appendRanks(ctx, card, entries, riot.QueueSoloDuo, riot.QueueFlex, riot.QueueTFT, riot.QueueTFTDoubleUp)
+	} else {
+		// Logged rather than swallowed: an account with a level but no ranks looks
+		// the same whether it is genuinely unranked or the call quietly failed.
+		logRiot().Info("ranked stats unavailable from the running client", "err", rerr)
 	}
 	return true
 }
@@ -155,6 +160,7 @@ func (s *Service) storeSnapshot(uniqueID string, card CardDTO) {
 		RiotID:     card.RiotID,
 		Region:     card.Region,
 		Level:      card.Level,
+		IconID:     card.IconID,
 		CapturedAt: time.Now().UTC(),
 	}
 	for _, r := range card.Ranks {

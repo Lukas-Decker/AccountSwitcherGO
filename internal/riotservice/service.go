@@ -117,11 +117,15 @@ type RankDTO struct {
 // key at all, so a card without one is still worth showing. Error carries why
 // the keyed half is missing without failing the whole call.
 type CardDTO struct {
-	RiotID  string    `json:"riotId"`
-	Region  string    `json:"region"`
-	Linked  bool      `json:"linked"`
-	HasKey  bool      `json:"hasKey"`
-	Level   int       `json:"level"`
+	RiotID string `json:"riotId"`
+	Region string `json:"region"`
+	Linked bool   `json:"linked"`
+	HasKey bool   `json:"hasKey"`
+	Level  int    `json:"level"`
+	// IconID is Riot's own id for the profile icon. Carried alongside the URL
+	// because the URL is a local cache path once resolved, and the avatar sync
+	// needs the id to rebuild it later.
+	IconID  int       `json:"iconId"`
 	IconURL string    `json:"iconUrl"`
 	Ranks   []RankDTO `json:"ranks"`
 	Links   []LinkDTO `json:"links"`
@@ -245,14 +249,19 @@ func (s *Service) getCard(uniqueID string, force bool) (CardDTO, error) {
 	// nothing better is available, and replaced when it is.
 	s.fillFromSnapshot(ctx0(), &card, link)
 
+	client := s.client()
+	card.HasKey = client.HasKey()
+
 	// The running client is the better source when it happens to be signed in as
 	// this account: current, free, and no key involved.
 	if s.fillFromRunningClient(&card, id) {
+		// Kept, exactly as an API answer is. This is the only source available
+		// without a key, so letting it evaporate when the client closes would
+		// leave the account with nothing to show and no way to get it back.
+		s.storeSnapshot(uniqueID, card)
 		return card, nil
 	}
 
-	client := s.client()
-	card.HasKey = client.HasKey()
 	if !card.HasKey || !s.liveRefreshAllowed(uniqueID, force) {
 		// Either no key, a development key that is not polled, or a refresh that
 		// came round too soon. The snapshot already filled in stands.
@@ -299,6 +308,7 @@ func (s *Service) fillLiveData(ctx context.Context, client *riot.Client, card *C
 	card.Source = "api"
 	card.CapturedAt = ""
 	card.Level = summoner.SummonerLevel
+	card.IconID = summoner.ProfileIconID
 	card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(summoner.ProfileIconID))
 
 	entries, err := client.LeagueEntriesByPUUID(ctx, acc.PUUID, region)
@@ -371,6 +381,7 @@ func (s *Service) fillFromSnapshot(ctx context.Context, card *CardDTO, link basi
 	card.Source = "snapshot"
 	card.CapturedAt = link.CapturedAt.UTC().Format(time.RFC3339)
 	card.Level = link.Level
+	card.IconID = link.IconID
 	if link.IconID > 0 {
 		card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(link.IconID))
 	}
