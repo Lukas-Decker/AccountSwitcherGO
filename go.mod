@@ -7,7 +7,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.2
 	github.com/antchfx/htmlquery v1.3.6
 	github.com/go-ole/go-ole v1.3.0
-	github.com/google/uuid v1.6.0
 	github.com/hugolgst/rich-go v0.0.0-20240715122152-74618cc1ace2
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c
@@ -36,6 +35,7 @@ require (
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
