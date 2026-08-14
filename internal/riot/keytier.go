@@ -3,6 +3,8 @@ package riot
 import (
 	"context"
 	"net/http"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -31,7 +33,12 @@ const (
 
 // developmentAppRateLimit is the allowance every development key is issued with:
 // 20 requests per second, 100 per two minutes.
-const developmentAppRateLimit = "20:1,100:120"
+//
+// Compared as a set, never as a string. Riot returns the pairs in whatever order
+// it likes, and a real development key was seen answering "100:120,20:1", which
+// an exact match reads as an unfamiliar quota and therefore as a key that had
+// been granted more than it has.
+var developmentAppRateLimit = []string{"20:1", "100:120"}
 
 // KeyInfo is what a probe call learned about the key.
 type KeyInfo struct {
@@ -45,14 +52,51 @@ type KeyInfo struct {
 
 // classifyAppRateLimit maps the header to a tier.
 func classifyAppRateLimit(header string) KeyTier {
-	norm := strings.ReplaceAll(strings.TrimSpace(header), " ", "")
-	if norm == "" {
+	buckets := parseRateLimitBuckets(header)
+	if len(buckets) == 0 {
 		return TierUnknown
 	}
-	if norm == developmentAppRateLimit {
+	if sameBuckets(buckets, parseRateLimitBuckets(strings.Join(developmentAppRateLimit, ","))) {
 		return TierDevelopment
 	}
 	return TierElevated
+}
+
+// parseRateLimitBuckets splits "100:120,20:1" into sorted "count:seconds" pairs,
+// so two spellings of the same allowance compare equal.
+func parseRateLimitBuckets(header string) []string {
+	var out []string
+	for _, part := range strings.Split(strings.ReplaceAll(header, " ", ""), ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		count, window, ok := strings.Cut(part, ":")
+		if !ok {
+			continue
+		}
+		// Numeric round trip, so "020:1" and "20:1" are the same bucket.
+		c, cerr := strconv.Atoi(count)
+		w, werr := strconv.Atoi(window)
+		if cerr != nil || werr != nil {
+			continue
+		}
+		out = append(out, strconv.Itoa(c)+":"+strconv.Itoa(w))
+	}
+	sort.Strings(out)
+	return out
+}
+
+func sameBuckets(a, b []string) bool {
+	if len(a) != len(b) || len(a) == 0 {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 // ProbeKey makes one cheap call and reports what the key turns out to be.

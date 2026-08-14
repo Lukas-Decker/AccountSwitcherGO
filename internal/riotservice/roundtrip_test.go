@@ -13,6 +13,7 @@ import (
 // "Gold, 0 LP", which looks like real data and is not.
 func TestRankSurvivesTheSnapshotRoundTrip(t *testing.T) {
 	paths.ResetForTest(t.TempDir())
+	withoutAPIKey(t)
 	s := New()
 	const uid = "round-trip"
 
@@ -80,4 +81,18 @@ func TestManualRiotIDSurvivesCapture(t *testing.T) {
 	if link.Level != 30 {
 		t.Errorf("captured level was discarded: %d", link.Level)
 	}
+}
+
+// withoutAPIKey makes the test independent of whatever is in the machine's
+// credential store, so it exercises the snapshot path rather than quietly
+// calling Riot with whichever key the developer happens to have installed.
+func withoutAPIKey(t *testing.T) {
+	t.Helper()
+	prev := apiKeySource
+	apiKeySource = func() (string, error) { return "", nil }
+	resetKeyProbeForTest()
+	t.Cleanup(func() {
+		apiKeySource = prev
+		resetKeyProbeForTest()
+	})
 }

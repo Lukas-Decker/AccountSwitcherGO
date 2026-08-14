@@ -95,6 +95,13 @@ func (s *Service) probeKey(key string) (riot.KeyInfo, error) {
 	keyState.mu.Lock()
 	keyState.info, keyState.probedKey, keyState.probedAt = info, key, time.Now()
 	keyState.mu.Unlock()
+
+	// At Info, because "my key does not work" is a question the log has to be able
+	// to answer. The quota is included since the tier is inferred from it, and a
+	// misread quota is the one way this can be wrong.
+	logRiot().Info("classified Riot API key",
+		"tier", info.Tier, "appRateLimit", info.AppRateLimit,
+		"valid", info.Valid, "liveAllowed", info.Tier.AllowsLiveRefresh(), "err", perr)
 	return info, perr
 }
 

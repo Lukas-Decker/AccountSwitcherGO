@@ -59,8 +59,18 @@ func (s *Service) client() *riot.Client {
 	return riot.NewClient(appclient.Shared, apiKey)
 }
 
-// apiKey reads the key from the OS credential store at call time.
-func apiKey() (string, error) {
+// apiKeySource is the credential store, or a stand-in during tests.
+//
+// The store is machine-global, so without this seam a unit test's behaviour
+// depends on whether the developer happens to have a key installed: the same
+// test passes on one machine and makes live API calls on another.
+var apiKeySource = credentialStoreKey
+
+// apiKey reads the key from whatever source is configured.
+func apiKey() (string, error) { return apiKeySource() }
+
+// credentialStoreKey reads the key from the OS credential store at call time.
+func credentialStoreKey() (string, error) {
 	key, err := credstore.Get(credKey)
 	if errors.Is(err, credstore.ErrNotFound) {
 		return "", nil
@@ -252,9 +262,13 @@ func (s *Service) getCard(uniqueID string, force bool) (CardDTO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), lookupTimeout)
 	defer cancel()
 	if err := s.fillLiveData(ctx, client, &card, id, region); err != nil {
+		// Info, not Debug: this is the line that explains an empty card.
+		logRiot().Info("Riot API lookup failed", "riotId", card.RiotID, "region", card.Region, "err", err)
 		card.Error = err.Error()
 		return card, nil
 	}
+	logRiot().Info("Riot API lookup succeeded",
+		"riotId", card.RiotID, "level", card.Level, "ranks", len(card.Ranks))
 	// Kept, so the figures survive the session and the next read has something to
 	// show without spending another call.
 	s.storeSnapshot(uniqueID, card)

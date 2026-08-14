@@ -4,7 +4,6 @@ package winutil
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,23 +61,24 @@ func restartVia(verb string, extraArgs []string) error {
 		}
 		return err
 	}
-	defer windows.CloseHandle(child)
+	windows.CloseHandle(child)
 
-	// A process that is still alive after this has got past its own startup; one
-	// that is already gone never came up, and exiting on it would leave the user
-	// with no window at all.
-	switch s, werr := windows.WaitForSingleObject(child, uint32(childStartupGrace.Milliseconds())); {
-	case werr != nil:
-		return fmt.Errorf("wait for restarted process: %w", werr)
-	case s == uint32(windows.WAIT_TIMEOUT):
-		os.Exit(0)
-	default:
-		var code uint32
-		if gerr := windows.GetExitCodeProcess(child, &code); gerr == nil {
-			return fmt.Errorf("restarted process exited immediately with code %d", code)
-		}
-		return fmt.Errorf("restarted process exited immediately")
-	}
+	// Having a handle is the whole confirmation available, so this exits on it.
+	//
+	// Waiting to see whether the replacement survives reported a healthy elevated
+	// restart as "exited immediately with code 0". Two things produce exactly that
+	// and both were reachable: this process is still alive while it waits, so the
+	// replacement can find an instance already running, forward its arguments and
+	// exit 0 by design; and for runas the handle need not be the application at
+	// all, since Windows may broker the launch through a process that exits once
+	// it has spawned the real one.
+	//
+	// Which of the two it was here is not established: telling them apart means
+	// driving a UAC prompt. They share a cause and a cure, which is not watching a
+	// child that is only free to run once its parent has gone. For the plain
+	// "open" verb the handle was measured to track the real child, so nothing is
+	// lost by dropping the wait beyond a check that never worked for elevation.
+	os.Exit(0)
 	return nil
 }
 
