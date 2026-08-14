@@ -24,6 +24,11 @@ tasks:
     cmds:
       - task: "{{OS}}:package"
 
+  dist:
+    summary: Builds and stages just the shippable files in dist/, with a zip beside them
+    cmds:
+      - task: "{{OS}}:dist"
+
   run:
     summary: Runs the application
     cmds:

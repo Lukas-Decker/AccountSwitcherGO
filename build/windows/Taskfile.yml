@@ -154,3 +154,13 @@ tasks:
   run:
     cmds:
       - '{{.BIN_DIR}}/{{.APP_NAME}}.exe'
+
+  dist:
+    summary: Stages a shippable build in dist/ and zips it
+    deps:
+      - task: build
+    cmds:
+      - cmd: powershell -NoProfile -ExecutionPolicy Bypass -File "{{.ROOT_DIR}}/build/windows/dist.ps1" -Root "{{.ROOT_DIR}}" -BinDir "{{.BIN_DIR}}" -BuiltExe "{{.APP_NAME}}.exe" -Arch "{{.ARCH}}"
+        platforms: [windows]
+    vars:
+      ARCH: '{{.ARCH | default ARCH}}'

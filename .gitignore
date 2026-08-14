@@ -30,3 +30,5 @@ docs/RELEASING.md
 /.codex
 /.fallow
 /.vscode
+# Release staging produced by "wails3 task dist"
+/dist
