@@ -10,6 +10,7 @@ package riotservice
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -40,6 +41,11 @@ const iconMaxAgeDays = 7
 // lookupTimeout bounds a manual refresh. Three sequential calls to Riot plus an
 // icon fetch, so it is the whole card rather than one request.
 const lookupTimeout = 20 * time.Second
+
+// logRiot names this package's lines in the shared log.
+func logRiot() *slog.Logger {
+	return slog.Default().With("component", "riot")
+}
 
 // Service is the Wails-facing surface.
 type Service struct{}
@@ -244,7 +250,24 @@ func (s *Service) fillLiveData(ctx context.Context, client *riot.Client, card *C
 	if err != nil {
 		return err
 	}
-	for _, queue := range []string{riot.QueueSoloDuo, riot.QueueFlex, riot.QueueTFT} {
+	s.appendRanks(ctx, card, entries, riot.QueueSoloDuo, riot.QueueFlex)
+
+	// TFT is a separate API, and a separate failure: an account that plays League
+	// but not TFT is the common case, so a miss here must not discard the League
+	// standings already collected.
+	tft, err := client.TFTLeagueEntriesByPUUID(ctx, acc.PUUID, region)
+	if err != nil {
+		logRiot().Debug("tft ranks unavailable", "err", err)
+		return nil
+	}
+	s.appendRanks(ctx, card, tft, riot.QueueTFT, riot.QueueTFTDoubleUp)
+	return nil
+}
+
+// appendRanks adds the named queues, in the order given, skipping any the
+// account has no standing in.
+func (s *Service) appendRanks(ctx context.Context, card *CardDTO, entries []riot.LeagueEntry, queues ...string) {
+	for _, queue := range queues {
 		e, ok := riot.EntryForQueue(entries, queue)
 		if !ok {
 			continue
@@ -261,7 +284,6 @@ func (s *Service) fillLiveData(ctx context.Context, client *riot.Client, card *C
 			HasGames:  hasGames,
 		})
 	}
-	return nil
 }
 
 // cachedImage publishes a remote image through the existing disk cache and

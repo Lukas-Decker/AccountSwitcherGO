@@ -130,7 +130,7 @@
           </button>
         {/if}
         <button type="button" class="btnicontext" on:click={() => (editing ? (editing = false) : void beginEdit())}>
-          {editing ? $t("Modal_Button_Cancel") : card?.linked ? $t("Riot_Edit") : $t("Riot_Link")}
+          {editing ? $t("Button_Cancel") : card?.linked ? $t("Riot_Edit") : $t("Riot_Link")}
         </button>
       </div>
     </header>
@@ -150,7 +150,7 @@
           </select>
         </label>
         <button type="button" class="btnicontext" disabled={saving} on:click={() => void save()}>
-          {$t("Modal_Button_Save")}
+          {$t("Riot_Save")}
         </button>
         <p class="riot-card__hint">{$t("Riot_ClearHint")}</p>
 
@@ -167,7 +167,7 @@
           />
         </label>
         <button type="button" class="btnicontext" disabled={savingKey} on:click={() => void saveKey()}>
-          {keyInput.trim() === "" && hasKey ? $t("Riot_ApiKey_Clear") : $t("Modal_Button_Save")}
+          {keyInput.trim() === "" && hasKey ? $t("Riot_ApiKey_Clear") : $t("Riot_Save")}
         </button>
         <p class="riot-card__hint">
           {keyStoreAvailable ? $t("Riot_ApiKey_Hint") : $t("Riot_ApiKey_NoStore")}

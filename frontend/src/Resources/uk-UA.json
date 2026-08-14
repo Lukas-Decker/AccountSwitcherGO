@@ -565,6 +565,7 @@
   "Settings_DiscordAppId_Hint": "Discord shows the name of the application this ID belongs to. Create your own at discord.com/developers/applications, name it what you want shown, and paste its ID here. Left empty, no presence is published.",
   "Riot_CardTitle": "Riot profile",
   "Riot_Link": "Link Riot ID",
+  "Riot_Save": "Save",
   "Riot_Edit": "Edit",
   "Riot_Refresh": "Refresh",
   "Riot_RiotId": "Riot ID",

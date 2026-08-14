@@ -106,10 +106,10 @@ type LeagueEntry struct {
 
 // Ranked queue identifiers as league-v4 spells them.
 const (
-	QueueSoloDuo  = "RANKED_SOLO_5x5"
-	QueueFlex     = "RANKED_FLEX_SR"
-	QueueTFT      = "RANKED_TFT"
-	QueueTFTDoubl = "RANKED_TFT_DOUBLE_UP"
+	QueueSoloDuo     = "RANKED_SOLO_5x5"
+	QueueFlex        = "RANKED_FLEX_SR"
+	QueueTFT         = "RANKED_TFT"
+	QueueTFTDoubleUp = "RANKED_TFT_DOUBLE_UP"
 )
 
 // Display renders a standing the way the games do, e.g. "Gold IV, 34 LP".
@@ -241,6 +241,26 @@ func (c *Client) LeagueEntriesByPUUID(ctx context.Context, puuid string, region 
 		return nil, errors.New("riot: empty PUUID")
 	}
 	url := "https://" + region.Host() + "/lol/league/v4/entries/by-puuid/" + puuid
+	var entries []LeagueEntry
+	if err := c.do(ctx, url, &entries); err != nil {
+		return nil, err
+	}
+	return entries, nil
+}
+
+// TFTLeagueEntriesByPUUID returns Teamfight Tactics ranked standings.
+//
+// A separate call because TFT is a separate API. league-v4 is the League of
+// Legends ladder and never returns a TFT queue, so asking it for RANKED_TFT
+// yields nothing at all rather than an error, which is the kind of gap that
+// survives a long time unnoticed.
+//
+// Served from the platform host, like the League ladder.
+func (c *Client) TFTLeagueEntriesByPUUID(ctx context.Context, puuid string, region Region) ([]LeagueEntry, error) {
+	if strings.TrimSpace(puuid) == "" {
+		return nil, errors.New("riot: empty PUUID")
+	}
+	url := "https://" + region.Host() + "/tft/league/v1/entries/by-puuid/" + puuid
 	var entries []LeagueEntry
 	if err := c.do(ctx, url, &entries); err != nil {
 		return nil, err
