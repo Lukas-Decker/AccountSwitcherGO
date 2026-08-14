@@ -57,7 +57,7 @@ export async function resolveInitialRoute(): Promise<void> {
 
 let syncing = false;
 
-/** Replace current history entry + route (does not push — avoids orphan stack entries on logical back). */
+/** Replace current history entry + route (does not push - avoids orphan stack entries on logical back). */
 function replaceCurrentHistoryRoute(next: Route): void {
   syncing = true;
   try {
@@ -170,10 +170,14 @@ export function navigateBackLikeButton(): void {
     history.back();
     return;
   }
-  if (typeof window !== "undefined" && window.history.length > 1) {
-    history.back();
-    return;
-  }
+  // No real entry behind this one, so there is nothing to pop and the route is
+  // rewritten instead.
+  //
+  // history.length is not the test for that: it counts the whole stack, forward
+  // entries included, so at the oldest entry it still reads greater than one.
+  // Trusting it meant calling back() where the browser rightly does nothing and
+  // then returning, which left the button dead exactly when this fallback was
+  // the thing needed.
   const prev = get(previousPage);
   replaceCurrentHistoryRoute(prev ?? { page: "home" });
 }
