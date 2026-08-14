@@ -5,6 +5,7 @@
   import { cubicOut } from "svelte/easing";
   import { Events } from "@wailsio/runtime";
   import { initStreamerMode } from "./stores/streamerMode";
+  import { installFrontendLogBridge } from "./lib/frontendLogBridge";
   import { motionEnabled } from "./lib/animation";
   import { applyAnimationClass } from "./lib/animationClass";
   import { installInputModalityTracking } from "./lib/inputModality";
@@ -296,6 +297,9 @@
   }
 
   onMount(() => {
+    // Installed unconditionally: errors are forwarded whatever the setting, and
+    // both ends drop the chatty levels unless debug logging is on.
+    const offLogBridge = installFrontendLogBridge();
     void loadSecurityStatus();
     void loadAnimationsEnabled();
     // Resolves after the first paint; the html class it sets is what censors the
@@ -421,6 +425,7 @@
       offPlatformsFound?.();
       offPlatformsUpdated?.();
       offUserDataMoveProgress?.();
+      offLogBridge();
       offStreamerMode?.();
       offSvgBridge?.();
       offInputModality();

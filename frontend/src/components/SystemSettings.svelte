@@ -123,6 +123,12 @@
     get(t)("Settings_AutoStreamerMode"),
   );
 
+  const debugLogging = createToggle(
+    () => PlatformService.GetDebugLogging(),
+    (v) => PlatformService.SetDebugLogging(v),
+    get(t)("Settings_DebugLogging"),
+  );
+
   const skipElevatePrompt = createToggle(
     () => PlatformService.GetSkipElevatePrompt(),
     (v) => PlatformService.SetSkipElevatePrompt(v),
@@ -284,6 +290,7 @@
     void startProgramCentered.init();
     void streamerModeToggle.init();
     void autoStreamerModeToggle.init();
+    void debugLogging.init();
     void skipElevatePrompt.init();
     void hideFromScreenshots.init();
     void animations.init();

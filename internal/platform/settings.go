@@ -100,6 +100,11 @@ type AppSettings struct {
 	// long as it is on.
 	HideFromScreenshots bool `json:"hideFromScreenshots,omitempty"`
 
+	// DebugLogging turns on verbose logging and forwards the frontend's console
+	// into the log file. Off by default: it is loud, and its value is entirely
+	// in being switchable when something needs explaining.
+	DebugLogging bool `json:"debugLogging,omitempty"`
+
 	// SkipElevatePrompt elevates without asking. Set by ticking the opt-out on the
 	// prompt itself, and reversible from Settings so a standing yes is never a
 	// one-way door.

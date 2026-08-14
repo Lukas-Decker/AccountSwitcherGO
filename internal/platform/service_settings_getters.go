@@ -189,6 +189,15 @@ func (p *PlatformService) GetHideFromScreenshots() (bool, error) {
 	return val, err
 }
 
+func (p *PlatformService) GetDebugLogging() (bool, error) {
+	var val bool
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = s.DebugLogging
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetSkipElevatePrompt() (bool, error) {
 	var val bool
 	err := p.withSettingsRead(func(s *AppSettings) error {

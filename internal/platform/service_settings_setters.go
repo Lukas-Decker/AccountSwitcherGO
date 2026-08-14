@@ -333,6 +333,28 @@ func (p *PlatformService) SetHideFromScreenshots(enabled bool) error {
 	return nil
 }
 
+// SetDebugLogging stores the preference and applies it to the running process,
+// so it takes effect without a restart: the point of the switch is to capture
+// something that is happening now.
+func (p *PlatformService) SetDebugLogging(enabled bool) error {
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.DebugLogging = enabled
+		return nil
+	}); err != nil {
+		return err
+	}
+	ApplyDebugLogging(enabled)
+	return nil
+}
+
+// LogFrontend records a line the webview produced.
+//
+// The console is invisible to this log otherwise, which has twice meant a fault
+// could only be explained by asking the user to open devtools and read it out.
+func (p *PlatformService) LogFrontend(level, message string) {
+	logFrontendLine(level, message)
+}
+
 func (p *PlatformService) SetSkipElevatePrompt(enabled bool) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		s.SkipElevatePrompt = enabled

@@ -165,8 +165,20 @@ func main() {
 	log.SetOutput(applog.Writer())
 	actionlog.Init()
 
+	// Verbosity follows the stored preference, and the hook lets Settings change
+	// it without a restart, which is the only way to capture something already
+	// happening.
+	platform.SetDebugLevelHook(func(debug bool) {
+		level := lvl
+		if debug {
+			level = slog.LevelDebug
+		}
+		slog.SetDefault(slog.New(slog.NewTextHandler(applog.Writer(), &slog.HandlerOptions{Level: level})))
+	})
+
 	startupSettings, _ := loadStartupSettings()
 	syncOfflineModeFromSettings(startupSettings)
+	platform.ApplyDebugLogging(startupSettings.DebugLogging)
 
 	defer crashlog.CaptureFatal()
 

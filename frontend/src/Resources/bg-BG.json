@@ -566,6 +566,8 @@
   "Riot_CardTitle": "Riot profile",
   "Riot_Link": "Link Riot ID",
   "Riot_Save": "Save",
+  "Settings_DebugLogging": "Verbose debug logging",
+  "Tooltip_DebugLogging": "Records far more detail, including what the interface prints, into Logs/app.log. Leave off unless something needs explaining.",
   "Prompt_RestartAsAdmin_NeverAsk": "Always restart as administrator without asking",
   "Settings_SkipElevatePrompt": "Skip the administrator restart prompt",
   "Tooltip_SkipElevatePrompt": "When on, the app restarts as administrator without asking first. Turn this off to be asked again.",
