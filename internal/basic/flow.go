@@ -166,6 +166,7 @@ func saveCurrentAfterKill(deps FlowDeps, accountName string, fc FlowContext) err
 			delete(idsFileData.LastUsed, existingUID)
 		}
 		delete(idsFileData.AccountTags, existingUID)
+		delete(idsFileData.RiotAccounts, existingUID)
 		if oldDestRoot, derr := accountCacheDir(fc.PlatformKey, existingName); derr == nil {
 			logFlow().Debug("remove superseded account cache", "path", oldDestRoot)
 			if rerr := security.RemoveAccountCache(fc.PlatformKey, existingUID, existingName, oldDestRoot); rerr != nil {

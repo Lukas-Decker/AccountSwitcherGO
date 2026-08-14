@@ -184,6 +184,7 @@ func (b *BasicService) ForgetAccount(platformKey, uniqueID string) error {
 	}
 	normalizeTagMaps(&f)
 	delete(f.AccountTags, uniqueID)
+	delete(f.RiotAccounts, uniqueID)
 	delete(f.AccountTagExpiries, uniqueID)
 	pruneUnusedTagDefinitions(&f)
 	if err := writeIdsFile(platformKey, f); err != nil {

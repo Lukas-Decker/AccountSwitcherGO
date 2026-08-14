@@ -38,6 +38,16 @@ type idsFile struct {
 	Tags               map[string]tagFileEntry      `json:"tags,omitempty"`
 	AccountTags        map[string][]string          `json:"accountTags,omitempty"`
 	AccountTagExpiries map[string]map[string]string `json:"accountTagExpiries,omitempty"`
+	// RiotAccounts links a saved account to the Riot ID whose public profile it
+	// shows. Stored here rather than in a file of its own so it is pruned with
+	// the account it belongs to instead of outliving it.
+	RiotAccounts map[string]RiotAccountLink `json:"riotAccounts,omitempty"`
+}
+
+// RiotAccountLink is the Riot ID and region shown for one saved account.
+type RiotAccountLink struct {
+	RiotID string `json:"riotId"`
+	Region string `json:"region"`
 }
 
 func readIdsFile(platformKey string) (idsFile, error) {

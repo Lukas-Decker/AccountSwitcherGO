@@ -20,6 +20,7 @@ import (
 	"account-switcher/internal/ipc"
 	"account-switcher/internal/paths"
 	"account-switcher/internal/platform"
+	"account-switcher/internal/riotservice"
 	"account-switcher/internal/security"
 	"account-switcher/internal/shortcuts"
 	"account-switcher/internal/steam"
@@ -49,6 +50,7 @@ var (
 	controllerSvc = controllerinput.NewService()
 	securitySvc   = security.NewService()
 	discordRPC    = discordrpc.NewManager()
+	riotSvc       = riotservice.New()
 )
 
 func init() {
@@ -186,14 +188,14 @@ func main() {
 	}
 
 	app.RunGUI(app.RunGUIParams{
-		Parsed:           parsed,
-		GuiSettings:      startupSettings,
-		Services:         serviceList(),
-		Dispatch:         disp,
-		DiscordRPC:       discordRPC,
-		StartupToast:     parsed.StartupToast,
-		EmbeddedAssets:   assets,
-		TrayIconPNG:      trayIconPNG,
+		Parsed:         parsed,
+		GuiSettings:    startupSettings,
+		Services:       serviceList(),
+		Dispatch:       disp,
+		DiscordRPC:     discordRPC,
+		StartupToast:   parsed.StartupToast,
+		EmbeddedAssets: assets,
+		TrayIconPNG:    trayIconPNG,
 	})
 }
 
@@ -205,6 +207,7 @@ func serviceList() []application.Service {
 		application.NewService(controllerSvc),
 		application.NewService(basicSvc),
 		application.NewService(securitySvc),
+		application.NewService(riotSvc),
 		application.NewService(shortcuts.NewService(platformSvc)),
 	}
 }
