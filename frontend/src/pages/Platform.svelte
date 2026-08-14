@@ -1,7 +1,6 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
-  import RiotAccountCard from "../components/RiotAccountCard.svelte";
   import type { PlatformAccountAdapter } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
@@ -18,6 +17,9 @@
   import { formatToastWithError } from "../lib/formatWailsError";
   import { offerRestartIfNeedsAdmin, isNeedsAdminError } from "../lib/adminFlow";
   import { openPrompt } from "../stores/modal";
+  import { openExternalUrl } from "../lib/openExternalUrl";
+  import { buildRiotMenu, RIOT_PLATFORM_KEY } from "../lib/riot/riotMenu";
+  import * as RiotService from "../../bindings/account-switcher/internal/riotservice/service.js";
   import "../styles/platformAccountsShared.scss";
 
   const PROFILE_FALLBACK = "/img/BasicDefault.webp";
@@ -34,6 +36,53 @@
   };
 
   export let name: string;
+
+  type RiotCard = Awaited<ReturnType<typeof RiotService.GetCard>>;
+  let riotCards: Record<string, RiotCard> = {};
+
+  /** Riot submenu from the cached card, refreshed in the background.
+   *  Never awaits: a menu must not hang on a game client or a spent API quota. */
+  function riotMenuFor(uniqueId: string): MenuItemDef {
+    void refreshRiotCard(uniqueId);
+    return buildRiotMenu(riotCards[uniqueId] ?? null, {
+      tr: (k, v) => get(t)(k, v),
+      openUrl: (url) => void openExternalUrl(url, { allowAnyHttps: true }),
+      editLink: () => void editRiotLink(uniqueId),
+      refresh: () => void refreshRiotCard(uniqueId, true),
+    });
+  }
+
+  async function refreshRiotCard(uniqueId: string, force = false): Promise<void> {
+    if (!uniqueId) return;
+    if (!force && riotCards[uniqueId]) return;
+    try {
+      riotCards = { ...riotCards, [uniqueId]: await RiotService.GetCard(uniqueId) };
+    } catch {
+      // A card is an extra, never a reason to break the menu it hangs off.
+    }
+  }
+
+  async function editRiotLink(uniqueId: string): Promise<void> {
+    const current = riotCards[uniqueId];
+    const riotId = await openPrompt({
+      title: get(t)("Riot_CardTitle"),
+      body: get(t)("Riot_RiotIdPrompt"),
+      initialValue: current?.riotId ?? "",
+    });
+    if (riotId === null) return;
+    const region = await openPrompt({
+      title: get(t)("Riot_CardTitle"),
+      body: get(t)("Riot_RegionPrompt"),
+      initialValue: current?.region ?? "euw1",
+    });
+    if (region === null) return;
+    try {
+      await RiotService.SetAccountLink(uniqueId, riotId, region);
+      await refreshRiotCard(uniqueId, true);
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Riot_SaveFailed"), e), duration: 8000 });
+    }
+  }
 
   $: adapter = {
     platformKey: name,
@@ -101,7 +150,8 @@
     setNote: (id: string, note: string) => BasicService.SetAccountNote(name, id, note),
     launch: () => LaunchPlatform(name),
 
-    buildMenu: (_a, shared) => [
+    buildMenu: (acc, shared) => [
+      ...(name === RIOT_PLATFORM_KEY ? [riotMenuFor(acc.uniqueId)] : []),
       shared.swapTo,
       shared.changeName,
       shared.createShortcut,
@@ -171,10 +221,4 @@
   } satisfies PlatformAccountAdapter<BasicRow>;
 </script>
 
-<PlatformAccountsBase {name} {adapter}>
-  <svelte:fragment slot="platform-header">
-    {#if name === "Riot Games"}
-      <RiotAccountCard />
-    {/if}
-  </svelte:fragment>
-</PlatformAccountsBase>
+<PlatformAccountsBase {name} {adapter} />
