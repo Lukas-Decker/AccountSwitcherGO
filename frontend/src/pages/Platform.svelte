@@ -1,6 +1,7 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
+  import RiotAccountCard from "../components/RiotAccountCard.svelte";
   import type { PlatformAccountAdapter } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
@@ -170,4 +171,10 @@
   } satisfies PlatformAccountAdapter<BasicRow>;
 </script>
 
-<PlatformAccountsBase {name} {adapter} />
+<PlatformAccountsBase {name} {adapter}>
+  <svelte:fragment slot="platform-header">
+    {#if name === "Riot Games"}
+      <RiotAccountCard />
+    {/if}
+  </svelte:fragment>
+</PlatformAccountsBase>

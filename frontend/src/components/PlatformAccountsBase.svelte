@@ -1023,6 +1023,9 @@
         on:close={() => closeSearchOverlay()}
         on:pick={(e) => void onSearchPick(e)}
       />
+      <!-- Platform-specific panel above the list. Riot uses it for the profile
+           card; every other platform leaves it empty and renders unchanged. -->
+      <slot name="platform-header" />
       <div class="platformTable">
       {#if loadError}
         <p class="platform-accounts-hint">{loadError}</p>
