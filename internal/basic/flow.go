@@ -455,7 +455,9 @@ func saveCurrentAfterKill(deps FlowDeps, accountName string, fc FlowContext) err
 func ensureUniqueIDOnSave(platformKey string, d platform.Descriptor, ctx platform.PathTokenContext) (string, error) {
 	if strings.EqualFold(strings.TrimSpace(d.UniqueIdMethod), "CREATE_ID_FILE") {
 		p := platform.ExpandPathTokens(platform.ExpandWindowsPath(d.UniqueIdFile), ctx)
-		if data, err := os.ReadFile(p); err == nil && len(strings.TrimSpace(string(data))) > 0 {
+		// Through the legacy resolver, or an account whose file still carries the
+		// old name would be given a brand new id and lose its saved session.
+		if data, err := os.ReadFile(resolveIDFilePath(p)); err == nil && len(strings.TrimSpace(string(data))) > 0 {
 			return strings.TrimSpace(string(data)), nil
 		}
 		b := make([]byte, 8)
@@ -623,7 +625,10 @@ func Login(deps FlowDeps, fc FlowContext, accountName string) error {
 			logFlow().Debug("merged JSON login file", "path", fp)
 			continue
 		}
-		src := filepath.Join(srcRoot, filepath.FromSlash(cacheRel))
+		// Resolved through the legacy name too: an account saved before the id
+		// file was renamed still has the old one in its cache, including inside an
+		// encrypted blob, which is only unpacked here.
+		src := resolveIDFilePath(filepath.Join(srcRoot, filepath.FromSlash(cacheRel)))
 		dst := expandPlatformPath(liveKey, folder, ctx)
 		emitUpdatingFileStatus(dst)
 		if hasGlobPattern(dst) {

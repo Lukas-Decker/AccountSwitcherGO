@@ -131,7 +131,7 @@ func registryCellToUniqueString(v any, typ uint32) (string, error) {
 }
 
 func uniqueFromCreateIDFile(d platform.Descriptor, ctx platform.PathTokenContext) (string, error) {
-	p := platform.ExpandPathTokens(platform.ExpandWindowsPath(d.UniqueIdFile), ctx)
+	p := resolveIDFilePath(platform.ExpandPathTokens(platform.ExpandWindowsPath(d.UniqueIdFile), ctx))
 	data, err := os.ReadFile(p)
 	if err != nil {
 		return "", fmt.Errorf("read unique id file %s: %w", p, err)

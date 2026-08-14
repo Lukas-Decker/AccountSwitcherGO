@@ -22,10 +22,10 @@
       "LoginFiles": {
         "%AppData%\\obs-studio\\global.ini": "global.ini",
         "%AppData%\\obs-studio\\basic\\*": "basic\\",
-        "%AppData%\\obs-studio\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%AppData%\\obs-studio\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "AllFilesRequired": true,
-      "UniqueIdFile": "%AppData%\\obs-studio\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%AppData%\\obs-studio\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Epic Games": {
@@ -258,7 +258,7 @@
         "%LocalAppData%\\Riot Games\\Riot Client\\Data\\Sessions\\": "Sessions",
         "%LocalAppData%\\Riot Games\\Riot Client\\Data": "RiotClientPrivateSettings.yaml",
         "%LocalAppData%\\Riot Games\\Riot Client\\Config": "RiotClientSettings.yaml",
-        "%LocalAppData%\\Riot Games\\Riot Client\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%LocalAppData%\\Riot Games\\Riot Client\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "Extras": {
         "ShortcutFolders": [
@@ -267,7 +267,7 @@
         "ShortcutIgnore": [ "Riot Client" ],
         "ShortcutIncludeMainExe": false
       },
-      "UniqueIdFile": "%LocalAppData%\\Riot Games\\Riot Client\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%LocalAppData%\\Riot Games\\Riot Client\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Origin": {
@@ -286,7 +286,7 @@
         "%ProgramData%\\Origin\\Subscription\\": "ProgramData\\Subscription",
         "%ProgramData%\\Origin\\local.xml": "ProgramData\\local.xml",
         "%ProgramData%\\Origin\\*.olc": "ProgramData\\",
-        "%ProgramData%\\Origin\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%ProgramData%\\Origin\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "ExitBeforeInteract": true,
       "Extras": {
@@ -302,7 +302,7 @@
           "%ProgramData%\\Origin\\local.xml": "local.xml"
         }
       },
-      "UniqueIdFile": "%ProgramData%\\Origin\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%ProgramData%\\Origin\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "EA Desktop": {
@@ -344,7 +344,7 @@
       "PathListToClear": [ "SAME_AS_LOGIN_FILES" ],
       "LoginFiles": {
         "%LocalAppData%\\NVIDIA Corporation\\GeForceNOW\\sharedstorage.json": "LocalAppData\\sharedstorage.json",
-        "%LocalAppData%\\NVIDIA Corporation\\GeForceNOW\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%LocalAppData%\\NVIDIA Corporation\\GeForceNOW\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "Extras": {
         "CachePaths": [
@@ -355,7 +355,7 @@
       },
       "ExitBeforeInteract": true,
       "ExitBeforeSave": true,
-      "UniqueIdFile": "%LocalAppData%\\NVIDIA Corporation\\GeForceNOW\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%LocalAppData%\\NVIDIA Corporation\\GeForceNOW\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Ubisoft": {
@@ -409,7 +409,7 @@
         "%AppData%\\Client\\Cookies": "Cookies",
         "%AppData%\\Client\\Network Persistent State": "Network Persistent State",
         "%AppData%\\Client\\blob_storage": "blob_storage\\",
-        "%AppData%\\Client\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%AppData%\\Client\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "Extras": {
         "CachePaths": [
@@ -417,7 +417,7 @@
         ]
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%AppData%\\Client\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%AppData%\\Client\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Oculus": {
@@ -441,7 +441,7 @@
         "%AppData%\\OculusClient\\Cookies": "Cookies",
         "%AppData%\\OculusClient\\Network Persistent State": "Network Persistent State",
         "%AppData%\\OculusClient\\blob_storage": "blob_storage\\",
-        "%AppData%\\Oculus\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%AppData%\\Oculus\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "Extras": {
         "CachePaths": [
@@ -449,7 +449,7 @@
         ]
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%AppData%\\Oculus\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%AppData%\\Oculus\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Magic Arena": {
@@ -477,10 +477,10 @@
       "PathListToClear": [ "SAME_AS_LOGIN_FILES" ],
       "LoginFiles": {
         "%LocalAppData%\\Sony Corporation\\PS Remote Play\\setting.cache": "setting.cache",
-        "%LocalAppData%\\Sony Corporation\\PS Remote Play\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%LocalAppData%\\Sony Corporation\\PS Remote Play\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%LocalAppData%\\Sony Corporation\\PS Remote Play\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%LocalAppData%\\Sony Corporation\\PS Remote Play\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Albion Online": {
@@ -541,7 +541,7 @@
         "%Documents%\\Rockstar Games\\Social Club\\Cache\\Images\\AvatarCache\\cache.dat": "AvatarCache.dat",
         "%Documents%\\Rockstar Games\\Social Club\\Launcher\\Renderer\\*": "Renderer\\",
         "%Documents%\\Rockstar Games\\Social Club\\Profiles\\*": "Profiles\\",
-        "%ProgramData%\\Rockstar Games\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%ProgramData%\\Rockstar Games\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "Extras": {
         "CachePaths": [
@@ -592,10 +592,10 @@
         "%Platform_Folder%\\launcher\\Cache\\TSF4G2\\*": "sessions\\",
         "%AppData%\\arena_breakout_infinite_launcher\\30061\\service\\intl_auth.txt": "intl_auth.txt",
         "%AppData%\\arena_breakout_infinite_launcher_Steam\\29158\\service\\intl_auth.txt": "intl_auth.txt",
-        "%AppData%\\arena_breakout_infinite_launcher\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%AppData%\\arena_breakout_infinite_launcher\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%AppData%\\arena_breakout_infinite_launcher\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%AppData%\\arena_breakout_infinite_launcher\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Delta Force": {
@@ -608,10 +608,10 @@
         "%Platform_Folder%\\launcher\\Cache\\TSF4G2\\*": "sessions\\",
         "%AppData%\\df_launcher_global_30029601\\29158\\service\\intl_auth.txt": "intl_auth.txt",
         "%AppData%\\df_launcher_global_30029601_Steam\\29158\\service\\intl_auth.txt": "intl_auth.txt",
-        "%AppData%\\df_launcher_global_30029601\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance"
+        "%AppData%\\df_launcher_global_30029601\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance"
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%AppData%\\df_launcher_global_30029601\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%AppData%\\df_launcher_global_30029601\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Jagex": {
@@ -626,11 +626,11 @@
         "%LocalAppData%\\jagex launcher\\auth\\*": "auth\\",
         "%LocalAppData%\\jagex launcher\\cefcache\\*": "cefcache\\",
         "%LocalAppData%\\jagex launcher\\logs\\*": "logs\\",
-        "%LocalAppData%\\jagex launcher\\TcNoAccSwitcher-ID.instance": "TcNoAccSwitcher-ID.instance",
+        "%LocalAppData%\\jagex launcher\\AccountSwitcher-ID.instance": "AccountSwitcher-ID.instance",
         "%LocalAppData%\\Microsoft\\Credentials\\C5F6B4FF052E05B4F26961945E953169": "LocalAppData\\Microsoft\\Credentials\\C5F6B4FF052E05B4F26961945E953169"
       },
       "ExitBeforeInteract": true,
-      "UniqueIdFile": "%LocalAppData%\\jagex launcher\\TcNoAccSwitcher-ID.instance",
+      "UniqueIdFile": "%LocalAppData%\\jagex launcher\\AccountSwitcher-ID.instance",
       "UniqueIdMethod": "CREATE_ID_FILE"
     },
     "Steam": {
@@ -673,5 +673,5 @@
   },
   "Platform-WIP": {
   },
-  "Version": "4.0.3"
+  "Version": "4.0.4"
 }
