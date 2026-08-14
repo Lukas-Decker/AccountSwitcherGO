@@ -16,8 +16,6 @@ func resolveStartupAccountCounts(platformNames []string) map[string]int {
 	return startupAccountCountResolver(platformNames)
 }
 
-
-
 // startupTagCountResolver returns per-platform tag & tagged-account totals for UI skeleton hints.
 var startupTagCountResolver func(platformNames []string) map[string]PlatformTagCountInfo
 

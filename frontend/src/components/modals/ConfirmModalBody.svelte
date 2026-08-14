@@ -9,15 +9,28 @@
   export let positiveLabel = "";
   export let negativeLabel: string | undefined = undefined;
   export let style: string = "";
+  /** When set, an opt-out checkbox is shown under the body. */
+  export let checkboxLabel: string | undefined = undefined;
+  export let checked = false;
 
-  const dispatch = createEventDispatcher<{ resolve: boolean }>();
+  const dispatch = createEventDispatcher<{ resolve: boolean | { ok: boolean; checked: boolean } }>();
+
+  // Ticking the box is a standing yes, so declining in the same breath is
+  // contradictory. Disabled rather than hidden, so the choice being removed
+  // stays visible.
+  $: negativeDisabled = checkboxLabel !== undefined && checked;
+
+  function resolveWith(ok: boolean): void {
+    dispatch("resolve", checkboxLabel === undefined ? ok : { ok, checked });
+  }
 
   function positive(): void {
-    dispatch("resolve", true);
+    resolveWith(true);
   }
 
   function negative(): void {
-    dispatch("resolve", false);
+    if (negativeDisabled) return;
+    resolveWith(false);
   }
 </script>
 
@@ -27,15 +40,30 @@
     {component}
     {componentProps}
   />
+  {#if checkboxLabel !== undefined}
+    <div class="rowSetting modal-optout">
+      <div class="form-check">
+        <input id="modal-optout" type="checkbox" bind:checked />
+        <label class="form-check-label" for="modal-optout"></label>
+      </div>
+      <label for="modal-optout">{checkboxLabel}</label>
+    </div>
+  {/if}
   <div class="modal-inline-actions settingsCol inputAndButton">
     <span class="modal-actions-spacer"></span>
     <button type="button" class="btnicontext modal-primary" on:click={positive}>
       {positiveLabel}
     </button>
     {#if style === "yesno"}
-      <button type="button" class="btnicontext" on:click={negative}>
+      <button type="button" class="btnicontext" on:click={negative} disabled={negativeDisabled}>
         {negativeLabel}
       </button>
     {/if}
   </div>
 </div>
+
+<style lang="scss">
+  .modal-optout {
+    margin: 0.4rem 0 0.2rem;
+  }
+</style>

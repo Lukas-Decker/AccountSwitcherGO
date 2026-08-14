@@ -123,6 +123,12 @@
     get(t)("Settings_AutoStreamerMode"),
   );
 
+  const skipElevatePrompt = createToggle(
+    () => PlatformService.GetSkipElevatePrompt(),
+    (v) => PlatformService.SetSkipElevatePrompt(v),
+    get(t)("Settings_SkipElevatePrompt"),
+  );
+
   const hideFromScreenshots = createToggle(
     () => PlatformService.GetHideFromScreenshots(),
     (v) => PlatformService.SetHideFromScreenshots(v),
@@ -278,6 +284,7 @@
     void startProgramCentered.init();
     void streamerModeToggle.init();
     void autoStreamerModeToggle.init();
+    void skipElevatePrompt.init();
     void hideFromScreenshots.init();
     void animations.init();
     void controllerSupport.init();

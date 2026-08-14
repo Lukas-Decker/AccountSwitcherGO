@@ -17,4 +17,3 @@ func (p *PlatformService) ResetPlatformSettings(platformKey string) error {
 	defer p.mu.Unlock()
 	return resetPlatformJSONToDefaults(platformKey)
 }
-

@@ -24,6 +24,8 @@ type ActiveModal =
       style: "yesno" | "okcancel";
       positiveLabel?: string;
       negativeLabel?: string;
+      /** Shows an opt-out checkbox, and resolves with its state beside the answer. */
+      checkboxLabel?: string;
     } & ModalBodyOptions)
   | (ModalBase & {
       kind: "prompt";
@@ -118,6 +120,7 @@ export function openConfirm(
     style?: "yesno" | "okcancel";
     positiveLabel?: string;
     negativeLabel?: string;
+    checkboxLabel?: string;
   } & ModalBodyOptions,
 ): Promise<boolean> {
   return new Promise((resolve) => {
@@ -129,6 +132,7 @@ export function openConfirm(
       style: opts.style ?? "yesno",
       positiveLabel: opts.positiveLabel,
       negativeLabel: opts.negativeLabel,
+      checkboxLabel: opts.checkboxLabel,
       body: opts.body,
       bodyComponent: opts.bodyComponent,
       bodyProps: opts.bodyProps,
@@ -270,4 +274,35 @@ export function cancelActiveModal(): void {
   else if (m.kind === "confirm") dismissModal(false);
   else if (m.kind === "crashReport") dismissModal("no" satisfies CrashReportChoice);
   else dismissModal(null);
+}
+
+/**
+ * A confirm with an opt-out checkbox, resolving with the box's state as well.
+ *
+ * Separate from openConfirm so that one keeps returning a plain boolean: a
+ * union would make `if (await openConfirm(...))` true for an object carrying
+ * ok: false, which is the kind of trap that goes unnoticed for a long time.
+ */
+export function openConfirmWithOptOut(
+  opts: {
+    title: string;
+    checkboxLabel: string;
+    positiveLabel?: string;
+    negativeLabel?: string;
+  } & ModalBodyOptions,
+): Promise<{ ok: boolean; checked: boolean }> {
+  return new Promise((resolve) => {
+    resolver = resolve as (value: unknown) => void;
+    activeModal.set({
+      id: bumpId(),
+      kind: "confirm",
+      title: opts.title,
+      style: "yesno",
+      positiveLabel: opts.positiveLabel,
+      negativeLabel: opts.negativeLabel,
+      checkboxLabel: opts.checkboxLabel,
+      body: opts.body,
+      bodyComponent: opts.bodyComponent,
+    });
+  });
 }

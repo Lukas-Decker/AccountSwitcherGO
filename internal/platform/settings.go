@@ -100,6 +100,11 @@ type AppSettings struct {
 	// long as it is on.
 	HideFromScreenshots bool `json:"hideFromScreenshots,omitempty"`
 
+	// SkipElevatePrompt elevates without asking. Set by ticking the opt-out on the
+	// prompt itself, and reversible from Settings so a standing yes is never a
+	// one-way door.
+	SkipElevatePrompt bool `json:"skipElevatePrompt,omitempty"`
+
 	// WindowWidth/WindowHeight/WindowX/WindowY remember the main window's last
 	// geometry so it reopens where and how the user left it. Zero means "not
 	// recorded yet", which is why these are omitempty: an absent key has to be
@@ -116,7 +121,7 @@ type AppSettings struct {
 	// AppBgImage is the filename (under wwwroot/backgrounds/) of the app-wide background image.
 	AppBgImage string `json:"appBgImage,omitempty"`
 
-	// AppBgOpacity is the opacity of the app-wide background (0.0–1.0). 0 means use default (0.6).
+	// AppBgOpacity is the opacity of the app-wide background (0.0-1.0). 0 means use default (0.6).
 	AppBgOpacity float64 `json:"appBgOpacity,omitempty"`
 
 	// AppBgBlur is the blur radius in px for the app-wide background. 0 means use default (4.0).
@@ -138,7 +143,7 @@ type AppSettings struct {
 type PlatformBgSettings struct {
 	// Image is the filename (under wwwroot/backgrounds/) of the platform background.
 	Image string `json:"image,omitempty"`
-	// Opacity is the opacity (0.0–1.0). 0 means use default (0.6).
+	// Opacity is the opacity (0.0-1.0). 0 means use default (0.6).
 	Opacity float64 `json:"opacity,omitempty"`
 	// Blur is the blur radius in px. 0 means use default (4.0).
 	Blur      float64 `json:"blur,omitempty"`

@@ -21,10 +21,10 @@ var (
 	saveSteamFolderFromExe func(exeFullPath string) error
 	resolveSteamExePath    func() (exePath string, ok bool)
 	resetSteamSettings     func() error
-	launchSteamExe          func() error
-	launchBasicPlatform     func(platformKey string) error
-	launchSteamExeAs        func(forceAdmin bool) error
-	launchBasicPlatformAs   func(platformKey string, forceAdmin bool) error
+	launchSteamExe         func() error
+	launchBasicPlatform    func(platformKey string) error
+	launchSteamExeAs       func(forceAdmin bool) error
+	launchBasicPlatformAs  func(platformKey string, forceAdmin bool) error
 )
 
 func SetSteamLaunchHooks(saveExe func(exeFullPath string) error, resolve func() (exePath string, ok bool)) {
@@ -123,10 +123,10 @@ func (p *PlatformService) ResolvePlatformLaunch(platformKey string) (ResolvePlat
 				return ResolvePlatformLaunchResult{}, err
 			}
 			return ResolvePlatformLaunchResult{
-				Ok:                true,
-				FoundViaShortcut:  true,
-				SoughtExeName:     exeName,
-				InitialPath:       filepath.Dir(found),
+				Ok:               true,
+				FoundViaShortcut: true,
+				SoughtExeName:    exeName,
+				InitialPath:      filepath.Dir(found),
 			}, nil
 		}
 		if settings.PlatformExePaths == nil {

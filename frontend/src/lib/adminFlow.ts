@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 import { t } from "../stores/i18n";
-import { openConfirm } from "../stores/modal";
+import { openConfirm, openConfirmWithOptOut } from "../stores/modal";
 import { pushToast } from "../stores/toast";
 import { formatToastWithError, formatWailsError } from "./formatWailsError";
 
@@ -20,6 +20,41 @@ export function isNeedsAdminError(err: unknown): boolean {
   return false;
 }
 
+
+/**
+ * Asks whether to restart elevated, unless the user has said not to ask again.
+ *
+ * The opt-out is a standing yes, so it is stored only when the answer was yes:
+ * ticking the box and then declining would otherwise record a preference the
+ * user never expressed. The prompt itself disables the negative button once the
+ * box is ticked, so that combination cannot be submitted in the first place.
+ */
+async function confirmElevate(): Promise<boolean> {
+  const tr = get(t);
+  try {
+    if (await PlatformService.GetSkipElevatePrompt()) {
+      return true;
+    }
+  } catch {
+    // Unreadable preference means ask, which is the safe direction.
+  }
+  const { ok, checked: remember } = await openConfirmWithOptOut({
+    title: tr("Modal_Title_ConfirmAction"),
+    body: tr("Prompt_RestartAsAdmin"),
+    positiveLabel: tr("Ok"),
+    negativeLabel: tr("No"),
+    checkboxLabel: tr("Prompt_RestartAsAdmin_NeverAsk"),
+  });
+  if (ok && remember) {
+    try {
+      await PlatformService.SetSkipElevatePrompt(true);
+    } catch {
+      // Failing to remember is not a reason to refuse the restart itself.
+    }
+  }
+  return ok;
+}
+
 export async function preflightAdminForPlatform(platformKey: string): Promise<void> {
   const key = String(platformKey ?? "").trim();
   if (!key) {
@@ -31,13 +66,7 @@ export async function preflightAdminForPlatform(platformKey: string): Promise<vo
       return;
     }
     const tr = get(t);
-    const ok = await openConfirm({
-      title: tr("Modal_Title_ConfirmAction"),
-      body: tr("Prompt_RestartAsAdmin"),
-      style: "yesno",
-      positiveLabel: tr("Ok"),
-      negativeLabel: tr("No"),
-    });
+    const ok = await confirmElevate();
     if (ok) {
       await PlatformService.RestartAsAdmin([`--page=${key}`]);
       return;
@@ -64,13 +93,7 @@ export async function offerRestartIfNeedsAdmin(err: unknown, platformKey: string
   }
   const key = String(platformKey ?? "").trim();
   const tr = get(t);
-  const ok = await openConfirm({
-    title: tr("Modal_Title_ConfirmAction"),
-    body: tr("Prompt_RestartAsAdmin"),
-    style: "yesno",
-    positiveLabel: tr("Ok"),
-    negativeLabel: tr("No"),
-  });
+  const ok = await confirmElevate();
   if (ok && key) {
     await PlatformService.RestartAsAdmin([`--page=${key}`]);
   }

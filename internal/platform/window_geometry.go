@@ -1,7 +1,5 @@
 package platform
 
-
-
 // WindowGeometry is the main window's remembered size, position and maximised
 // state.
 type WindowGeometry struct {
@@ -19,7 +17,6 @@ const (
 	minRememberedWindowWidth  = 760
 	minRememberedWindowHeight = 520
 )
-
 
 // Valid reports whether a remembered size is usable. Position is allowed to be
 // anything, including negative, because a second monitor left of the primary one

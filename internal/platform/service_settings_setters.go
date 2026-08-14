@@ -333,6 +333,13 @@ func (p *PlatformService) SetHideFromScreenshots(enabled bool) error {
 	return nil
 }
 
+func (p *PlatformService) SetSkipElevatePrompt(enabled bool) error {
+	return p.withSettingsWrite(func(s *AppSettings) error {
+		s.SkipElevatePrompt = enabled
+		return nil
+	})
+}
+
 func (p *PlatformService) SetDesktopHomeShortcut(create bool) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
