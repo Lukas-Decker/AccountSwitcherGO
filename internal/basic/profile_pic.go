@@ -32,6 +32,12 @@ func queueAutomatedProfileImage(platformKey, uniqueID, accountName string, d pla
 	if profileimage.HasManualProfileMarker(platformKey, uniqueID) {
 		return nil
 	}
+	// A platform that can name its own image wins: for Riot that is the profile
+	// icon the account actually wears, which no descriptor rule could find.
+	if url := platformProfileImageURL(platformKey, uniqueID); url != "" {
+		queueProfileImageDownload(platformKey, uniqueID, url, 0)
+		return nil
+	}
 	ctx := platform.PathTokenContext{PlatformFolder: folder}
 	if platformProfileImagesSavedPerAccount(platformKey) && accountName != "" {
 		if src, ok, err := platformProfileImageSourceFromSavedAccount(platformKey, accountName); err == nil && ok {

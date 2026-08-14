@@ -90,6 +90,22 @@ func init() {
 		}
 		tray.RefreshMenuIfSet()
 	})
+	// Riot enrichment, registered here because internal/basic cannot import the
+	// service that reads its account links without forming a cycle.
+	basic.SetAccountCapturedHook(func(platformKey, uniqueID string) {
+		if platformKey != riotservice.PlatformKey {
+			return
+		}
+		if _, err := riotservice.CaptureFromClient(uniqueID); err != nil {
+			slog.Debug("riot capture failed", "uniqueID", uniqueID, "err", err)
+		}
+	})
+	basic.SetProfileImageSourceHook(func(platformKey, uniqueID string) string {
+		if platformKey != riotservice.PlatformKey {
+			return ""
+		}
+		return riotservice.ProfileIconURLFor(uniqueID)
+	})
 	app.RegisterStartupAccountCounts()
 }
 

@@ -201,4 +201,3 @@ func mergeBasicAccountDTO(list AccountListItemDTO, enrich AccountEnrichmentDTO) 
 		SavedDataBroken:    list.SavedDataBroken || enrich.SavedDataBroken,
 	}
 }
-

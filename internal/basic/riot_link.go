@@ -37,6 +37,41 @@ func ReadAllRiotAccountLinks(platformKey string) (map[string]RiotAccountLink, er
 	return out, nil
 }
 
+// MergeRiotAccountSnapshot records captured profile data against an account.
+//
+// The Riot ID is only adopted when the account has none or was filled in
+// automatically before: a name the user typed is theirs, and a client that
+// happens to be signed in as somebody else must not quietly rewrite it.
+func MergeRiotAccountSnapshot(platformKey, uniqueID string, captured RiotAccountLink) error {
+	uniqueID = strings.TrimSpace(uniqueID)
+	if uniqueID == "" {
+		return nil
+	}
+	f, err := readIdsFile(platformKey)
+	if err != nil {
+		return err
+	}
+	if f.RiotAccounts == nil {
+		f.RiotAccounts = map[string]RiotAccountLink{}
+	}
+	existing := f.RiotAccounts[uniqueID]
+
+	next := existing
+	if !existing.Manual && strings.TrimSpace(captured.RiotID) != "" {
+		next.RiotID = strings.TrimSpace(captured.RiotID)
+		if strings.TrimSpace(captured.Region) != "" {
+			next.Region = strings.TrimSpace(captured.Region)
+		}
+	}
+	next.Level = captured.Level
+	next.IconID = captured.IconID
+	next.Ranks = captured.Ranks
+	next.CapturedAt = captured.CapturedAt
+
+	f.RiotAccounts[uniqueID] = next
+	return writeIdsFile(platformKey, f)
+}
+
 // WriteRiotAccountLink stores the link for one account. An empty Riot ID clears
 // it, so the UI needs no separate removal call.
 func WriteRiotAccountLink(platformKey, uniqueID string, link RiotAccountLink) error {
@@ -56,6 +91,12 @@ func WriteRiotAccountLink(platformKey, uniqueID string, link RiotAccountLink) er
 	} else {
 		if f.RiotAccounts == nil {
 			f.RiotAccounts = map[string]RiotAccountLink{}
+		}
+		// Typed by hand, so auto-capture leaves it alone from here on. Any snapshot
+		// already held is kept: it still describes this account.
+		link.Manual = true
+		if prev, ok := f.RiotAccounts[uniqueID]; ok {
+			link.Level, link.IconID, link.Ranks, link.CapturedAt = prev.Level, prev.IconID, prev.Ranks, prev.CapturedAt
 		}
 		f.RiotAccounts[uniqueID] = link
 	}

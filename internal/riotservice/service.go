@@ -111,6 +111,11 @@ type CardDTO struct {
 	Ranks   []RankDTO `json:"ranks"`
 	Links   []LinkDTO `json:"links"`
 	Error   string    `json:"error"`
+	// Source is where the figures came from: "client", "api" or "snapshot".
+	Source string `json:"source"`
+	// CapturedAt is when a snapshot was taken, empty when the data is live. The
+	// UI shows it so a rank from weeks ago is not read as current.
+	CapturedAt string `json:"capturedAt"`
 }
 
 // Regions lists the regions the UI offers.
@@ -211,6 +216,16 @@ func (s *Service) GetCard(uniqueID string) (CardDTO, error) {
 		card.Links = append(card.Links, LinkDTO{Site: l.Site, Title: string(l.Title), URL: l.URL})
 	}
 
+	// Whatever was captured the last time this account was used. Shown as-is when
+	// nothing better is available, and replaced when it is.
+	s.fillFromSnapshot(ctx0(), &card, link)
+
+	// The running client is the better source when it happens to be signed in as
+	// this account: current, free, and no key involved.
+	if s.fillFromRunningClient(&card, id) {
+		return card, nil
+	}
+
 	client := s.client()
 	card.HasKey = client.HasKey()
 	if !card.HasKey {
@@ -243,6 +258,11 @@ func (s *Service) fillLiveData(ctx context.Context, client *riot.Client, card *C
 	if err != nil {
 		return err
 	}
+	// Replaces the snapshot rather than adding to it: both describe the same
+	// account, and appending would list every rank twice.
+	card.Ranks = nil
+	card.Source = "api"
+	card.CapturedAt = ""
 	card.Level = summoner.SummonerLevel
 	card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(summoner.ProfileIconID))
 
@@ -300,4 +320,42 @@ func (s *Service) cachedImage(ctx context.Context, remoteURL string) string {
 		return ""
 	}
 	return local
+}
+
+// ctx0 is a short-lived context for cache lookups that only touch disk.
+func ctx0() context.Context { return context.Background() }
+
+// fillFromSnapshot populates the card from what was last captured for the
+// account, and records when that was.
+func (s *Service) fillFromSnapshot(ctx context.Context, card *CardDTO, link basic.RiotAccountLink) {
+	if link.CapturedAt.IsZero() {
+		return
+	}
+	card.Source = "snapshot"
+	card.CapturedAt = link.CapturedAt.UTC().Format(time.RFC3339)
+	card.Level = link.Level
+	if link.IconID > 0 {
+		card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(link.IconID))
+	}
+	for _, r := range link.Ranks {
+		e := riot.LeagueEntry{
+			QueueType:    r.Queue,
+			Tier:         r.Tier,
+			Rank:         r.Rank,
+			LeaguePoints: r.LeaguePoints,
+			Wins:         r.Wins,
+			Losses:       r.Losses,
+		}
+		rate, hasGames := e.WinRate()
+		card.Ranks = append(card.Ranks, RankDTO{
+			Queue:     r.Queue,
+			Tier:      r.Tier,
+			Display:   e.Display(),
+			EmblemURL: s.cachedImage(ctx, riot.RankedEmblemURL(r.Tier)),
+			Wins:      r.Wins,
+			Losses:    r.Losses,
+			WinRate:   int(rate + 0.5),
+			HasGames:  hasGames,
+		})
+	}
 }

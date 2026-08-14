@@ -44,10 +44,34 @@ type idsFile struct {
 	RiotAccounts map[string]RiotAccountLink `json:"riotAccounts,omitempty"`
 }
 
-// RiotAccountLink is the Riot ID and region shown for one saved account.
+// RiotAccountLink is the Riot ID and region shown for one saved account, plus
+// the last profile data captured for it.
+//
+// The snapshot exists because the only keyless source, the running League
+// Client, knows just the account signed in at that moment. Recording what it
+// said means the other saved accounts still show something real rather than
+// nothing, and CapturedAt is stored so the age can be shown instead of a stale
+// rank passing for current.
 type RiotAccountLink struct {
 	RiotID string `json:"riotId"`
 	Region string `json:"region"`
+	// Manual marks a Riot ID the user typed. Auto-capture never overwrites one.
+	Manual bool `json:"manual,omitempty"`
+
+	Level      int                `json:"level,omitempty"`
+	IconID     int                `json:"iconId,omitempty"`
+	Ranks      []RiotRankSnapshot `json:"ranks,omitempty"`
+	CapturedAt time.Time          `json:"capturedAt,omitempty"`
+}
+
+// RiotRankSnapshot is one queue's standing as it was when captured.
+type RiotRankSnapshot struct {
+	Queue        string `json:"queue"`
+	Tier         string `json:"tier"`
+	Rank         string `json:"rank,omitempty"`
+	LeaguePoints int    `json:"leaguePoints"`
+	Wins         int    `json:"wins"`
+	Losses       int    `json:"losses"`
 }
 
 func readIdsFile(platformKey string) (idsFile, error) {

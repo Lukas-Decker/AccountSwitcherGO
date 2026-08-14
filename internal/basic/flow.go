@@ -448,6 +448,8 @@ func saveCurrentAfterKill(deps FlowDeps, accountName string, fc FlowContext) err
 	}
 	syncBasicTrayKnownAccounts(fc.PlatformKey, ids)
 
+	// Before the image, so a profile icon captured here is available to it.
+	notifyAccountCaptured(fc.PlatformKey, uid)
 	platform.EmitActionBarStatusI18n("Status_HandlingImage")
 	return queueAutomatedProfileImage(fc.PlatformKey, uid, accountName, fc.Descriptor, fc.Folder)
 }
@@ -833,6 +835,9 @@ func SwapTo(deps FlowDeps, platformKey, uniqueID string, extraLaunchArgs []strin
 	}
 	_ = touchLastUsed(fc.PlatformKey, uniqueID)
 	recordBasicTrayRecent(platformKey, uniqueID)
+	// The moment the platform's own client is signed in as this account, which is
+	// the only chance to record what it knows.
+	notifyAccountCaptured(fc.PlatformKey, uniqueID)
 	platform.TriggerDiscordPresenceRefresh()
 	if !ps.AutoStart {
 		tray.MaybeHideMainWindow()
