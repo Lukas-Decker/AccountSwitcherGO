@@ -9,6 +9,10 @@ import (
 // file. A geometry save that loads before a batch update and writes after it puts
 // its stale copy back, and the user's change vanishes with no error anywhere.
 func TestConcurrentWritersDoNotLoseEachOthersChanges(t *testing.T) {
+	// APPDATA is redirected first. Without it the settings path can resolve to the
+	// real user data directory however temporary the exe dir is, and the test then
+	// writes over the user's own settings.
+	setTestAppData(t)
 	dir := t.TempDir()
 	ResetPathSingletonsForTest(dir)
 
