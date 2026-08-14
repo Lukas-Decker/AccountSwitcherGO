@@ -53,8 +53,9 @@
           positiveLabel={m.positiveLabel ?? (m.style === "yesno" ? $t("Yes") : $t("Ok"))}
           negativeLabel={m.negativeLabel ?? $t("No")}
           style={m.style}
-          on:resolve={onResolve}
-        />
+          checkboxLabel={m.checkboxLabel}
+          on:resolve={onResolve}
+        />
       {:else if m.kind === "prompt"}
         <PromptModalBody
           html={m.body}

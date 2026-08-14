@@ -290,7 +290,7 @@ export function openConfirmWithOptOut(
     positiveLabel?: string;
     negativeLabel?: string;
   } & ModalBodyOptions,
-): Promise<{ ok: boolean; checked: boolean }> {
+): Promise<boolean | { ok: boolean; checked: boolean }> {
   return new Promise((resolve) => {
     resolver = resolve as (value: unknown) => void;
     activeModal.set({
@@ -303,6 +303,7 @@ export function openConfirmWithOptOut(
       checkboxLabel: opts.checkboxLabel,
       body: opts.body,
       bodyComponent: opts.bodyComponent,
+      bodyProps: opts.bodyProps,
     });
   });
 }

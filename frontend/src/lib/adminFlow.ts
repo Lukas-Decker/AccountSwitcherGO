@@ -38,13 +38,19 @@ async function confirmElevate(): Promise<boolean> {
   } catch {
     // Unreadable preference means ask, which is the safe direction.
   }
-  const { ok, checked: remember } = await openConfirmWithOptOut({
+  const answer = await openConfirmWithOptOut({
     title: tr("Modal_Title_ConfirmAction"),
     body: tr("Prompt_RestartAsAdmin"),
     positiveLabel: tr("Ok"),
     negativeLabel: tr("No"),
     checkboxLabel: tr("Prompt_RestartAsAdmin_NeverAsk"),
   });
+  // A bare boolean is what a confirm without a checkbox resolves with, and this
+  // has already been on the receiving end of one: destructuring ok off it gave
+  // undefined, so pressing Ok quietly did nothing. Both shapes are accepted so
+  // the answer never depends on that wiring holding.
+  const ok = typeof answer === "boolean" ? answer : Boolean(answer?.ok);
+  const remember = typeof answer === "boolean" ? false : Boolean(answer?.checked);
   if (ok && remember) {
     try {
       await PlatformService.SetSkipElevatePrompt(true);
