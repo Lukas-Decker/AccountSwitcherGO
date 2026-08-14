@@ -42,7 +42,17 @@ export function buildRiotMenu(card: Card | null, deps: RiotMenuDeps): MenuItemDe
   const { tr } = deps;
   const children: MenuItemDef[] = [];
 
-  if (!card?.linked) {
+  // Not loaded and not linked are different answers, and saying the second when
+  // the first is true tells the user their account is unlinked when it is not.
+  // A menu is built synchronously the instant it opens, so "not yet" is a real
+  // state rather than a transient that can be waited out.
+  if (card === null) {
+    children.push({ label: tr("Riot_Loading"), disabled: true });
+    children.push({ label: tr("Riot_Edit"), action: () => deps.editLink() });
+    return { label: tr("Riot_CardTitle"), children };
+  }
+
+  if (!card.linked) {
     children.push({ label: tr("Riot_Link"), action: () => deps.editLink() });
     return { label: tr("Riot_CardTitle"), children };
   }

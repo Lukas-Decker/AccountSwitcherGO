@@ -52,6 +52,24 @@
     });
   }
 
+  /**
+   * Loads the cards for a whole list up front.
+   *
+   * A context menu is built synchronously the moment it opens, so a card that is
+   * still being fetched is simply absent and the account renders as unlinked. The
+   * fetch cannot be awaited there without the menu hanging on a game client, so
+   * the cache is filled ahead of the first right-click instead.
+   *
+   * Sequential, and using the ordinary read rather than a forced one, so this
+   * stays subject to the same gates as everything else: a development key is not
+   * called at all and an elevated one is throttled per account.
+   */
+  async function warmRiotCards(uniqueIds: string[]): Promise<void> {
+    for (const id of uniqueIds) {
+      await refreshRiotCard(id);
+    }
+  }
+
   async function refreshRiotCard(uniqueId: string, force = false): Promise<void> {
     if (!uniqueId) return;
     if (!force && riotCards[uniqueId]) return;
@@ -117,13 +135,17 @@
 
     loadAccountsList: async () => {
       const rows = await BasicService.GetAccountsList(name);
-      return rows.map((r: AccountListItemDTO) => ({
+      const list = rows.map((r: AccountListItemDTO) => ({
         platformKey: r.platformKey,
         uniqueId: r.uniqueId,
         displayName: r.displayName,
         currentSession: r.currentSession ?? false,
         savedDataBroken: r.savedDataBroken ?? false,
       })) as BasicRow[];
+      if (name === RIOT_PLATFORM_KEY) {
+        void warmRiotCards(list.map((r) => r.uniqueId));
+      }
+      return list;
     },
     loadAccountsEnrichment: async () => {
       const rows = await BasicService.GetAccountsEnrichment(name);

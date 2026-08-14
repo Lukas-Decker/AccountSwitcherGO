@@ -566,6 +566,7 @@
   "Riot_CardTitle": "Riot profile",
   "Riot_Link": "Link Riot ID",
   "Riot_Save": "Save",
+  "Riot_Loading": "Loading profile...",
   "Riot_Snapshot": "Create snapshot",
   "Riot_Snapshot_Running": "Creating snapshot...",
   "Riot_Snapshot_NeedsKey": "Needs an API key: the running client only knows the account signed in to it.",
