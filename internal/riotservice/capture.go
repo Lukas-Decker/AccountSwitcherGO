@@ -145,3 +145,29 @@ func (s *Service) fillFromRunningClient(card *CardDTO, want riot.ID) bool {
 	}
 	return true
 }
+
+// storeSnapshot records a freshly fetched card so it outlives the session.
+//
+// Everything fetched is kept, whatever the source. A key that may only be used
+// sparingly is exactly the one whose answers are worth holding on to.
+func (s *Service) storeSnapshot(uniqueID string, card CardDTO) {
+	captured := basic.RiotAccountLink{
+		RiotID:     card.RiotID,
+		Region:     card.Region,
+		Level:      card.Level,
+		CapturedAt: time.Now().UTC(),
+	}
+	for _, r := range card.Ranks {
+		captured.Ranks = append(captured.Ranks, basic.RiotRankSnapshot{
+			Queue:        r.Queue,
+			Tier:         r.Tier,
+			Rank:         r.Rank,
+			LeaguePoints: r.LeaguePoints,
+			Wins:         r.Wins,
+			Losses:       r.Losses,
+		})
+	}
+	if err := basic.MergeRiotAccountSnapshot(PlatformKey, uniqueID, captured); err != nil {
+		logRiot().Debug("could not store snapshot", "uniqueID", uniqueID, "err", err)
+	}
+}

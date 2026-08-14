@@ -86,14 +86,19 @@ type RegionDTO struct {
 
 // RankDTO is one ranked queue's standing.
 type RankDTO struct {
-	Queue     string `json:"queue"`
-	Tier      string `json:"tier"`
-	Display   string `json:"display"`
-	EmblemURL string `json:"emblemUrl"`
-	Wins      int    `json:"wins"`
-	Losses    int    `json:"losses"`
-	WinRate   int    `json:"winRate"`
-	HasGames  bool   `json:"hasGames"`
+	Queue string `json:"queue"`
+	Tier  string `json:"tier"`
+	// Rank is the division numeral, empty for the tiers that have none.
+	// Carried separately from Display so a snapshot can be rebuilt without
+	// parsing the rendered string back apart.
+	Rank         string `json:"rank"`
+	LeaguePoints int    `json:"leaguePoints"`
+	Display      string `json:"display"`
+	EmblemURL    string `json:"emblemUrl"`
+	Wins         int    `json:"wins"`
+	Losses       int    `json:"losses"`
+	WinRate      int    `json:"winRate"`
+	HasGames     bool   `json:"hasGames"`
 }
 
 // CardDTO is everything the account card renders.
@@ -186,6 +191,16 @@ func (s *Service) SetAccountLink(uniqueID, riotID, region string) error {
 // GetCard returns the card for a saved account, fetching live data when a key is
 // configured.
 func (s *Service) GetCard(uniqueID string) (CardDTO, error) {
+	return s.getCard(uniqueID, false)
+}
+
+// RefreshCard is the user asking directly, which overrides the throttle and lets
+// a development key fill in a snapshot it would not be polled for.
+func (s *Service) RefreshCard(uniqueID string) (CardDTO, error) {
+	return s.getCard(uniqueID, true)
+}
+
+func (s *Service) getCard(uniqueID string, force bool) (CardDTO, error) {
 	if err := security.RequireUnlocked(); err != nil {
 		return CardDTO{}, err
 	}
@@ -228,7 +243,9 @@ func (s *Service) GetCard(uniqueID string) (CardDTO, error) {
 
 	client := s.client()
 	card.HasKey = client.HasKey()
-	if !card.HasKey {
+	if !card.HasKey || !s.liveRefreshAllowed(uniqueID, force) {
+		// Either no key, a development key that is not polled, or a refresh that
+		// came round too soon. The snapshot already filled in stands.
 		return card, nil
 	}
 
@@ -236,7 +253,11 @@ func (s *Service) GetCard(uniqueID string) (CardDTO, error) {
 	defer cancel()
 	if err := s.fillLiveData(ctx, client, &card, id, region); err != nil {
 		card.Error = err.Error()
+		return card, nil
 	}
+	// Kept, so the figures survive the session and the next read has something to
+	// show without spending another call.
+	s.storeSnapshot(uniqueID, card)
 	return card, nil
 }
 
@@ -294,14 +315,16 @@ func (s *Service) appendRanks(ctx context.Context, card *CardDTO, entries []riot
 		}
 		rate, hasGames := e.WinRate()
 		card.Ranks = append(card.Ranks, RankDTO{
-			Queue:     queue,
-			Tier:      e.Tier,
-			Display:   e.Display(),
-			EmblemURL: s.cachedImage(ctx, riot.RankedEmblemURL(e.Tier)),
-			Wins:      e.Wins,
-			Losses:    e.Losses,
-			WinRate:   int(rate + 0.5),
-			HasGames:  hasGames,
+			Queue:        queue,
+			Tier:         e.Tier,
+			Rank:         e.Rank,
+			LeaguePoints: e.LeaguePoints,
+			Display:      e.Display(),
+			EmblemURL:    s.cachedImage(ctx, riot.RankedEmblemURL(e.Tier)),
+			Wins:         e.Wins,
+			Losses:       e.Losses,
+			WinRate:      int(rate + 0.5),
+			HasGames:     hasGames,
 		})
 	}
 }
@@ -348,14 +371,16 @@ func (s *Service) fillFromSnapshot(ctx context.Context, card *CardDTO, link basi
 		}
 		rate, hasGames := e.WinRate()
 		card.Ranks = append(card.Ranks, RankDTO{
-			Queue:     r.Queue,
-			Tier:      r.Tier,
-			Display:   e.Display(),
-			EmblemURL: s.cachedImage(ctx, riot.RankedEmblemURL(r.Tier)),
-			Wins:      r.Wins,
-			Losses:    r.Losses,
-			WinRate:   int(rate + 0.5),
-			HasGames:  hasGames,
+			Queue:        r.Queue,
+			Tier:         r.Tier,
+			Rank:         r.Rank,
+			LeaguePoints: r.LeaguePoints,
+			Display:      e.Display(),
+			EmblemURL:    s.cachedImage(ctx, riot.RankedEmblemURL(r.Tier)),
+			Wins:         r.Wins,
+			Losses:       r.Losses,
+			WinRate:      int(rate + 0.5),
+			HasGames:     hasGames,
 		})
 	}
 }

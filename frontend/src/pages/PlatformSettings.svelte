@@ -8,6 +8,7 @@
   import GeneralSettingsBlock from "../components/GeneralSettingsBlock.svelte";
   import PlatformSettingsSteamSection from "../components/settings/PlatformSettingsSteamSection.svelte";
   import PlatformSettingsGenericSection from "../components/settings/PlatformSettingsGenericSection.svelte";
+  import PlatformSettingsRiotSection from "../components/settings/PlatformSettingsRiotSection.svelte";
   import PlatformSettingsToolsSection from "../components/settings/PlatformSettingsToolsSection.svelte";
   import * as Wails from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
@@ -474,6 +475,10 @@
       on:refreshBasicProfileImages={onRefreshBasicProfileImages}
       on:clearBasicProfileImages={onClearBasicProfileImages}
     />
+  {/if}
+
+  {#if name === "Riot Games"}
+    <PlatformSettingsRiotSection />
   {/if}
 
   {#if (isSteam && steamSettings) || (!isSteam && genericPS)}
