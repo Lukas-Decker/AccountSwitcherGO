@@ -6,6 +6,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"strings"
 
 	"account-switcher/internal/actionlog"
 	"account-switcher/internal/app"
@@ -89,6 +90,18 @@ func init() {
 			steam.SyncTrayKnownAccounts()
 		}
 		tray.RefreshMenuIfSet()
+	})
+	// Translated here, where the user's language is resolvable, so the layers
+	// below can raise a toast without knowing about either i18n or the app.
+	platform.SetToastHook(func(typ, _, messageKey string, vars map[string]string) {
+		exeDir, err := platform.ResolveExeDir()
+		language := "en-US"
+		if err == nil {
+			if s, lerr := platform.LoadAppSettings(exeDir); lerr == nil && strings.TrimSpace(s.Language) != "" {
+				language = s.Language
+			}
+		}
+		app.EmitToast(typ, "", i18n.T(exeDir, language, messageKey, vars), 9000)
 	})
 	// Riot enrichment, registered here because internal/basic cannot import the
 	// service that reads its account links without forming a cycle.

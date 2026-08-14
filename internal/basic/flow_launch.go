@@ -17,9 +17,35 @@ func killPlatformExes(deps FlowDeps, fc FlowContext) error {
 		return err
 	}
 	platform.EmitActionBarStatusI18nPlatform("Status_ClosingPlatform", fc.PlatformKey)
-	if err := winutil.KillByName(fc.Descriptor.ExesToEnd, closingMethod, electronBeforeKillSynth(deps, fc.PlatformKey, fc.Descriptor.ExesToEnd)); err != nil {
+	result, err := winutil.KillByNameWithOptions(fc.Descriptor.ExesToEnd, winutil.KillOptions{
+		Method:              closingMethod,
+		GraceTimeout:        fc.Settings.CloseGrace(),
+		AllowForce:          fc.Settings.ForceCloseEnabled(),
+		BeforeElectronSynth: electronBeforeKillSynth(deps, fc.PlatformKey, fc.Descriptor.ExesToEnd),
+	})
+	if err != nil {
 		platform.EmitActionBarStatusI18nPlatform("Status_ClosingPlatformFailed", fc.PlatformKey)
 		return err
+	}
+
+	// Both outcomes are worth saying out loud. A terminated launcher may not have
+	// written its session, which is what the next save will go looking for; one
+	// that is still running will not have released it at all.
+	if len(result.Forced) > 0 {
+		logFlow().Warn("platform had to be force-closed; its session may not have been written",
+			"platform", fc.PlatformKey, "processes", strings.Join(result.Forced, ", "))
+		platform.EmitToastI18n("warning", "Toast_ForceClosed", map[string]string{
+			"platform":  fc.PlatformKey,
+			"processes": strings.Join(result.Forced, ", "),
+		})
+	}
+	if len(result.Survived) > 0 {
+		logFlow().Warn("platform did not close and force is disabled",
+			"platform", fc.PlatformKey, "processes", strings.Join(result.Survived, ", "))
+		platform.EmitToastI18n("error", "Toast_StillRunning", map[string]string{
+			"platform":  fc.PlatformKey,
+			"processes": strings.Join(result.Survived, ", "),
+		})
 	}
 	return nil
 }

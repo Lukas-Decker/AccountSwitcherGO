@@ -9,6 +9,7 @@
   } from "../../lib/platformSettingsShared";
   import SharedSettingCheckbox from "./SharedSettingCheckbox.svelte";
   import ProcessMethodDropdown from "./ProcessMethodDropdown.svelte";
+  import { tooltip } from "../../lib/actions/tooltip";
   import type { PlatformSettings } from "../../../bindings/account-switcher/internal/platform/models";
 
   export let name: string;
@@ -117,6 +118,44 @@
     }}
   />
 {/if}
+
+<!-- How long the platform gets to close on its own, and what happens when it
+     does not. Terminating a launcher mid-write loses the session the switcher is
+     about to read, so whether to go that far is the user's call. -->
+<div class="rowSetting">
+  <label class="closeGrace">
+    <span>{$t("Settings_CloseTimeout")}</span>
+    <input
+      type="number"
+      min="0"
+      max="120"
+      value={genericPS.CloseTimeoutSeconds ?? 0}
+      on:change={(e) => {
+        const n = Number.parseInt(e.currentTarget.value, 10);
+        genericPS.CloseTimeoutSeconds = Number.isFinite(n) && n > 0 ? Math.min(n, 120) : 0;
+        dispatch("save");
+      }}
+    />
+  </label>
+  <span class="closeGrace__hint">{$t("Settings_CloseTimeout_Hint")}</span>
+</div>
+
+<div class="rowSetting">
+  <div class="form-check">
+    <input
+      id="gs-force-close"
+      type="checkbox"
+      checked={genericPS.ForceCloseAfterTimeout !== false}
+      on:change={(e) => {
+        genericPS.ForceCloseAfterTimeout = e.currentTarget.checked;
+        dispatch("save");
+      }}
+    />
+    <label class="form-check-label" for="gs-force-close"></label>
+  </div>
+  <label for="gs-force-close" use:tooltip={$t("Tooltip_ForceClose")}>{$t("Settings_ForceClose")}</label>
+</div>
+
 <ProcessMethodDropdown
   values={startingValues}
   current={genericPS.StartingMethod}
@@ -173,3 +212,22 @@
     </button>
   </div>
 {/if}
+
+<style lang="scss">
+  .closeGrace {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    input {
+      width: 5rem;
+      padding: 0.25rem 0.4rem;
+    }
+  }
+
+  .closeGrace__hint {
+    margin-left: 0.6rem;
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+</style>

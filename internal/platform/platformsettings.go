@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 	"unicode"
 
 	"account-switcher/internal/fsutil"
@@ -80,11 +81,21 @@ func settingsDirUnderExe() (string, error) {
 }
 
 type PlatformSettings struct {
-	RunAsAdmin                bool                `json:"RunAsAdmin"`
-	TrayAccNumber             int                 `json:"TrayAccNumber"`
-	ForgetAccountEnabled      bool                `json:"ForgetAccountEnabled"`
-	ClosingMethod             string              `json:"ClosingMethod"`
-	ClosingMethodForced       bool                `json:"ClosingMethodForced,omitempty"`
+	RunAsAdmin           bool   `json:"RunAsAdmin"`
+	TrayAccNumber        int    `json:"TrayAccNumber"`
+	ForgetAccountEnabled bool   `json:"ForgetAccountEnabled"`
+	ClosingMethod        string `json:"ClosingMethod"`
+	ClosingMethodForced  bool   `json:"ClosingMethodForced,omitempty"`
+	// CloseTimeoutSeconds is how long the platform gets to close on its own
+	// before the app decides it is not going to. Zero uses the method's default.
+	CloseTimeoutSeconds int `json:"CloseTimeoutSeconds,omitempty"`
+	// ForceCloseAfterTimeout decides what happens when that time runs out. A
+	// pointer because absent has to mean "as before" rather than "off": every
+	// existing configuration predates this option and expects to be forced.
+	//
+	// Turning it off keeps a launcher that is slow to close from being killed
+	// mid-write, at the cost of a switch that can report it could not proceed.
+	ForceCloseAfterTimeout    *bool               `json:"ForceCloseAfterTimeout,omitempty"`
 	StartingMethod            string              `json:"StartingMethod"`
 	AutoStart                 bool                `json:"AutoStart"`
 	ShowShortNotes            bool                `json:"ShowShortNotes"`
@@ -398,4 +409,25 @@ func resetPlatformJSONToDefaults(platformKey string) error {
 	delete(platformSettingsCache, strings.TrimSpace(platformKey))
 	platformSettingsCacheMu.Unlock()
 	return fsutil.WriteFileAtomic(path, data, 0o644)
+}
+
+// ForceCloseEnabled reports whether a platform that will not close should be
+// terminated. Absent means yes, which is how every configuration written before
+// the option existed behaved.
+func (p PlatformSettings) ForceCloseEnabled() bool {
+	return p.ForceCloseAfterTimeout == nil || *p.ForceCloseAfterTimeout
+}
+
+// CloseGrace returns the configured grace period, or zero to use the method's
+// own default. Bounded so a typo cannot hang a switch for an hour.
+func (p PlatformSettings) CloseGrace() time.Duration {
+	const maxGraceSeconds = 120
+	secs := p.CloseTimeoutSeconds
+	if secs <= 0 {
+		return 0
+	}
+	if secs > maxGraceSeconds {
+		secs = maxGraceSeconds
+	}
+	return time.Duration(secs) * time.Second
 }

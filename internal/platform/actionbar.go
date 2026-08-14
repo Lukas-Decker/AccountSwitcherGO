@@ -70,3 +70,20 @@ func EmitActionBarStatusI18nVars(key string, vars map[string]string) {
 func (p *PlatformService) SetActionBarStatus(text string) {
 	EmitActionBarStatus(text)
 }
+
+// toastHook is set by main so packages below the app layer can raise a toast
+// without importing it. Same direction-of-travel trick as the other hooks here.
+var toastHook func(typ, titleKey, messageKey string, vars map[string]string)
+
+// SetToastHook registers the toast emitter.
+func SetToastHook(fn func(typ, titleKey, messageKey string, vars map[string]string)) {
+	toastHook = fn
+}
+
+// EmitToastI18n raises a translated toast, if anything is listening.
+func EmitToastI18n(typ, messageKey string, vars map[string]string) {
+	if toastHook == nil {
+		return
+	}
+	toastHook(typ, "", messageKey, vars)
+}

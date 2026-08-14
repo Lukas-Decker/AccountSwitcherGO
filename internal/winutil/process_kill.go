@@ -13,10 +13,10 @@ import (
 	"time"
 	"unsafe"
 
+	"account-switcher/internal/crashlog"
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/mgr"
-	"account-switcher/internal/crashlog"
 )
 
 const servicePrefix = "SERVICE:"
@@ -30,14 +30,55 @@ const (
 // when the name is prefixed with SERVICE:.
 // beforeElectronSynth, when non-nil, runs before Electron Alt+F4 (e.g. launch platform + wait for foreground).
 func KillByName(names []string, method ClosingMethod, beforeElectronSynth func() error) error {
+	_, err := KillByNameWithOptions(names, KillOptions{
+		Method:              method,
+		AllowForce:          true,
+		BeforeElectronSynth: beforeElectronSynth,
+	})
+	return err
+}
+
+// KillOptions controls how hard the app tries to close a platform.
+//
+// The defaults exist because closing is not free: a program that is killed
+// before it has finished shutting down never writes out what it was holding, and
+// for a game launcher that is the login session the switcher is about to read.
+// Whether to go that far is therefore the user's call, not a constant.
+type KillOptions struct {
+	Method ClosingMethod
+	// GraceTimeout is how long a process gets to close on its own. Zero uses the
+	// method's own default.
+	GraceTimeout time.Duration
+	// AllowForce decides what happens when that time runs out: terminate the
+	// process, or leave it running and say so.
+	AllowForce bool
+	// BeforeElectronSynth runs before the Electron Alt+F4 synthesis.
+	BeforeElectronSynth func() error
+}
+
+// KillResult reports what it took.
+type KillResult struct {
+	// Forced lists images that ignored the polite request and were terminated.
+	// Anything they had not yet written to disk is gone.
+	Forced []string
+	// Survived lists images still running because force was not permitted.
+	Survived []string
+}
+
+// KillByNameWithOptions terminates processes by image name, or stops Windows
+// services when the name is prefixed with SERVICE:.
+func KillByNameWithOptions(names []string, opts KillOptions) (KillResult, error) {
+	var result KillResult
 	if len(names) == 0 {
-		return nil
+		return result, nil
 	}
-	m := method
+	m := opts.Method
 	if m == "" {
 		m = ClosingCombined
 	}
-	log.Printf("winutil: kill begin method=%s targets=%d", m, len(names))
+	var resultMu sync.Mutex
+	log.Printf("winutil: kill begin method=%s targets=%d allowForce=%v grace=%s",
+		m, len(names), opts.AllowForce, opts.GraceTimeout)
 	var wg sync.WaitGroup
 	for _, name := range names {
 		raw := strings.TrimSpace(name)
@@ -68,9 +109,9 @@ func KillByName(names []string, method ClosingMethod, beforeElectronSynth func()
 				_ = taskKillIM(base, true)
 			case ClosingElectron:
 				var prior windows.HWND
-				if beforeElectronSynth != nil {
+				if opts.BeforeElectronSynth != nil {
 					prior = foregroundHWND()
-					if err := beforeElectronSynth(); err != nil {
+					if err := opts.BeforeElectronSynth(); err != nil {
 						log.Printf("winutil: electron prepare err=%v", err)
 					}
 					requestElectronChromiumExit(base, prior, true)
@@ -81,20 +122,50 @@ func KillByName(names []string, method ClosingMethod, beforeElectronSynth func()
 				waitForElectronImageExit(base, electronExitMaxWait, len(names))
 				_ = taskKillIM(base, true)
 			case ClosingClose:
-				requestGracefulProcessExit(base)
-				waitForImageExit(base, gracefulExitMaxWait, 100*time.Millisecond, len(names))
-				_ = taskKillIM(base, true)
+				finishGracefully(base, pickGrace(opts.GraceTimeout, gracefulExitMaxWait), len(names), opts.AllowForce, &resultMu, &result)
 			default: // Combined
-				requestGracefulProcessExit(base)
-				waitForImageExit(base, gracefulCombinedExitMaxWait, 100*time.Millisecond, len(names))
-				_ = taskKillIM(base, true)
+				finishGracefully(base, pickGrace(opts.GraceTimeout, gracefulCombinedExitMaxWait), len(names), opts.AllowForce, &resultMu, &result)
 			}
 			log.Printf("winutil: stop process done process=%s", base)
 		}(raw)
 	}
 	wg.Wait()
-	log.Printf("winutil: kill completed method=%s", m)
-	return nil
+	log.Printf("winutil: kill completed method=%s forced=%v survived=%v", m, result.Forced, result.Survived)
+	return result, nil
+}
+
+// pickGrace uses the caller's timeout when they set one, else the method default.
+func pickGrace(configured, fallback time.Duration) time.Duration {
+	if configured > 0 {
+		return configured
+	}
+	return fallback
+}
+
+// finishGracefully asks a process to close, waits, and then either terminates it
+// or reports that it is still there.
+//
+// The check between the two is the whole point. Terminating unconditionally,
+// which is what this used to do, means a launcher that was merely slow to start
+// or that minimises to tray instead of exiting gets killed mid-write, and the
+// session it was holding is lost with no indication that anything happened.
+func finishGracefully(base string, grace time.Duration, targetCount int, allowForce bool, mu *sync.Mutex, result *KillResult) {
+	requestGracefulProcessExit(base)
+	waitForImageExit(base, grace, 100*time.Millisecond, targetCount)
+
+	if !IsExeRunning(base) {
+		return
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if !allowForce {
+		log.Printf("winutil: %s did not close within %s and force is off; leaving it running", base, grace)
+		result.Survived = append(result.Survived, base)
+		return
+	}
+	log.Printf("winutil: %s did not close within %s; terminating", base, grace)
+	_ = taskKillIM(base, true)
+	result.Forced = append(result.Forced, base)
 }
 
 // requestGracefulProcessExit closes every top-level window for matching PIDs (visible + hidden),
