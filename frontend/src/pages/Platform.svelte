@@ -38,43 +38,44 @@
   export let name: string;
 
   type RiotCard = Awaited<ReturnType<typeof RiotService.GetCard>>;
-  let riotCards: Record<string, RiotCard> = {};
+  let riotCards: Record<string, RiotCard | undefined> = {};
 
   /** Riot submenu from the cached card, refreshed in the background.
    *  Never awaits: a menu must not hang on a game client or a spent API quota. */
   function riotMenuFor(uniqueId: string): MenuItemDef {
-    void refreshRiotCard(uniqueId);
     return buildRiotMenu(riotCards[uniqueId] ?? null, {
       tr: (k, v) => get(t)(k, v),
       openUrl: (url) => void openExternalUrl(url, { allowAnyHttps: true }),
       editLink: () => void editRiotLink(uniqueId),
-      refresh: () => void refreshRiotCard(uniqueId, true),
+      refresh: () => void refreshRiotCard(uniqueId),
     });
   }
 
   /**
-   * Loads the cards for a whole list up front.
+   * Loads what is already known about every linked account, in one local read.
    *
-   * A context menu is built synchronously the moment it opens, so a card that is
-   * still being fetched is simply absent and the account renders as unlinked. The
-   * fetch cannot be awaited there without the menu hanging on a game client, so
-   * the cache is filled ahead of the first right-click instead.
+   * The linked state and the last captured figures live in the same file the
+   * account list comes from, so this needs no network and cannot be late in a way
+   * that matters: it completes with the list, before any menu can be opened.
    *
-   * Sequential, and using the ordinary read rather than a forced one, so this
-   * stays subject to the same gates as everything else: a development key is not
-   * called at all and an elevated one is throttled per account.
+   * This exists because a context menu is built from plain values at the instant
+   * it opens and never updates afterwards. Anything the menu needs has to be in
+   * hand by then, so the menu depends on stored data only; going to the client or
+   * the API is what Refresh is for.
    */
-  async function warmRiotCards(uniqueIds: string[]): Promise<void> {
-    for (const id of uniqueIds) {
-      await refreshRiotCard(id);
+  async function loadRiotCards(): Promise<void> {
+    try {
+      riotCards = await RiotService.AccountCards();
+    } catch {
+      // The rest of the page is unaffected; the submenu simply has nothing to add.
     }
   }
 
-  async function refreshRiotCard(uniqueId: string, force = false): Promise<void> {
+  /** The deliberate, on-demand live lookup behind the menu's Refresh. */
+  async function refreshRiotCard(uniqueId: string): Promise<void> {
     if (!uniqueId) return;
-    if (!force && riotCards[uniqueId]) return;
     try {
-      riotCards = { ...riotCards, [uniqueId]: await RiotService.GetCard(uniqueId) };
+      riotCards = { ...riotCards, [uniqueId]: await RiotService.RefreshCard(uniqueId) };
     } catch {
       // A card is an extra, never a reason to break the menu it hangs off.
     }
@@ -96,7 +97,7 @@
     if (region === null) return;
     try {
       await RiotService.SetAccountLink(uniqueId, riotId, region);
-      await refreshRiotCard(uniqueId, true);
+      await loadRiotCards();
     } catch (e) {
       pushToast({ type: "error", message: formatToastWithError(get(t)("Riot_SaveFailed"), e), duration: 8000 });
     }
@@ -143,7 +144,7 @@
         savedDataBroken: r.savedDataBroken ?? false,
       })) as BasicRow[];
       if (name === RIOT_PLATFORM_KEY) {
-        void warmRiotCards(list.map((r) => r.uniqueId));
+        await loadRiotCards();
       }
       return list;
     },
