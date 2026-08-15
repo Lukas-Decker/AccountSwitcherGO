@@ -294,12 +294,17 @@ input[type="checkbox"]:focus-visible + label {
 .accent-dropdown-item {
   display: flex;
   align-items: center;
+  /*
+     Both are buttons, and the global button rule in UI.scss centres a button's
+     children. Left to it, each menu row centres its swatch and label as a pair,
+     so the swatches land at a different offset on every row.
+  */
+  justify-content: flex-start;
   gap: 0.6rem;
 }
 
 .accent-toggle {
   min-width: 13.5rem;
-  justify-content: flex-start;
 }
 
 .accent-toggle-label {
