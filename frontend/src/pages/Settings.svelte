@@ -5,7 +5,6 @@
   import { activeModal } from "../stores/modal";
   import { t } from "../stores/i18n";
   import { controllerSpatialNavigation } from "../lib/actions/controllerSpatialNavigation";
-  import "../styles/Settings.scss";
 
   $: appBarTitle.set($t("Title_Settings"));
   onMount(() => {
@@ -19,16 +18,15 @@
     if (get(activeModal)) {
       return;
     }
+    // The search field clears itself on Escape and stops the event there.
     e.preventDefault();
     navigateBackLikeButton();
   }
 </script>
 
 <div class="main-content main-spacing" use:controllerSpatialNavigation>
-  <h1 class="SettingsHeader">{$t("Settings_Header_AppWide")}</h1>
-
-  {#await import("../components/GeneralSettingsBlock.svelte") then { default: GeneralSettingsBlock }}
-    <GeneralSettingsBlock />
+  {#await import("../components/settings/app/AppSettingsGrid.svelte") then { default: AppSettingsGrid }}
+    <AppSettingsGrid />
   {/await}
 </div>
 <svelte:window on:keydown={onWindowKeyDown} />

@@ -5,7 +5,7 @@
   import { t } from "../stores/i18n";
   import { activeModal, openConfirm, openFolderPicker } from "../stores/modal";
   import { pushToast } from "../stores/toast";
-  import GeneralSettingsBlock from "../components/GeneralSettingsBlock.svelte";
+  import AppSettingsGrid from "../components/settings/app/AppSettingsGrid.svelte";
   import PlatformSettingsSteamSection from "../components/settings/PlatformSettingsSteamSection.svelte";
   import PlatformSettingsGenericSection from "../components/settings/PlatformSettingsGenericSection.svelte";
   import PlatformSettingsRiotSection from "../components/settings/PlatformSettingsRiotSection.svelte";
@@ -506,8 +506,7 @@
 
     <hr class="settings-divider" />
 
-    <h2 class="SettingsHeader">{$t("Settings_Header_AppWide")}</h2>
-    <GeneralSettingsBlock />
+    <AppSettingsGrid title={$t("Settings_Header_AppWide")} />
   {/if}
 </div>
 <svelte:window on:keydown={onWindowKeyDown} />

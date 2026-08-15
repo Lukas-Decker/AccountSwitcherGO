@@ -26,7 +26,7 @@
       prefetchPage({ page: "platform-settings", platformName: cur.platformName });
     } else {
       prefetchPage({ page: "settings" });
-      void import("../components/GeneralSettingsBlock.svelte");
+      void import("../components/settings/app/AppSettingsGrid.svelte");
     }
   }
 

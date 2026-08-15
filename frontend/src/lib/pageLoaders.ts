@@ -56,7 +56,7 @@ export function prefetchPage(route: Route): void {
 export function prefetchCommonPages(): void {
   prefetchPage({ page: "settings" });
   prefetchPage({ page: "manage-platforms" });
-  void import("../components/GeneralSettingsBlock.svelte");
+  void import("../components/settings/app/AppSettingsGrid.svelte");
 }
 
 /** Warm platform account pages after the home screen has rendered. */
