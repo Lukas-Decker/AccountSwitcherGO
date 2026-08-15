@@ -307,14 +307,35 @@ label.setting-row__label {
 /* ---------------------------------------- */
 
 .settings-switch {
+  /*
+      The travel is derived rather than typed in, so the knob lands flush
+      against the far edge whatever the track and knob are set to. The border
+      is inside the width, hence the 2px.
+  */
+  --switch-track-width: 2.7rem;
+  --switch-track-height: 1.45rem;
+  --switch-border: 1px;
+  --switch-knob-size: 1.05rem;
+  --switch-knob-inset: 0.15rem;
+  --switch-travel: calc(
+    var(--switch-track-width) - (var(--switch-border) * 2) - var(--switch-knob-size) -
+      (var(--switch-knob-inset) * 2)
+  );
+
   display: inline-flex;
   align-items: center;
+  /*
+      Not inherited: the global button rule in UI.scss centres its children,
+      which parks the knob in the middle of the track when off and pushes it
+      past the right edge when on.
+  */
+  justify-content: flex-start;
   flex: 0 0 auto;
-  width: 2.7rem;
-  height: 1.45rem;
+  width: var(--switch-track-width);
+  height: var(--switch-track-height);
   margin: 0;
   padding: 0;
-  border: 1px solid var(--overlay-white-15);
+  border: var(--switch-border) solid var(--overlay-white-15);
   border-radius: 999px;
   background: var(--overlay-white-12);
   cursor: pointer;
@@ -354,10 +375,13 @@ label.setting-row__label {
 }
 
 .settings-switch__knob {
-  width: 1.05rem;
-  height: 1.05rem;
-  margin: 0 0.15rem;
+  flex: 0 0 auto;
+  width: var(--switch-knob-size);
+  height: var(--switch-knob-size);
+  margin: 0 var(--switch-knob-inset);
   border-radius: 50%;
+  /* UI.scss gives every span inside a button a 2.5em line box. */
+  line-height: 0;
   background: var(--whiteSecondary);
   box-shadow: 0 1px 2px var(--shadow-color-40);
   transform: translateX(0);
@@ -366,7 +390,7 @@ label.setting-row__label {
 
 .settings-switch[aria-checked="true"] .settings-switch__knob {
   background: var(--text-on-bright-bg);
-  transform: translateX(1.2rem);
+  transform: translateX(var(--switch-travel));
 }
 
 /* The knob position is the state; sliding it while saving would be a lie. */
@@ -555,6 +579,7 @@ label.setting-row__label {
 .settings-select__trigger {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.45rem;
   width: 100%;
   min-width: 7rem;
@@ -585,6 +610,8 @@ label.setting-row__label {
 .settings-select__label {
   flex: 1 1 auto;
   min-width: 0;
+  /* UI.scss gives every span inside a button a 2.5em line box. */
+  line-height: 1.2;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -625,6 +652,7 @@ label.setting-row__label {
 .settings-select__option {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
   width: 100%;
   margin: 0;
@@ -755,6 +783,6 @@ label.setting-row__label {
 
   /* The switch is a flex row, so in RTL the knob rests on the right. */
   .settings-switch[aria-checked="true"] .settings-switch__knob {
-    transform: translateX(-1.2rem);
+    transform: translateX(calc(var(--switch-travel) * -1));
   }
 }
