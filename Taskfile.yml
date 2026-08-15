@@ -69,3 +69,31 @@ tasks:
     cmds:
       - go test -race -count=1 ./internal/... ./cmd/...
       - cd frontend && pnpm run test && cd ..
+
+  version:
+    summary: Prints the application version from build/config.yml
+    cmds:
+      - cmd: python tools/bump_version.py --print
+        platforms: [windows]
+      - cmd: python3 tools/bump_version.py --print
+        platforms: [linux, darwin]
+
+  version:bump:
+    # Only the bare part word survives the wrapper; `wails3 task` eats any flag
+    # after `--`, so use the script directly for --dry-run.
+    summary: 'Bumps the version in build/config.yml and the Windows resources. Usage: wails3 task version:bump -- minor'
+    cmds:
+      - cmd: python tools/bump_version.py {{.PART}}
+        platforms: [windows]
+      - cmd: python3 tools/bump_version.py {{.PART}}
+        platforms: [linux, darwin]
+    vars:
+      PART: '{{.CLI_ARGS | default "patch"}}'
+
+  version:check:
+    summary: Fails when a copy of the version has drifted from build/config.yml
+    cmds:
+      - cmd: python tools/bump_version.py --check
+        platforms: [windows]
+      - cmd: python3 tools/bump_version.py --check
+        platforms: [linux, darwin]
