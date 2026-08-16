@@ -7,7 +7,10 @@ export type Route =
   | { page: "manage-platforms" }
   | { page: "platform"; platformName: string }
   | { page: "platform-settings"; platformName: string }
-  | { page: "steam-advanced-clearing" };
+  | { page: "steam-advanced-clearing" }
+  // The card editor is its own panel. Without a platform it edits the card
+  // every platform falls back to; with one, that platform's own.
+  | { page: "card-editor"; platformName?: string };
 
 export function serializeRoute(r: Route): string {
   switch (r.page) {
@@ -25,6 +28,10 @@ export function serializeRoute(r: Route): string {
       return "#/platform-settings/" + encodeURIComponent(r.platformName);
     case "steam-advanced-clearing":
       return "#/steam/advanced-clearing";
+    case "card-editor":
+      return r.platformName
+        ? "#/card-editor/" + encodeURIComponent(r.platformName)
+        : "#/card-editor";
     default:
       return "#/";
   }
@@ -42,6 +49,7 @@ const ROUTE_PARSERS: Record<string, RouteParser> = {
   platform:             (p) => p[1] ? { page: "platform", platformName: decodeURIComponent(p[1]) } : null,
   "platform-settings":  (p) => p[1] ? { page: "platform-settings", platformName: decodeURIComponent(p[1]) } : null,
   steam:                (p) => p[1]?.toLowerCase() === "advanced-clearing" ? { page: "steam-advanced-clearing" } : null,
+  "card-editor":        (p) => p[1] ? { page: "card-editor", platformName: decodeURIComponent(p[1]) } : { page: "card-editor" },
 };
 
 export function parseHash(hash: string): Route | null {
@@ -74,6 +82,10 @@ export function validateRoute(r: Route, startup: PlatformStartup): Route {
       return nameOk(r.platformName) ? r : { page: "home" };
     case "steam-advanced-clearing":
       return nameOk("Steam") ? r : { page: "home" };
+    case "card-editor":
+      // The global editor is always reachable; a platform one is not if that
+      // platform has gone away.
+      return !r.platformName || nameOk(r.platformName) ? r : { page: "card-editor" };
     default:
       return r;
   }

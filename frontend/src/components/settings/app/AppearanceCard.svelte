@@ -260,6 +260,20 @@
     </button>
   </SettingsRow>
 
+  <SettingsRow
+    label={$t("CardEditor_Title")}
+    hint={$t("CardEditor_OpenHint")}
+    keywords="account card size layout blocks avatar preset small medium large custom"
+  >
+    <button
+      type="button"
+      class="settings-btn"
+      on:click={() => route.set({ page: "card-editor" })}
+    >
+      {$t("CardEditor_Open")}
+    </button>
+  </SettingsRow>
+
   <SettingsRow label={$t("Settings_RoundedCorners")} controlId="settings-rounded">
     <SettingsSwitch
       id="settings-rounded"

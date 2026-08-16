@@ -476,6 +476,8 @@
               <Page />
             {:else if $route.page === "manage-platforms"}
               <Page />
+            {:else if $route.page === "card-editor"}
+              <Page platformName={$route.platformName} />
             {/if}
           {/await}
         </main>

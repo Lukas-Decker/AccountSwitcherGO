@@ -10,6 +10,7 @@
   import PlatformSettingsGenericSection from "../components/settings/PlatformSettingsGenericSection.svelte";
   import PlatformSettingsRiotSection from "../components/settings/PlatformSettingsRiotSection.svelte";
   import PlatformSettingsToolsSection from "../components/settings/PlatformSettingsToolsSection.svelte";
+  import PlatformSettingsCardSection from "../components/settings/PlatformSettingsCardSection.svelte";
   import * as Wails from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
   import * as Shortcuts from "wails-shortcuts-service";
@@ -36,6 +37,13 @@
   }
 
   $: isSteam = name === "Steam";
+
+  // Steam's settings embed the shared ones, so the card section edits whichever
+  // object this platform actually stores.
+  $: cardSettingsTarget = (isSteam ? steamSettings : genericPS) as unknown as {
+    AccountCardCustomizationEnabled?: boolean;
+    AccountCard?: unknown;
+  };
 
   let steamSettings: Settings | null = null;
   let genericPS: PlatformSettings | null = null;
@@ -474,6 +482,13 @@
       on:toggleDesktopShortcut={onToggleDesktopShortcut}
       on:refreshBasicProfileImages={onRefreshBasicProfileImages}
       on:clearBasicProfileImages={onClearBasicProfileImages}
+    />
+  {/if}
+
+  {#if (isSteam && steamSettings) || (!isSteam && genericPS)}
+    <PlatformSettingsCardSection
+      {name}
+      overrideEnabled={cardSettingsTarget?.AccountCardCustomizationEnabled === true}
     />
   {/if}
 

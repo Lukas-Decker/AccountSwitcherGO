@@ -31,6 +31,8 @@ function loaderFor(route: Route): () => Promise<PageModule> {
       return () => import("../pages/SteamAdvancedClearing.svelte");
     case "manage-platforms":
       return () => import("../pages/ManagePlatforms.svelte");
+    case "card-editor":
+      return () => import("../pages/CardEditor.svelte");
   }
 }
 
