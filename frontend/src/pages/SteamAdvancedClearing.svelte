@@ -177,12 +177,17 @@
 </script>
 
 <div class="main-content main-spacing steam-adv-root">
-  <h1 class="SettingsHeader">{$t("Title_Steam_Cleaning")}</h1>
+  <!-- The window title already carries the app name; repeating it in the page
+       broke the sentence-case pattern its sibling pages follow. -->
+  <h1 class="SettingsHeader">{$t("Cleaning_PageTitle")}</h1>
 
   <h2 class="SettingsHeader">{$t("Cleaning_ImportantInfoHeader")}</h2>
   <div class="steam-adv-info">
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
     {@html sanitizeHtml($t("Cleaning_ImportantInfo"), "inline")}
+    <!-- Reference material sits with the warning, before the decisions,
+         not below all thirteen of them. -->
+    <button type="button" class="fancyLinkBtn steam-adv-wiki" on:click={onWiki}>{$t("Button_WikiInfo")}</button>
   </div>
 
   <div class="rowSetting steam-adv-ack">
@@ -252,7 +257,6 @@
   </div>
 
   <div class="buttoncol col_close steam-adv-footer">
-    <button type="button" class="fancyLinkBtn" on:click={onWiki}>{$t("Button_WikiInfo")}</button>
     <button type="button" class="btn_close" on:click={onClose}><span>{$t("Button_Close")}</span></button>
   </div>
 </div>
@@ -386,10 +390,16 @@
     filter: brightness(1.15);
   }
 
+  .steam-adv-wiki {
+    display: block;
+    margin-top: 0.35rem;
+    padding-left: 0;
+  }
+
   .steam-adv-footer {
     margin-top: 1.125rem;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
   }
 </style>

@@ -312,9 +312,11 @@
   {/if}
 
   <SettingsRow label={$t("Settings_PreviewCssHeader")} keywords="css theme preview developer">
+    <!-- Same weight as "Edit account cards" above: both are peer actions
+         that open another page, so they wear the same button. -->
     <button
       type="button"
-      class="settings-btn settings-btn--ghost"
+      class="settings-btn"
       on:click={() => route.set({ page: "preview-css" })}
     >
       {$t("PreviewCss")}

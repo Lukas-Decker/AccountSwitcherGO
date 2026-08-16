@@ -506,6 +506,7 @@
   "Title_AccountsList": "Account Switcher - {platform}",
   "Title_Settings": "Account Switcher - Settings",
   "Title_Steam_Cleaning": "Account Switcher - Steam Cleaning",
+  "Cleaning_PageTitle": "Steam cleaning",
   "Title_Template_Settings": "Account Switcher - {platformName} Settings",
   "Tray_Switch": "Switch to: {account}",
   "Tray_Unlock": "Unlock",
