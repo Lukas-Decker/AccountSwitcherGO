@@ -158,7 +158,12 @@
     <span class="steam-adv-ack-text">{$t("Cleaning_Understand")}</span>
   </div>
 
-  <button type="button" disabled={!acceptedRisk || busy} on:click={() => void runAction("close_steam")}>
+  <button
+    type="button"
+    class="steam-adv-kill"
+    disabled={!acceptedRisk || busy}
+    on:click={() => void runAction("close_steam")}
+  >
     {$t("Cleaning_Button_KillProcess", { platform: "Steam" })}
   </button>
 
@@ -246,6 +251,12 @@
   .steam-adv-ack-text {
     padding: 0 0.5em;
     line-height: 1.35;
+  }
+
+  /* The grid buttons get this from .buttoncol; this one sits outside it. */
+  .steam-adv-kill:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 
   .steam-adv-layout {
