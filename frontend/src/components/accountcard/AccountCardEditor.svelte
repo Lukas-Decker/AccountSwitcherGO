@@ -405,6 +405,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
+    // A settings list, not a page-wide table: capping the column keeps every
+    // control within a glance of the label it belongs to.
+    max-width: 46rem;
   }
 
   .cardeditor--disabled {
@@ -418,13 +421,14 @@
     border: 0;
   }
 
+  // The accent-bar heading the settings pages use: a section anchor has to
+  // outrank the body text it introduces, not whisper under it.
   .cardeditor__legend {
-    padding: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    opacity: 0.7;
+    padding: 0.15rem 0 0.15rem 0.65rem;
+    border-left: 3px solid var(--settings-header-border, var(--accent));
+    color: var(--whiteSecondary);
+    font-size: 1rem;
+    font-weight: 700;
   }
 
   .cardeditor__presets {
@@ -434,11 +438,13 @@
     margin-top: 0.4rem;
   }
 
+  // Fill marks the current choice and nothing else: quiet outlines for the
+  // options, the accent fill for the one that is active.
   .cardeditor__preset {
     padding: 0.35rem 0.9rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
-    background: var(--button-bg);
+    background: transparent;
     color: inherit;
     font: inherit;
     cursor: pointer;
@@ -449,7 +455,14 @@
 
     &.is-active {
       border-color: var(--accent);
-      background: var(--accent-fill-soft, var(--button-bg-hover));
+      background: var(--accent);
+      color: var(--text-on-bright-bg, var(--pure-black, #000));
+      font-weight: 600;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
   }
 
@@ -593,14 +606,20 @@
     }
   }
 
+  // A readable ghost button at full opacity: 0.45 opacity is the app's
+  // disabled costume and stays reserved for the :disabled state below.
   .cardeditor__reset {
     padding: 0.15rem 0.5rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
-    background: var(--button-bg);
+    background: transparent;
     color: inherit;
-    font-size: 0.75rem;
+    font-size: 1rem;
     cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--button-bg-hover, var(--button-bg));
+    }
 
     &:disabled {
       opacity: 0.45;

@@ -54,6 +54,15 @@
     border-radius: 4px;
     background: var(--mainContentBackground, var(--code-background));
     overflow-x: auto;
+    // Sized to the card it shows rather than the page it sits on, and sticky
+    // so the feedback loop survives scrolling the block list it reflects.
+    width: fit-content;
+    min-width: 14rem;
+    max-width: 100%;
+    align-self: center;
+    position: sticky;
+    top: 0.25rem;
+    z-index: 5;
   }
 
   // The list is a grid in the real page; here it only ever holds one card, so
