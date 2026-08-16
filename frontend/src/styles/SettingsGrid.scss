@@ -124,7 +124,13 @@
 
 .settings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+  /* Capped at four columns: past that, extra width goes into wider cards
+     rather than more of them. Six 250px columns of wrapped labels read worse
+     at 1600px than four comfortable ones. */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(max(21rem, calc((100% - 3 * var(--settings-card-gap)) / 4)), 1fr)
+  );
   align-items: start;
   gap: var(--settings-card-gap);
 }
@@ -154,7 +160,10 @@
 @supports (display: grid-lanes) {
   .settings-grid {
     display: grid-lanes;
-    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(max(21rem, calc((100% - 3 * var(--settings-card-gap)) / 4)), 1fr)
+    );
     flow-tolerance: 1em;
     align-items: initial;
   }
