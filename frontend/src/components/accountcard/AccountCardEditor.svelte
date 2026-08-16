@@ -468,7 +468,7 @@
 
   .cardeditor__hint {
     margin: 0.3rem 0 0;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     opacity: 0.7;
   }
 
@@ -531,7 +531,7 @@
   }
 
   .cardeditor__join {
-    font-size: 0.585rem;
+    font-size: 0.6875rem;
     opacity: 0.75;
   }
 
@@ -560,7 +560,7 @@
 
   .cardeditor__subhead {
     margin: 0;
-    font-size: 0.615rem;
+    font-size: 0.75rem;
     font-weight: 600;
   }
 
@@ -572,7 +572,7 @@
 
   .cardeditor__slidervalue {
     font-variant-numeric: tabular-nums;
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     opacity: 0.8;
   }
 
@@ -587,7 +587,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.1875rem;
-    font-size: 0.615rem;
+    font-size: 0.6875rem;
   }
 
   .cardeditor__colorrow {
@@ -636,7 +636,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.15rem;
-      font-size: 0.615rem;
+      font-size: 0.6875rem;
     }
 
     input {

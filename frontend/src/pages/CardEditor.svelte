@@ -187,7 +187,7 @@
 
   .cardeditor-page__hint {
     margin: 0.225rem 0 0;
-    font-size: 0.615rem;
+    font-size: 0.6875rem;
     opacity: 0.72;
     max-width: 60ch;
   }

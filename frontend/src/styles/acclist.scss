@@ -81,7 +81,7 @@
 }
 
 .steam-acclist .steam_meta_err {
-  font-size: 0.6em;
+  font-size: max(0.6em, 0.6875rem);
   // Muted, not red: a transient fetch failure is app-side noise, and red is
   // reserved for account-state problems (VAC, Limited, broken saved data).
   color: var(--text-muted-gray);
@@ -96,13 +96,13 @@
 }
 
 .steam-acclist .steam_meta_pending {
-  font-size: 0.6em;
+  font-size: max(0.6em, 0.6875rem);
   opacity: 0.65;
 }
 
 .steam-acclist .acc_lastused {
   margin: 0.1125rem 0 0;
-  font-size: 0.54rem;
+  font-size: 0.6875rem;
   opacity: 0.75;
 }
 
@@ -111,7 +111,7 @@
   // Matches the login name's size and sits a step fainter: a 17-digit number
   // is the least-read line on the card and must not outweigh the name the
   // user actually identifies accounts by.
-  font-size: 0.75em;
+  font-size: max(0.75em, 0.6875rem);
   letter-spacing: -0.01em;
   opacity: 0.8;
 }
@@ -222,7 +222,7 @@
   align-items: center;
   gap: 0.2em;
   min-width: 0;
-  font-size: 0.54rem;
+  font-size: 0.6875rem;
   line-height: 1.3;
   opacity: 0.8;
 }
@@ -571,7 +571,7 @@ label.acc {
     margin: 0 auto;
     overflow: hidden;
     color: var(--text-muted-gray);
-    font-size: 0.75em;
+    font-size: max(0.75em, 0.6875rem);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -585,7 +585,7 @@ label.acc {
     padding-top: 0.225rem;
     overflow: hidden;
     color: var(--red);
-    font-size: 0.72em;
+    font-size: max(0.72em, 0.6875rem);
     text-overflow: ellipsis;
     white-space: nowrap;
   }

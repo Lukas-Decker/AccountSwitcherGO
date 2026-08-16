@@ -29,7 +29,7 @@
     padding: 0.02em 0.3em;
     border: 1px solid currentColor;
     border-radius: 2px;
-    font-size: 0.62em;
+    font-size: max(0.62em, 0.6875rem);
     line-height: 1.4;
     letter-spacing: 0.02em;
     text-transform: uppercase;
