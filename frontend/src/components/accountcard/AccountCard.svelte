@@ -4,7 +4,7 @@
   import { contextMenu as ctxMenuAction } from "../../lib/actions/contextMenu";
   import type { MenuItemDef } from "../../stores/contextMenu";
   import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
-  import { BLOCK_ORDER, type CardBlockKind } from "./blockKinds";
+  import { ALL_BLOCK_KINDS, type CardBlockKind } from "../../lib/accountCard/types";
   import { availableBlockKinds, blockComponent, type CardBlockProps } from "./blockRegistry";
 
   export let acc: TAccount;
@@ -38,7 +38,7 @@
   $: isBroken = adapter.savedDataBroken?.(acc) === true;
 
   $: available = new Set<CardBlockKind>(availableBlockKinds(adapter));
-  $: blocks = BLOCK_ORDER.filter((kind) => available.has(kind));
+  $: blocks = ALL_BLOCK_KINDS.filter((kind) => available.has(kind));
 
   $: blockProps = {
     acc, adapter, rid, epoch, labelId, gameStats, boundary, hoverBoundary,

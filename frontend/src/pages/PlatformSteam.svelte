@@ -6,7 +6,7 @@
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
   import SteamGamesView from "../components/SteamGamesView.svelte";
   import { steamPageTab } from "../stores/steamPageTab";
-  import type { PlatformAccountAdapter, SharedMenuItems } from "../components/PlatformAccountAdapter";
+  import type { AccountBadge, PlatformAccountAdapter, SharedMenuItems } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
   import type { PlatformSortKind } from "../stores/platformListSort";
@@ -128,6 +128,13 @@
 
     platformId: (a: SteamAccountRow) => a.steamId64 ?? "",
     shouldShowPlatformId: (a: SteamAccountRow) => a.showSteamId === true,
+
+    badges: (a: SteamAccountRow) => {
+      const out: AccountBadge[] = [];
+      if (a.showVac && a.vac) out.push({ id: "vac", labelKey: "Steam_Badge_Vac", tone: "danger" });
+      if (a.showLimited && a.ltd) out.push({ id: "limited", labelKey: "Steam_Badge_Limited", tone: "warning" });
+      return out;
+    },
 
     statusLine: (a: SteamAccountRow) => {
       if (a.syncError) return { kind: "error" as const, text: a.syncError, title: a.syncError };

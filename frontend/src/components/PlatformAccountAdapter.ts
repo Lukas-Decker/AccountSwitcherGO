@@ -3,7 +3,7 @@ import type { MenuItemDef } from "../stores/contextMenu";
 import type { PlatformSortKind } from "../stores/platformListSort";
 import type { SearchResultRow } from "./SearchOverlay.svelte";
 import type { TagDefRow } from "../lib/accountTagsContext";
-import type { CardBlockKind } from "./accountcard/blockKinds";
+import type { CardBlockKind } from "../lib/accountCard/types";
 
 export type GameStatMetricDTO = { statValue: string; indicatorMarkup: string };
 
@@ -47,7 +47,21 @@ export interface AccountRowProjection<TAccount> {
 
   /** A short sync state for the card's footer. */
   statusLine?(a: TAccount): AccountStatusLine | null;
+
+  /**
+   * Standing warnings about the account, such as Steam's VAC and limited
+   * flags. Where these are drawn is the user's choice, so the adapter reports
+   * them rather than deciding how they look.
+   */
+  badges?(a: TAccount): AccountBadge[];
 }
+
+export type AccountBadge = {
+  id: string;
+  /** i18n key; also the accessible name when the badge draws as a mark only. */
+  labelKey: string;
+  tone: "danger" | "warning";
+};
 
 export type AccountStatusLine = {
   kind: "error" | "pending";

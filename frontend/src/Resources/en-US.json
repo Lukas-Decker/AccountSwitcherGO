@@ -8,6 +8,8 @@
   "Steam_ShowAccUsername": "Account username",
   "Steam_ShowMiniProfile": "Mini profile (hover over avatar)",
   "Steam_ShowAvatarFrame": "Avatar frame overlay",
+  "Steam_Badge_Vac": "VAC",
+  "Steam_Badge_Limited": "Limited",
   "Tooltip_SteamShowMiniProfile": "Fetch Steam mini profile HTML in the background and show it after hovering an account avatar for one second.",
   "Tooltip_SteamShowAvatarFrame": "Download the equipped avatar frame from the mini profile page and draw it on top of the profile picture.",
   "Steam_Tray_AccountName": "Show account name [not friend name]",
@@ -635,5 +637,15 @@
   "Settings_SkipElevatePrompt_Hint": "Restarts as administrator straight away when a switch needs it, instead of asking first.",
   "Riot_BlueEssence": "Blue Essence: {amount}",
   "Riot_RiotPoints": "Riot Points: {amount}",
-  "Riot_Wallet_AsOf": "Balances as of {age}"
+  "Riot_Wallet_AsOf": "Balances as of {age}",
+  "CardBlock_Avatar": "Avatar",
+  "CardBlock_AccountLogin": "Login name",
+  "CardBlock_DisplayName": "Display name",
+  "CardBlock_Tags": "Tags",
+  "CardBlock_Note": "Note",
+  "CardBlock_GameStats": "Game stats",
+  "CardBlock_PlatformId": "Account ID",
+  "CardBlock_LastUsed": "Last used",
+  "CardBlock_StatusLine": "Sync status",
+  "CardBlock_Badges": "Warnings"
 }

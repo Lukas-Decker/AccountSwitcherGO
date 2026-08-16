@@ -1,6 +1,6 @@
 import type { ComponentType } from "svelte";
 import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
-import { CORE_BLOCK_KINDS, type CardBlockKind } from "./blockKinds";
+import { CORE_BLOCK_KINDS, type CardBlockKind } from "../../lib/accountCard/types";
 
 import AvatarBlock from "./blocks/AvatarBlock.svelte";
 import AccountLoginBlock from "./blocks/AccountLoginBlock.svelte";
@@ -11,6 +11,7 @@ import GameStatsBlock from "./blocks/GameStatsBlock.svelte";
 import PlatformIdBlock from "./blocks/PlatformIdBlock.svelte";
 import LastUsedBlock from "./blocks/LastUsedBlock.svelte";
 import StatusLineBlock from "./blocks/StatusLineBlock.svelte";
+import BadgesBlock from "./blocks/BadgesBlock.svelte";
 
 /**
  * What every block is handed. Passed as one object rather than as separate
@@ -58,6 +59,7 @@ const REGISTRY: Record<CardBlockKind, CardBlockDef> = {
   platformId: { kind: "platformId", labelKey: "CardBlock_PlatformId", censorable: true, component: PlatformIdBlock as ComponentType },
   lastUsed: { kind: "lastUsed", labelKey: "CardBlock_LastUsed", censorable: false, component: LastUsedBlock as ComponentType },
   statusLine: { kind: "statusLine", labelKey: "CardBlock_StatusLine", censorable: false, component: StatusLineBlock as ComponentType },
+  badges: { kind: "badges", labelKey: "CardBlock_Badges", censorable: false, component: BadgesBlock as ComponentType },
 };
 
 export function blockDef(kind: CardBlockKind): CardBlockDef {
