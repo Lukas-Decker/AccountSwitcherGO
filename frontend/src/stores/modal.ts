@@ -10,6 +10,7 @@ export type ModalBodyOptions = {
 };
 
 export type PasswordSetupResult = { password: string };
+export type RiotLinkResult = { riotId: string; region: string };
 export type TagExpiryResult = {
   scope: "account" | "all";
   expiresAt: string;
@@ -40,6 +41,15 @@ type ActiveModal =
   | (ModalBase & {
       kind: "passwordSetup";
       title: string;
+      positiveLabel?: string;
+      negativeLabel?: string;
+    })
+  | (ModalBase & {
+      kind: "riotLink";
+      title: string;
+      riotId: string;
+      region: string;
+      regions: { platform: string; display: string }[];
       positiveLabel?: string;
       negativeLabel?: string;
     })
@@ -179,6 +189,36 @@ export function openPasswordSetupModal(opts: {
       id: bumpId(),
       kind: "passwordSetup",
       title: opts.title,
+      positiveLabel: opts.positiveLabel,
+      negativeLabel: opts.negativeLabel,
+    });
+  });
+}
+
+/**
+ * Asks for a Riot ID and a region together, with the region picked from a list.
+ *
+ * One modal rather than two prompts: the two values are one decision, and the
+ * region is a platform id nobody memorises, so offering the list is the whole
+ * point.
+ */
+export function openRiotLinkModal(opts: {
+  title: string;
+  riotId?: string;
+  region?: string;
+  regions: { platform: string; display: string }[];
+  positiveLabel?: string;
+  negativeLabel?: string;
+}): Promise<RiotLinkResult | null> {
+  return new Promise((resolve) => {
+    resolver = resolve as (value: unknown) => void;
+    activeModal.set({
+      id: bumpId(),
+      kind: "riotLink",
+      title: opts.title,
+      riotId: opts.riotId ?? "",
+      region: opts.region ?? "",
+      regions: opts.regions,
       positiveLabel: opts.positiveLabel,
       negativeLabel: opts.negativeLabel,
     });

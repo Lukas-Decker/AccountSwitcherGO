@@ -104,3 +104,48 @@ func TestLeagueEntryDisplay(t *testing.T) {
 		}
 	}
 }
+
+// A Riot ID copied out of the League client, op.gg or a chat app arrives wrapped
+// in bidi isolates, because Riot IDs mix scripts and the surrounding text would
+// otherwise reorder around them. They are invisible, so a rejection for being
+// too long is unexplainable to the person looking at 15 characters.
+func TestParseIDAcceptsACopiedID(t *testing.T) {
+	cases := map[string]string{
+		"bidi isolates":      "\u2066Average Tibbers\u2069#\u2066TR1\u2069",
+		"left-to-right mark": "\u200eAverage Tibbers#TR1",
+		"zero width space":   "Average Tibbers\u200b#TR1",
+		"byte order mark":    "\ufeffAverage Tibbers#TR1",
+	}
+	for name, in := range cases {
+		id, err := ParseID(in)
+		if err != nil {
+			t.Errorf("%s: ParseID(%q) = %v", name, in, err)
+			continue
+		}
+		if got := id.String(); got != "Average Tibbers#TR1" {
+			t.Errorf("%s: ParseID(%q) = %q", name, in, got)
+		}
+	}
+}
+
+// A non-breaking space is not the space Riot stores, so a name pasted with one
+// would be kept as something no lookup can match.
+func TestParseIDNormalisesExoticSpaces(t *testing.T) {
+	id, err := ParseID("Average\u00a0Tibbers#TR1")
+	if err != nil {
+		t.Fatalf("ParseID: %v", err)
+	}
+	if got := id.String(); got != "Average Tibbers#TR1" {
+		t.Errorf("ParseID = %q, want a plain space", got)
+	}
+}
+
+// Stripping invisibles must not smuggle a genuinely over-long name through.
+func TestParseIDStillEnforcesTheLimits(t *testing.T) {
+	if _, err := ParseID("\u2066ThisNameIsFarTooLong\u2069#TR1"); err == nil {
+		t.Error("a 20-character name was accepted")
+	}
+	if _, err := ParseID("Average Tibbers#\u2066TOOLONG\u2069"); err == nil {
+		t.Error("a 7-character tagline was accepted")
+	}
+}

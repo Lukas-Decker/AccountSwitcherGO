@@ -6,6 +6,7 @@
   import ConfirmModalBody from "./modals/ConfirmModalBody.svelte";
   import PromptModalBody from "./modals/PromptModalBody.svelte";
   import PasswordSetupModalBody from "./modals/PasswordSetupModalBody.svelte";
+  import RiotLinkModalBody from "./modals/RiotLinkModalBody.svelte";
   import TagExpiryModalBody from "./modals/TagExpiryModalBody.svelte";
   import FolderPickerModalBody from "./modals/FolderPickerModalBody.svelte";
   import CrashReportModalBody from "./modals/CrashReportModalBody.svelte";
@@ -53,9 +54,12 @@
           positiveLabel={m.positiveLabel ?? (m.style === "yesno" ? $t("Yes") : $t("Ok"))}
           negativeLabel={m.negativeLabel ?? $t("No")}
           style={m.style}
-          checkboxLabel={m.checkboxLabel}
-          on:resolve={onResolve}
-        />
+          checkboxLabel={m.checkboxLabel}
+
+          on:resolve={onResolve}
+
+        />
+
       {:else if m.kind === "prompt"}
         <PromptModalBody
           html={m.body}
@@ -70,6 +74,15 @@
       {:else if m.kind === "passwordSetup"}
         <PasswordSetupModalBody
           positiveLabel={m.positiveLabel ?? $t("Security_SetAppPassword")}
+          negativeLabel={m.negativeLabel ?? $t("Button_Cancel")}
+          on:resolve={onResolve}
+        />
+      {:else if m.kind === "riotLink"}
+        <RiotLinkModalBody
+          riotId={m.riotId}
+          region={m.region}
+          regions={m.regions}
+          positiveLabel={m.positiveLabel ?? $t("Riot_Save")}
           negativeLabel={m.negativeLabel ?? $t("Button_Cancel")}
           on:resolve={onResolve}
         />

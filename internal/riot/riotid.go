@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -47,13 +48,44 @@ type ID struct {
 	TagLine  string
 }
 
+// sanitizeIDInput drops the invisible characters a copied Riot ID arrives
+// wrapped in, and normalises the spaces.
+//
+// Riot IDs mix scripts, so the League client, op.gg and most chat apps wrap them
+// in bidi isolates (U+2066..U+2069) to stop the surrounding text reordering
+// around them. Copying one brings those along invisibly, and counting them
+// against the 16-character limit rejects a name that is plainly short enough:
+// "Average Tibbers#TR1" is 15 characters and was reported as 17.
+//
+// Non-breaking and other exotic spaces become plain ones for the same class of
+// reason: they look like a space, Riot stores a space, and a name pasted with
+// U+00A0 in it would be stored as something no lookup can match.
+func sanitizeIDInput(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+	for _, r := range s {
+		switch {
+		case unicode.Is(unicode.Cf, r):
+			// Format characters: bidi controls, zero-width spaces, the BOM. None
+			// of them are part of any name, and all of them are invisible, so
+			// there is nothing for the user to see and delete.
+			continue
+		case unicode.Is(unicode.Zs, r):
+			b.WriteRune(' ')
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return strings.TrimSpace(b.String())
+}
+
 // ParseID reads "GameName#TAG".
 //
 // The '#' is only ever a separator, so the split is on the first one and a second
 // '#' is an error rather than part of the tagline. Lengths are counted in runes:
 // a name of five kanji is five characters, not fifteen bytes.
 func ParseID(s string) (ID, error) {
-	s = strings.TrimSpace(s)
+	s = sanitizeIDInput(s)
 	if s == "" {
 		return ID{}, ErrEmptyRiotID
 	}

@@ -16,7 +16,7 @@
   import { LaunchPlatform } from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { formatToastWithError } from "../lib/formatWailsError";
   import { offerRestartIfNeedsAdmin, isNeedsAdminError } from "../lib/adminFlow";
-  import { openPrompt } from "../stores/modal";
+  import { openPrompt, openRiotLinkModal } from "../stores/modal";
   import { openExternalUrl } from "../lib/openExternalUrl";
   import { buildRiotMenu, RIOT_PLATFORM_KEY } from "../lib/riot/riotMenu";
   import * as RiotService from "../../bindings/account-switcher/internal/riotservice/service.js";
@@ -82,22 +82,32 @@
     }
   }
 
+  /** Region list, fetched once: it is a fixed table in the backend. */
+  let riotRegions: { platform: string; display: string }[] = [];
+
+  async function loadRiotRegions(): Promise<void> {
+    if (riotRegions.length > 0) return;
+    try {
+      riotRegions = await RiotService.Regions();
+    } catch {
+      // An empty list still lets the Riot ID be edited; the select is simply
+      // empty, which is no worse than the free-text field it replaced.
+      riotRegions = [];
+    }
+  }
+
   async function editRiotLink(uniqueId: string): Promise<void> {
     const current = riotCards[uniqueId];
-    const riotId = await openPrompt({
+    await loadRiotRegions();
+    const result = await openRiotLinkModal({
       title: get(t)("Riot_CardTitle"),
-      body: get(t)("Riot_RiotIdPrompt"),
-      initialValue: current?.riotId ?? "",
+      riotId: current?.riotId ?? "",
+      region: current?.region ?? "",
+      regions: riotRegions,
     });
-    if (riotId === null) return;
-    const region = await openPrompt({
-      title: get(t)("Riot_CardTitle"),
-      body: get(t)("Riot_RegionPrompt"),
-      initialValue: current?.region ?? "euw1",
-    });
-    if (region === null) return;
+    if (result === null) return;
     try {
-      await RiotService.SetAccountLink(uniqueId, riotId, region);
+      await RiotService.SetAccountLink(uniqueId, result.riotId, result.region);
       await loadRiotCards();
     } catch (e) {
       pushToast({ type: "error", message: formatToastWithError(get(t)("Riot_SaveFailed"), e), duration: 8000 });
