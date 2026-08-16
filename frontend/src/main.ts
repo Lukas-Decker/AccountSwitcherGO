@@ -16,6 +16,13 @@ import { initTheme } from './lib/themes'
 import { initRoundedCorners } from './stores/roundedCorners'
 
 const app = void (async () => {
+  // Lets the UI be driven in a plain browser, where Wails' native IPC is not
+  // available. Opt-in via ?wailsStub, and compiled out of production builds.
+  if (import.meta.env.DEV && new URLSearchParams(location.search).has('wailsStub')) {
+    const { installWailsStub } = await import('./dev/wailsStub')
+    installWailsStub()
+  }
+
   await initI18n()
   await initOfflineMode()
   await initTheme()
