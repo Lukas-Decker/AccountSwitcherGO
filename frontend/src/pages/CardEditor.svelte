@@ -112,6 +112,13 @@
 </script>
 
 <div class="main-content cardeditor-page">
+  <!-- The title bar shows this visually; the page itself needs a heading so
+       its section legends hang off a real outline. -->
+  <h1 class="sr-only">
+    {isPlatform
+      ? $t("CardEditor_TitleForPlatform", { platform: platformName ?? "" })
+      : $t("CardEditor_Title")}
+  </h1>
   {#if loadError}
     <p class="cardeditor-page__error">{loadError}</p>
   {/if}

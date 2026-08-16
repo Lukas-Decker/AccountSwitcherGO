@@ -1033,6 +1033,9 @@
 </script>
 
 <div class="main-content platform-accounts-root" bind:this={rootEl}>
+  <!-- The title bar shows the name visually; this gives the page a heading
+       outline, which is how screen reader users skim to the account list. -->
+  <h1 class="sr-only">{name || "Account Switcher"}</h1>
   {#if name}
     <div class="platformTableHost">
       <SearchOverlay
