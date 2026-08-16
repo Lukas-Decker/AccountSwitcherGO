@@ -428,6 +428,18 @@ label.acc {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  // Avatar sizing, defined here so both the plain avatar and Steam's framed one
+  // resolve them the same way. The percentages are evaluated where they are
+  // used, on the avatar itself, so they resolve against this card's content box.
+  //
+  // Steam avatar frames are drawn scaled up past the avatar's own box, so the
+  // avatar is capped to leave room for that, and the overhang is reserved on
+  // every card whether or not this one has a frame. Without the cap the frame
+  // reaches past the tile's edge; without the reserve it lands on the name.
+  --acc-avatar-frame-scale: 1.22;
+  --acc-avatar-used: min(var(--acc-avatar-size), calc(100% / var(--acc-avatar-frame-scale)));
+  --acc-avatar-frame-overhang: calc(var(--acc-avatar-used) * (var(--acc-avatar-frame-scale) - 1) / 2);
   // The preset's text scale. A larger card that still renders every label at
   // the app's base size only buys whitespace, not legibility.
   font-size: calc(1em * var(--acc-card-font-scale, 1));
