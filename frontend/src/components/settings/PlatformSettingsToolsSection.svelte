@@ -19,7 +19,7 @@
 
 <h2 class="SettingsHeader">{$t("Settings_Header_GeneralTools")}</h2>
 <p class="install-loc">
-  {$t("Settings_CurrentLocation", { path: installFolder || "" })}
+  {$t("Settings_CurrentLocation", { path: installFolder || $t("Settings_LocationNotDetected") })}
 </p>
 <div class="buttoncol">
   <button type="button" on:click={() => dispatch("pickFolder")}>{$t("Settings_PickFolder", { platform: name })}</button>

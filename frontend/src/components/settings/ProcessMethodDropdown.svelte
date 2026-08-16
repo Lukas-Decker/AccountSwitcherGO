@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { tooltip as tooltipAction } from "../../lib/actions/tooltip";
+  import { t } from "../../stores/i18n";
   import { viewportDropdown } from "../../lib/actions/viewportDropdown";
+  import SettingsRow from "./app/SettingsRow.svelte";
 
   export let values: readonly string[];
   export let current: string;
@@ -12,6 +13,10 @@
 
   const dispatch = createEventDispatcher();
   let open = false;
+
+  // A dropdown that displays nothing gives no sign it is one, so an unset
+  // value renders as an explicit "Default" instead of a bare caret.
+  $: currentLabel = current ? labelFn(current) : $t("Settings_MethodNotSet");
 
   function toggle(): void {
     if (!disabled) open = !open;
@@ -24,11 +29,10 @@
   }
 </script>
 
-<div class="rowSetting rowDropdown" use:tooltipAction={tooltip || undefined}>
-  <span>{label}</span>
+<SettingsRow {label} hint={tooltip} {disabled}>
   <div class="dropdown" class:show={open}>
     <button type="button" class="dropdown-toggle" on:click={toggle}>
-      {labelFn(current)}
+      {currentLabel}
       <span class="caret" aria-hidden="true"></span>
     </button>
     {#if open}
@@ -43,4 +47,4 @@
       </ul>
     {/if}
   </div>
-</div>
+</SettingsRow>

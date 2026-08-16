@@ -532,6 +532,17 @@
     flex: 1;
     min-height: 0;
     padding-bottom: 1rem;
+
+    // The shared settings rows normally live inside .settings-page, which is
+    // where these tokens are declared; this page hosts them directly.
+    --settings-row-border: var(--overlay-white-08);
+    --settings-hint-fg: var(--text-white-60);
+
+    // A settings list, not a page-wide table: without the cap the control
+    // column drifts a full window-width away from its labels.
+    :global(.setting-row) {
+      max-width: 46rem;
+    }
   }
 
   .platform-settings-err {

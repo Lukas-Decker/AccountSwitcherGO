@@ -44,7 +44,7 @@
       inputmode="numeric"
       spellcheck="false"
       autocomplete="off"
-      placeholder="000000000000000000"
+      placeholder={$t("Settings_DiscordAppId_Placeholder")}
       value={$discordAppId}
       disabled={$offlineMode}
       on:change={(e) => void saveDiscordAppId(e.currentTarget.value)}

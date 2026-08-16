@@ -10,6 +10,7 @@
     overrideStates,
     withLaunchArgFlag,
   } from "../../lib/platformSettingsShared";
+  import SettingsRow from "./app/SettingsRow.svelte";
   import SharedSettingCheckbox from "./SharedSettingCheckbox.svelte";
   import ProcessMethodDropdown from "./ProcessMethodDropdown.svelte";
   import type { Settings } from "../../../bindings/account-switcher/internal/steam/models";
@@ -33,18 +34,12 @@
 </script>
 
 <h2 class="SettingsHeader">{$t("Settings_Header_GeneralSettings")}</h2>
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="ps-desktop-shortcut"
-      type="checkbox"
-      checked={hasDesktopShortcut}
-      on:change={() => dispatch("toggleDesktopShortcut")}
-    />
-    <label class="form-check-label" for="ps-desktop-shortcut"></label>
-  </div>
-  <label for="ps-desktop-shortcut">{$t("Settings_Shortcut", { platform: name })}</label>
-</div>
+<SharedSettingCheckbox
+  id="ps-desktop-shortcut"
+  checked={hasDesktopShortcut}
+  label={$t("Settings_Shortcut", { platform: name })}
+  on:change={() => dispatch("toggleDesktopShortcut")}
+/>
 <SharedSettingCheckbox
   id="ps-run-admin"
   checked={steamSettings.RunAsAdmin}
@@ -105,34 +100,28 @@
     dispatch("save");
   }}
 />
-<div class="form-text tray-max-row">
-  <span>{$t("Settings_TrayMax")}</span>
+<SettingsRow label={$t("Settings_TrayMax")} controlId="ps-tray-max">
   <input
+    id="ps-tray-max"
     type="number"
     min="0"
     max="365"
     bind:value={steamSettings.TrayAccNumber}
     on:change={() => dispatch("save")}
   />
-</div>
+</SettingsRow>
 
 <h2 class="SettingsHeader">{$t("Settings_Header_LaunchOptions")}</h2>
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="ps-silent"
-      type="checkbox"
-      disabled={!steamSettings.AutoStart}
-      checked={silentOn}
-      on:change={() => {
-        steamSettings.LaunchArguments = withLaunchArgFlag(steamSettings.LaunchArguments ?? "", ARG_SILENT, !silentOn);
-        dispatch("save");
-      }}
-    />
-    <label class="form-check-label" for="ps-silent"></label>
-  </div>
-  <label for="ps-silent">{$t("Steam_StartSilent")}</label>
-</div>
+<SharedSettingCheckbox
+  id="ps-silent"
+  checked={silentOn}
+  disabled={!steamSettings.AutoStart}
+  label={$t("Steam_StartSilent")}
+  on:change={() => {
+    steamSettings.LaunchArguments = withLaunchArgFlag(steamSettings.LaunchArguments ?? "", ARG_SILENT, !silentOn);
+    dispatch("save");
+  }}
+/>
 <SharedSettingCheckbox
   id="ps-steam-switcher"
   checked={steamSettings.ShowSteamSwitcher}
@@ -151,26 +140,26 @@
     dispatch("save");
   }}
 />
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="ps-oldui"
-      type="checkbox"
-      disabled={!steamSettings.AutoStart}
-      checked={oldUiOn}
-      on:change={() => {
-        steamSettings.LaunchArguments = withLaunchArgFlag(steamSettings.LaunchArguments ?? "", ARG_VGUI, !oldUiOn);
-        dispatch("save");
-      }}
-    />
-    <label class="form-check-label" for="ps-oldui"></label>
-  </div>
-  <label for="ps-oldui">{$t("Steam_OldUi")}</label>
-</div>
-<div class="rowSetting form-text launch-args-row">
-  <label for="ps-launch-args">{$t("Settings_LaunchArgumentsForPlatform", { platform: name })}</label>
+<SharedSettingCheckbox
+  id="ps-oldui"
+  checked={oldUiOn}
+  disabled={!steamSettings.AutoStart}
+  label={$t("Steam_OldUi")}
+  on:change={() => {
+    steamSettings.LaunchArguments = withLaunchArgFlag(steamSettings.LaunchArguments ?? "", ARG_VGUI, !oldUiOn);
+    dispatch("save");
+  }}
+/>
+<SettingsRow
+  label={$t("Settings_LaunchArgumentsForPlatform", { platform: name })}
+  hint={$t("Settings_LaunchArguments_Hint")}
+  controlId="ps-launch-args"
+  disabled={!steamSettings.AutoStart}
+  stacked
+>
   <input
     id="ps-launch-args"
+    class="settings-input"
     type="text"
     spellcheck="false"
     autocomplete="off"
@@ -178,10 +167,8 @@
     bind:value={steamSettings.LaunchArguments}
     on:input={() => dispatch("save")}
   />
-  <p class="subtext">{$t("Settings_LaunchArguments_Hint")}</p>
-</div>
-<div class="rowSetting rowDropdown">
-  <span>{$t("Steam_OverrideDefaultState")}</span>
+</SettingsRow>
+<SettingsRow label={$t("Steam_OverrideDefaultState")}>
   <div class="dropdown" class:show={stateOpen}>
     <button type="button" class="dropdown-toggle" on:click={() => (stateOpen = !stateOpen)}>
       {overrideLabel(steamSettings.Steam_OverrideState)}
@@ -207,27 +194,33 @@
       </ul>
     {/if}
   </div>
-</div>
-<div class="form-text">
-  <span>{$t("Settings_ImageExpiry")}</span>
+</SettingsRow>
+<SettingsRow label={$t("Settings_ImageExpiry")} controlId="ps-image-expiry">
   <input
+    id="ps-image-expiry"
     type="number"
     min="0"
     max="365"
     bind:value={steamSettings.Steam_ImageExpiryTime}
     on:change={() => dispatch("save")}
   />
-</div>
-<div class="form-text">
-  <span>{$t("Settings_SteamAPIKey")}</span>
+</SettingsRow>
+<SettingsRow
+  label={$t("Settings_SteamAPIKey")}
+  hint={$t("Settings_SteamAPIKey_Note")}
+  controlId="ps-api-key"
+  stacked
+>
   <input
+    id="ps-api-key"
+    class="settings-input"
     type="text"
     spellcheck="false"
     bind:value={steamSettings.SteamWebApiKey}
     on:change={() => dispatch("save")}
   />
-  <p class="subtext">{$t("Settings_SteamAPIKey_Note")}</p>
-</div>
+</SettingsRow>
+
 <h2 class="SettingsHeader">{$t("Settings_Header_ProcessManagement")}</h2>
 {#if !closingMethodUiLocked}
   <ProcessMethodDropdown

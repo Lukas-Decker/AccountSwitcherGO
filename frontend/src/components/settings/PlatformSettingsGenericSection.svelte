@@ -7,9 +7,9 @@
     closingLabel,
     startingLabel,
   } from "../../lib/platformSettingsShared";
+  import SettingsRow from "./app/SettingsRow.svelte";
   import SharedSettingCheckbox from "./SharedSettingCheckbox.svelte";
   import ProcessMethodDropdown from "./ProcessMethodDropdown.svelte";
-  import { tooltip } from "../../lib/actions/tooltip";
   import type { PlatformSettings } from "../../../bindings/account-switcher/internal/platform/models";
 
   export let name: string;
@@ -33,18 +33,12 @@
 </script>
 
 <h2 class="SettingsHeader">{$t("Settings_Header_GeneralSettings")}</h2>
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="gp-desktop-shortcut"
-      type="checkbox"
-      checked={hasDesktopShortcut}
-      on:change={() => dispatch("toggleDesktopShortcut")}
-    />
-    <label class="form-check-label" for="gp-desktop-shortcut"></label>
-  </div>
-  <label for="gp-desktop-shortcut">{$t("Settings_Shortcut", { platform: name })}</label>
-</div>
+<SharedSettingCheckbox
+  id="gp-desktop-shortcut"
+  checked={hasDesktopShortcut}
+  label={$t("Settings_Shortcut", { platform: name })}
+  on:change={() => dispatch("toggleDesktopShortcut")}
+/>
 <SharedSettingCheckbox
   id="gp-run-admin"
   checked={genericPS.RunAsAdmin}
@@ -72,11 +66,18 @@
     dispatch("save");
   }}
 />
+
 <h2 class="SettingsHeader">{$t("Settings_Header_LaunchOptions")}</h2>
-<div class="rowSetting form-text launch-args-row">
-  <label for="gp-launch-args">{$t("Settings_LaunchArgumentsForPlatform", { platform: name })}</label>
+<SettingsRow
+  label={$t("Settings_LaunchArgumentsForPlatform", { platform: name })}
+  hint={$t("Settings_LaunchArguments_Hint")}
+  controlId="gp-launch-args"
+  disabled={!genericPS.AutoStart}
+  stacked
+>
   <input
     id="gp-launch-args"
+    class="settings-input"
     type="text"
     spellcheck="false"
     autocomplete="off"
@@ -84,8 +85,8 @@
     bind:value={genericPS.LaunchArguments}
     on:input={() => dispatch("save")}
   />
-  <p class="subtext">{$t("Settings_LaunchArguments_Hint")}</p>
-</div>
+</SettingsRow>
+
 <h2 class="SettingsHeader">{$t("Settings_Header_ProcessManagement")}</h2>
 {#if !closingMethodUiLocked}
   <ProcessMethodDropdown
@@ -104,39 +105,37 @@
 <!-- How long the platform gets to close on its own, and what happens when it
      does not. Terminating a launcher mid-write loses the session the switcher is
      about to read, so whether to go that far is the user's call. -->
-<div class="rowSetting">
-  <label class="closeGrace">
-    <span>{$t("Settings_CloseTimeout")}</span>
-    <input
-      type="number"
-      min="0"
-      max="120"
-      value={genericPS.CloseTimeoutSeconds ?? 0}
-      on:change={(e) => {
-        const n = Number.parseInt(e.currentTarget.value, 10);
-        genericPS.CloseTimeoutSeconds = Number.isFinite(n) && n > 0 ? Math.min(n, 120) : 0;
-        dispatch("save");
-      }}
-    />
-  </label>
-  <span class="closeGrace__hint">{$t("Settings_CloseTimeout_Hint")}</span>
-</div>
+<SettingsRow
+  label={$t("Settings_CloseTimeout")}
+  hint={$t("Settings_CloseTimeout_Hint")}
+  controlId="gp-close-timeout"
+>
+  <input
+    id="gp-close-timeout"
+    type="number"
+    min="0"
+    max="120"
+    value={genericPS.CloseTimeoutSeconds ?? 0}
+    on:change={(e) => {
+      const n = Number.parseInt(e.currentTarget.value, 10);
+      genericPS.CloseTimeoutSeconds = Number.isFinite(n) && n > 0 ? Math.min(n, 120) : 0;
+      dispatch("save");
+    }}
+  />
+</SettingsRow>
 
-<div class="rowSetting">
-  <div class="form-check">
-    <input
-      id="gs-force-close"
-      type="checkbox"
-      checked={genericPS.ForceCloseAfterTimeout !== false}
-      on:change={(e) => {
-        genericPS.ForceCloseAfterTimeout = e.currentTarget.checked;
-        dispatch("save");
-      }}
-    />
-    <label class="form-check-label" for="gs-force-close"></label>
-  </div>
-  <label for="gs-force-close" use:tooltip={$t("Tooltip_ForceClose")}>{$t("Settings_ForceClose")}</label>
-</div>
+<SharedSettingCheckbox
+  id="gs-force-close"
+  checked={genericPS.ForceCloseAfterTimeout !== false}
+  label={$t("Settings_ForceClose")}
+  tooltip={$t("Tooltip_ForceClose")}
+  on:change={() => {
+    // Absent means forced (the historical behaviour), so the toggle flips
+    // between an explicit false and an explicit true.
+    genericPS.ForceCloseAfterTimeout = genericPS.ForceCloseAfterTimeout === false;
+    dispatch("save");
+  }}
+/>
 
 <ProcessMethodDropdown
   values={startingValues}
@@ -151,40 +150,35 @@
 />
 
 <h2 class="SettingsHeader">{$t("Settings_Header_TraySettings")}</h2>
-<div class="form-text tray-max-row">
-  <span>{$t("Settings_TrayMax")}</span>
+<SettingsRow label={$t("Settings_TrayMax")} controlId="gp-tray-max">
   <input
+    id="gp-tray-max"
     type="number"
     min="0"
     max="365"
     bind:value={genericPS.TrayAccNumber}
     on:change={() => dispatch("save")}
   />
-</div>
+</SettingsRow>
+
 {#if hasRemoteProfileImages}
   <h2 class="SettingsHeader">{$t("Settings_Header_ProfileImages")}</h2>
-  <div class="rowSetting">
-    <div class="form-check">
-      <input
-        id="gp-pull-account-images"
-        type="checkbox"
-        checked={pullAccountImagesOnSwitch()}
-        on:change={handlePullAccountImagesChange}
-      />
-      <label class="form-check-label" for="gp-pull-account-images"></label>
-    </div>
-    <label for="gp-pull-account-images">{$t("Settings_PullAccountImages")}</label>
-  </div>
-  <div class="form-text tray-max-row">
-    <span>{$t("Settings_ProfileImageExpiryDays")}</span>
+  <SharedSettingCheckbox
+    id="gp-pull-account-images"
+    checked={pullAccountImagesOnSwitch()}
+    label={$t("Settings_PullAccountImages")}
+    on:change={handlePullAccountImagesChange}
+  />
+  <SettingsRow label={$t("Settings_ProfileImageExpiryDays")} controlId="gp-image-expiry">
     <input
+      id="gp-image-expiry"
       type="number"
       min="1"
       max="365"
       bind:value={genericPS.ProfileImageExpiryDays}
       on:change={() => dispatch("save")}
     />
-  </div>
+  </SettingsRow>
   <div class="buttoncol">
     <button type="button" on:click={() => dispatch("refreshBasicProfileImages")}>
       {$t("Button_RefreshImages")}
@@ -194,22 +188,3 @@
     </button>
   </div>
 {/if}
-
-<style lang="scss">
-  .closeGrace {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    input {
-      width: 5rem;
-      padding: 0.25rem 0.4rem;
-    }
-  }
-
-  .closeGrace__hint {
-    margin-left: 0.6rem;
-    font-size: 0.85rem;
-    opacity: 0.7;
-  }
-</style>
