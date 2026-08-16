@@ -4,8 +4,10 @@
  * Wails talks to Go over native IPC, so `vite dev` on its own boots the shell
  * and then every call fails: nothing renders and no screen can be checked.
  * This replaces the runtime's transport with one that answers from canned
- * data, which is enough to exercise the account list, the card and the
- * settings screens without a backend.
+ * data, which is enough to exercise every screen without a backend: home,
+ * the account lists, the card editor, app, platform and Steam settings,
+ * the games tab and advanced clearing. Saves are kept in memory so toggles
+ * and edits round-trip within a session.
  *
  * Dev only, and opt-in: it is loaded behind `import.meta.env.DEV` and a
  * `?wailsStub` flag, so `wails3 dev` against the real backend is untouched.
@@ -96,8 +98,79 @@ const AVATAR_FRAME = `data:image/svg+xml;utf8,${encodeURIComponent(
 )}`;
 
 const TAGS = [
-  { id: "t1", name: "main", colour: "#8aff80" },
-  { id: "t2", name: "alt", colour: "#80ffea" },
+  { id: "t1", name: "main", color: "#8aff80" },
+  { id: "t2", name: "alt", color: "#80ffea" },
+];
+
+/**
+ * Names double as icon asset lookups (public/img/platform/<name>.svg), so
+ * they have to match files that actually exist. Seven enabled tiles leave
+ * the home grid's last row partly filled, which is the wrap case worth
+ * seeing; the disabled list feeds Manage Platforms' other column.
+ */
+const HOME_PLATFORMS = ["Steam", "BattleNet", "Epic Games", "Riot Games", "Discord", "Ubisoft", "GOG Galaxy"];
+const DISABLED_PLATFORMS = ["Rockstar", "Origin", "EA Desktop"];
+
+/** Mutable so Save/Set calls round-trip while the stub session lasts. */
+const state = {
+  homeOrder: [...HOME_PLATFORMS],
+  disabled: [...DISABLED_PLATFORMS],
+  cardConfig: { version: 1, preset: "medium", blocks: { note: false } } as Record<string, unknown>,
+  platformSettings: new Map<string, Record<string, unknown>>(),
+  steamSettings: null as Record<string, unknown> | null,
+};
+
+function defaultPlatformSettings(): Record<string, unknown> {
+  return {
+    RunAsAdmin: false,
+    TrayAccNumber: 3,
+    ForgetAccountEnabled: true,
+    ClosingMethod: "Combined",
+    CloseTimeoutSeconds: 0,
+    ForceCloseAfterTimeout: true,
+    StartingMethod: "Default",
+    AutoStart: true,
+    ShowShortNotes: true,
+    ShowLastUsed: true,
+    AccountNotes: {},
+    LaunchArguments: "",
+    PullAccountImagesOnSwitch: true,
+    AccountCardCustomizationEnabled: false,
+    AccountCard: null,
+  };
+}
+
+function defaultSteamSettings(): Record<string, unknown> {
+  return {
+    ...defaultPlatformSettings(),
+    FolderPath: "C:\\Program Files (x86)\\Steam",
+    Steam_ShowSteamID: true,
+    Steam_ShowVAC: true,
+    Steam_ShowLimited: true,
+    Steam_ShowLastLogin: true,
+    Steam_ShowAccUsername: true,
+    Steam_TrayAccountName: false,
+    Steam_ImageExpiryTime: 7,
+    Steam_OverrideState: -1,
+    SteamWebApiKey: "",
+    ShowSteamSwitcher: true,
+    CollectInfo: true,
+    Steam_ShowMiniProfile: false,
+    Steam_ShowAvatarFrame: true,
+  };
+}
+
+const OWNED_GAMES = [
+  { appId: "730", name: "Counter-Strike 2", iconUrl: "", owners: ["76561198000000001", "76561198000000003"], installed: true },
+  { appId: "570", name: "Dota 2", iconUrl: "", owners: ["76561198000000001"], installed: true },
+  { appId: "271590", name: "Grand Theft Auto V", iconUrl: "", owners: ["76561198000000002"], installed: false },
+  { appId: "1245620", name: "Elden Ring", iconUrl: "", owners: ["76561198000000002", "76561198000000003"], installed: false },
+];
+
+const SHORTCUTS = [
+  { fileName: "Counter-Strike 2.url", displayName: "Counter-Strike 2", iconUrl: "", pinned: true, isPlatformExe: false, isUrl: true },
+  { fileName: "Dota 2.url", displayName: "Dota 2", iconUrl: "", pinned: false, isPlatformExe: false, isUrl: true },
+  { fileName: "Steam.exe", displayName: "Steam", iconUrl: "", pinned: false, isPlatformExe: true, isUrl: false },
 ];
 
 /**
@@ -162,16 +235,150 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
 
   // Stands in for a settings file that already has a card shape stored, so the
   // boot path that reads one can actually be exercised.
-  GetAccountCardConfig: () => ({
-    version: 1,
-    preset: "medium",
-    blocks: { note: false },
-  }),
+  GetAccountCardConfig: () => state.cardConfig,
+  SetAccountCardConfig: (args) => {
+    if (args[0] && typeof args[0] === "object") state.cardConfig = args[0] as Record<string, unknown>;
+  },
 
-  GetTagDefs: () => TAGS,
+  ListTagDefinitions: () => TAGS,
   GetAccountNote: () => "",
   GetPlatformExeIcon: () => "",
-  HasGameStatsSupport: () => false,
+
+  // --- Home and Manage Platforms ---
+
+  GetStartup: () => ({
+    homePlatformOrder: state.homeOrder.filter((n) => !state.disabled.includes(n)),
+    allPlatformNames: [...HOME_PLATFORMS, ...DISABLED_PLATFORMS],
+    disabledPlatformNames: state.disabled,
+    platformsFileMissing: false,
+    platformAccountCounts: { "Steam": 3, "BattleNet": 4, "Epic Games": 2, "Riot Games": 1, "GOG Galaxy": 5 },
+    platformTagCounts: { Steam: { tagCount: 2, taggedAccountCount: 2 } },
+    language: "en-US",
+    offlineMode: false,
+    protocolEnabled: true,
+    exitToTray: true,
+    discordRpc: false,
+    minimizeOnSwitch: true,
+    startTrayWithWindows: false,
+    startProgramCentered: false,
+    streamerMode: false,
+    autoStreamerMode: true,
+    hideFromScreenshots: true,
+    animationsEnabled: true,
+    controllerSupportEnabled: true,
+    prereleaseUpdates: false,
+    commandPaletteHotkey: "Ctrl+K",
+    themeAccentPreset: "",
+    themeAccentCustom: "",
+    themeHueRotate: 0,
+    roundedCorners: true,
+    discordAppId: "",
+    appVersion: "1.4.0-dev",
+  }),
+
+  SaveHomeOrder: (args) => {
+    if (Array.isArray(args[0])) state.homeOrder = args[0] as string[];
+  },
+  SetDisabledPlatforms: (args) => {
+    if (Array.isArray(args[0])) state.disabled = args[0] as string[];
+  },
+
+  // Every canned platform "installs" instantly, so tiles navigate rather than
+  // opening the locate-the-exe flow.
+  ResolvePlatformLaunch: () => ({
+    ok: true,
+    needsManualLocate: false,
+    foundViaShortcut: false,
+    soughtExeName: "",
+    initialPath: "",
+  }),
+
+  // --- App settings ---
+
+  GetAppVersion: () => "1.4.0-dev",
+  GetLanguage: () => "en-US",
+  // A factor, not a percentage: 1 is 100%, and 0 would mean automatic.
+  GetUIScale: () => 1,
+  GetAnimationsEnabled: () => true,
+  GetRoundedCorners: () => true,
+  GetProtocolEnabled: () => true,
+  GetExitToTray: () => true,
+  GetMinimizeOnSwitch: () => true,
+  GetAutoStreamerMode: () => true,
+  GetHideFromScreenshots: () => true,
+  GetUserDataLocation: () => "C:\\Users\\dev\\AppData\\Roaming\\AccountSwitcher",
+  GetDefaultUserDataLocation: () => "C:\\Users\\dev\\AppData\\Roaming\\AccountSwitcher",
+  CredentialStoreAvailable: () => true,
+  GetSecurityStatus: () => ({
+    appPasswordSet: false,
+    appLocked: false,
+    savedAccountDataEncrypted: false,
+    operationBusy: false,
+    quarantineCount: 0,
+    interruptedRestorePending: false,
+  }),
+
+  // --- Platform and Steam settings ---
+
+  GetPlatformSettings: (args) => {
+    const name = String(args[0] ?? "");
+    let s = state.platformSettings.get(name);
+    if (!s) {
+      s = defaultPlatformSettings();
+      state.platformSettings.set(name, s);
+    }
+    return s;
+  },
+  SavePlatformSettings: (args) => {
+    const name = String(args[0] ?? "");
+    if (args[1] && typeof args[1] === "object") {
+      state.platformSettings.set(name, args[1] as Record<string, unknown>);
+    }
+  },
+  ResetPlatformSettings: (args) => {
+    state.platformSettings.delete(String(args[0] ?? ""));
+  },
+
+  GetSteamSettings: () => {
+    if (!state.steamSettings) state.steamSettings = defaultSteamSettings();
+    return state.steamSettings;
+  },
+  SaveSteamSettings: (args) => {
+    if (args[0] && typeof args[0] === "object") state.steamSettings = args[0] as Record<string, unknown>;
+  },
+
+  GetPlatformInstallFolder: (args) => {
+    const name = String(args[0] ?? "");
+    return name === "Steam" ? "C:\\Program Files (x86)\\Steam" : `C:\\Program Files\\${name}`;
+  },
+
+  GetSteamIDFormats: (args) => {
+    const id64 = String(args[0] ?? "76561198000000001");
+    const id32 = String(BigInt(id64) - 76561197960265728n);
+    return {
+      ID64: id64,
+      ID3: `[U:1:${id32}]`,
+      STEAMx: `STEAM_1:${BigInt(id32) % 2n}:${BigInt(id32) / 2n}`,
+      ID32: id32,
+      FriendCode: id32,
+    };
+  },
+
+  // --- Games tab and shortcut bar ---
+
+  GetOwnedGames: () => OWNED_GAMES,
+  GetInstalledGames: () => OWNED_GAMES.filter((g) => g.installed).map((g) => ({ appId: g.appId, name: g.name })),
+  ListShortcuts: () => SHORTCUTS,
+
+  // --- Steam advanced clearing ---
+
+  AdvancedClearingRegistrySupported: () => true,
+  RunAdvancedClearingAction: (args) => ({
+    lines: [
+      `[stub] ${String(args[0] ?? "?")}: deleted 3 files (1.2 MB)`,
+      "[stub] done, nothing was actually touched",
+    ],
+  }),
 };
 
 /**
