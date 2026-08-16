@@ -516,6 +516,12 @@ label.acc {
     object-fit: cover;
   }
 
+  // Steam's frames are drawn for a circular portrait, so a framed avatar is
+  // masked to match; unframed avatars stay square with the rest of the grid.
+  .steam-acc-avatar--framed {
+    border-radius: 50%;
+  }
+
   // Holds the frame's footprint on accounts that have no frame, so every
   // avatar occupies the same box whether or not one is drawn in it.
   .steam-acc-avatar-frame--empty {

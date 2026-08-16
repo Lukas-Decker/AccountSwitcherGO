@@ -56,6 +56,7 @@
   {#if avatarIsVideo}
     <video
       class="steam-acc-avatar"
+      class:steam-acc-avatar--framed={hasFrame}
       class:status_vac={account.vac}
       class:status_limited={account.ltd}
       src={avatarSrc}
@@ -66,6 +67,7 @@
   {:else}
     <img
       class="steam-acc-avatar"
+      class:steam-acc-avatar--framed={hasFrame}
       class:status_vac={account.vac}
       class:status_limited={account.ltd}
       src={avatarSrc}
