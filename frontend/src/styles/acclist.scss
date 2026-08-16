@@ -340,8 +340,11 @@ label.acc {
   > img {
     -webkit-user-drag: none;
     display: inline-block;
-    width: var(--acc-avatar-size);
-    height: var(--acc-avatar-size);
+    // Never wider than the card: a large avatar on a narrow preset would
+    // otherwise push past the tile's own edge.
+    width: min(var(--acc-avatar-size), 100%);
+    height: auto;
+    aspect-ratio: 1;
     flex: none;
     margin-bottom: 0.5em;
     border: 2px solid transparent;
@@ -355,14 +358,30 @@ label.acc {
     }
   }
 
+  // Avatar frames are drawn scaled up past the avatar's own box, so a framed
+  // avatar needs the overhang reserved. Without it the frame lands on the
+  // tile's top edge and on the current-account ring, which are both painted
+  // in the outermost few pixels.
   .steam-acc-avatar-wrap {
+    --acc-avatar-frame-scale: 1.22;
+    --acc-avatar-used: min(var(--acc-avatar-size), 100%);
+
     position: relative;
     display: inline-block;
-    width: var(--acc-avatar-size);
-    height: var(--acc-avatar-size);
+    width: var(--acc-avatar-used);
+    height: auto;
+    aspect-ratio: 1;
     flex: none;
     margin-bottom: 0.75em;
     vertical-align: top;
+  }
+
+  .steam-acc-avatar-wrap--framed {
+    // Leave room for the frame on every side rather than only above, so it
+    // stays clear of the tile's edges at any preset.
+    --acc-avatar-used: min(var(--acc-avatar-size), calc(100% / var(--acc-avatar-frame-scale)));
+
+    margin-top: calc(var(--acc-avatar-used) * (var(--acc-avatar-frame-scale) - 1) / 2);
   }
 
   img.steam-acc-avatar,
@@ -394,7 +413,7 @@ label.acc {
     margin: 0;
     border: none !important;
     box-sizing: border-box;
-    transform: scale(1.22);
+    transform: scale(var(--acc-avatar-frame-scale, 1.22));
   }
 
   // Clamped to the card rather than to a fixed 9em, so text keeps ellipsing at

@@ -39,6 +39,11 @@
   // games. Exactly what streamer mode exists to keep off the screen.
   $: miniProfileEnabled =
     !$streamerMode && !!(account.showMiniProfile && (account.miniProfileHtml ?? "").trim() !== "");
+  $: hasFrame =
+    account.showAvatarFrame === true &&
+    (account.avatarFrameUrl ?? "").trim() !== "" &&
+    !$offlineMode &&
+    !$streamerMode;
   $: hoverOpts = {
     html: account.miniProfileHtml ?? "",
     boundary: block.hoverBoundary ?? block.boundary ?? null,
@@ -47,7 +52,7 @@
   };
 </script>
 
-<span class="steam-acc-avatar-wrap">
+<span class="steam-acc-avatar-wrap" class:steam-acc-avatar-wrap--framed={hasFrame}>
   {#if avatarIsVideo}
     <video
       class="steam-acc-avatar"
@@ -68,7 +73,7 @@
       use:miniProfileHover={hoverOpts}
     />
   {/if}
-  {#if account.showAvatarFrame && (account.avatarFrameUrl ?? "").trim() !== "" && !$offlineMode && !$streamerMode}
+  {#if hasFrame}
     <img class="steam-acc-avatar-frame" src={account.avatarFrameUrl ?? ""} alt="" draggable="false" />
   {/if}
 </span>

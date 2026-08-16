@@ -79,6 +79,22 @@ const STEAM_ACCOUNTS = [
   { steamId64: "76561198000000003", personaName: "smurf", displayName: "smurf", accountName: "smurf_login", currentSession: false },
 ];
 
+/**
+ * Stands in for a Steam avatar frame: an ornate ring with a transparent middle,
+ * drawn to the edge of its box the way the real ones are. The card scales these
+ * up by 1.22, so anything that reaches its own edge reaches past the avatar.
+ */
+const AVATAR_FRAME = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+     <circle cx="50" cy="50" r="47" fill="none" stroke="#e8c96a" stroke-width="5"/>
+     <circle cx="50" cy="50" r="41" fill="none" stroke="#8a6d2b" stroke-width="2"/>
+     <circle cx="50" cy="4" r="4" fill="#e8c96a"/>
+     <circle cx="50" cy="96" r="4" fill="#e8c96a"/>
+     <circle cx="4" cy="50" r="4" fill="#e8c96a"/>
+     <circle cx="96" cy="50" r="4" fill="#e8c96a"/>
+   </svg>`,
+)}`;
+
 const TAGS = [
   { id: "t1", name: "main", colour: "#8aff80" },
   { id: "t2", name: "alt", colour: "#80ffea" },
@@ -133,10 +149,12 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
       collectInfo: true,
       showShortNotes: true,
       note: i === 0 ? "main / ranked" : "",
-      avatarFrameUrl: "",
+      // The first account is the signed-in one, so this is the case the user
+      // actually sees: a frame and the current-account ring on the same card.
+      avatarFrameUrl: i === 0 ? AVATAR_FRAME : "",
       miniProfileHtml: "",
       showMiniProfile: false,
-      showAvatarFrame: false,
+      showAvatarFrame: i === 0,
       syncError: i === 2 ? "Could not reach the Steam Web API" : "",
       tags: i < 2 ? [TAGS[i]] : [],
       manualProfileImage: false,
