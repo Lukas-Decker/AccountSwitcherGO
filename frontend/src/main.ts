@@ -19,8 +19,9 @@ const app = void (async () => {
   // Lets the UI be driven in a plain browser, where Wails' native IPC is not
   // available. Opt-in via ?wailsStub, and compiled out of production builds.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('wailsStub')) {
-    const { installWailsStub } = await import('./dev/wailsStub')
+    const { installWailsStub, applyDevCardPreset } = await import('./dev/wailsStub')
     installWailsStub()
+    await applyDevCardPreset()
   }
 
   await initI18n()

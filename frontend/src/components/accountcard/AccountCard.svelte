@@ -4,12 +4,15 @@
   import { contextMenu as ctxMenuAction } from "../../lib/actions/contextMenu";
   import type { MenuItemDef } from "../../stores/contextMenu";
   import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
-  import { ALL_BLOCK_KINDS, type CardBlockKind } from "../../lib/accountCard/types";
-  import { availableBlockKinds, blockComponent, type CardBlockProps } from "./blockRegistry";
+  import type { CardBlockConfig, CardLayout } from "../../lib/accountCard/types";
+  import { blockComponent, type CardBlockProps } from "./blockRegistry";
 
   export let acc: TAccount;
   export let adapter: PlatformAccountAdapter<TAccount>;
   export let rid: string;
+
+  /** Already resolved: preset, user overrides and platform support folded in. */
+  export let layout: CardLayout;
 
   /** Ids shared with the hidden radio the card labels. */
   export let radioId: string;
@@ -37,12 +40,22 @@
   $: isCurrent = adapter.currentSession(acc);
   $: isBroken = adapter.savedDataBroken?.(acc) === true;
 
-  $: available = new Set<CardBlockKind>(availableBlockKinds(adapter));
-  $: blocks = ALL_BLOCK_KINDS.filter((kind) => available.has(kind));
+  // Warnings draw as an avatar border unless the user moved them elsewhere.
+  $: badgeStyle = layout.statusBadgeStyle;
 
-  $: blockProps = {
-    acc, adapter, rid, epoch, labelId, gameStats, boundary, hoverBoundary,
-  } satisfies CardBlockProps<TAccount>;
+  function propsFor(block: CardBlockConfig): CardBlockProps<TAccount> {
+    return {
+      acc,
+      adapter,
+      rid,
+      epoch,
+      display: block.display ?? "text",
+      labelId,
+      gameStats,
+      boundary,
+      hoverBoundary,
+    };
+  }
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -53,6 +66,8 @@
   class:acc--broken={isBroken}
   class:acc--profile-drop-target={profileDropActive}
   class:acc--drop-target={dropTarget}
+  class:acc--badges-corner={badgeStyle === "corner"}
+  class:acc--badges-border={badgeStyle === "border"}
   on:dragover={onDragOver}
   on:dragleave={onDragLeave}
   use:ctxMenuAction={{ items: contextMenuItems, beforeOpen: onContextMenuOpen }}
@@ -79,10 +94,24 @@
     </div>
   {/if}
 
-  {#each blocks as kind (kind)}
-    <svelte:component this={blockComponent(kind, adapter)} block={blockProps} />
-    {#if kind === "displayName" && a11yDescription}
-      <span id={descId} class="sr-only">{a11yDescription}</span>
+  {#each layout.rows as row, rowIndex (rowIndex)}
+    {#if row.blocks.length === 1}
+      <!-- A single block is a plain stacked line, with no wrapper, so the
+           common case keeps exactly the DOM the card has always had. -->
+      {@const block = row.blocks[0]}
+      <svelte:component this={blockComponent(block.kind, adapter)} block={propsFor(block)} />
+      {#if block.kind === "displayName" && a11yDescription}
+        <span id={descId} class="sr-only">{a11yDescription}</span>
+      {/if}
+    {:else}
+      <span class="acc_row">
+        {#each row.blocks as block (block.kind)}
+          <svelte:component this={blockComponent(block.kind, adapter)} block={propsFor(block)} />
+          {#if block.kind === "displayName" && a11yDescription}
+            <span id={descId} class="sr-only">{a11yDescription}</span>
+          {/if}
+        {/each}
+      </span>
     {/if}
   {/each}
 </label>

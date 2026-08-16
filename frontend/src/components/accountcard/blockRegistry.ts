@@ -1,6 +1,10 @@
 import type { ComponentType } from "svelte";
 import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
-import { CORE_BLOCK_KINDS, type CardBlockKind } from "../../lib/accountCard/types";
+import {
+  CORE_BLOCK_KINDS,
+  type CardBlockDisplay,
+  type CardBlockKind,
+} from "../../lib/accountCard/types";
 
 import AvatarBlock from "./blocks/AvatarBlock.svelte";
 import AccountLoginBlock from "./blocks/AccountLoginBlock.svelte";
@@ -23,6 +27,8 @@ export interface CardBlockProps<TAccount> {
   adapter: PlatformAccountAdapter<TAccount>;
   rid: string;
   epoch: number;
+  /** How this block was asked to draw itself in the active layout. */
+  display: CardBlockDisplay;
   /** Ties the name block to the hidden radio's accessible name. */
   labelId: string;
   gameStats?: Record<string, Record<string, GameStatMetricDTO>>;
@@ -47,19 +53,28 @@ export interface CardBlockDef {
    */
   censorable: boolean;
   component: ComponentType;
+  /**
+   * The draw modes this block actually supports. An identifier is only useful
+   * as its characters, so those blocks stay text; a timestamp or a sync state
+   * reads fine as a mark, which is what makes the small card worth having.
+   */
+  displays: readonly CardBlockDisplay[];
 }
 
+const TEXT_ONLY: readonly CardBlockDisplay[] = ["text"];
+const ICONABLE: readonly CardBlockDisplay[] = ["text", "icon", "iconText"];
+
 const REGISTRY: Record<CardBlockKind, CardBlockDef> = {
-  avatar: { kind: "avatar", labelKey: "CardBlock_Avatar", censorable: false, component: AvatarBlock as ComponentType },
-  accountLogin: { kind: "accountLogin", labelKey: "CardBlock_AccountLogin", censorable: true, component: AccountLoginBlock as ComponentType },
-  displayName: { kind: "displayName", labelKey: "CardBlock_DisplayName", censorable: false, component: DisplayNameBlock as ComponentType },
-  tags: { kind: "tags", labelKey: "CardBlock_Tags", censorable: false, component: TagsBlock as ComponentType },
-  note: { kind: "note", labelKey: "CardBlock_Note", censorable: false, component: NoteBlock as ComponentType },
-  gameStats: { kind: "gameStats", labelKey: "CardBlock_GameStats", censorable: false, component: GameStatsBlock as ComponentType },
-  platformId: { kind: "platformId", labelKey: "CardBlock_PlatformId", censorable: true, component: PlatformIdBlock as ComponentType },
-  lastUsed: { kind: "lastUsed", labelKey: "CardBlock_LastUsed", censorable: false, component: LastUsedBlock as ComponentType },
-  statusLine: { kind: "statusLine", labelKey: "CardBlock_StatusLine", censorable: false, component: StatusLineBlock as ComponentType },
-  badges: { kind: "badges", labelKey: "CardBlock_Badges", censorable: false, component: BadgesBlock as ComponentType },
+  avatar: { kind: "avatar", labelKey: "CardBlock_Avatar", censorable: false, component: AvatarBlock as ComponentType, displays: TEXT_ONLY },
+  accountLogin: { kind: "accountLogin", labelKey: "CardBlock_AccountLogin", censorable: true, component: AccountLoginBlock as ComponentType, displays: TEXT_ONLY },
+  displayName: { kind: "displayName", labelKey: "CardBlock_DisplayName", censorable: false, component: DisplayNameBlock as ComponentType, displays: TEXT_ONLY },
+  tags: { kind: "tags", labelKey: "CardBlock_Tags", censorable: false, component: TagsBlock as ComponentType, displays: TEXT_ONLY },
+  note: { kind: "note", labelKey: "CardBlock_Note", censorable: false, component: NoteBlock as ComponentType, displays: ICONABLE },
+  gameStats: { kind: "gameStats", labelKey: "CardBlock_GameStats", censorable: false, component: GameStatsBlock as ComponentType, displays: TEXT_ONLY },
+  platformId: { kind: "platformId", labelKey: "CardBlock_PlatformId", censorable: true, component: PlatformIdBlock as ComponentType, displays: TEXT_ONLY },
+  lastUsed: { kind: "lastUsed", labelKey: "CardBlock_LastUsed", censorable: false, component: LastUsedBlock as ComponentType, displays: ICONABLE },
+  statusLine: { kind: "statusLine", labelKey: "CardBlock_StatusLine", censorable: false, component: StatusLineBlock as ComponentType, displays: ICONABLE },
+  badges: { kind: "badges", labelKey: "CardBlock_Badges", censorable: false, component: BadgesBlock as ComponentType, displays: ICONABLE },
 };
 
 export function blockDef(kind: CardBlockKind): CardBlockDef {

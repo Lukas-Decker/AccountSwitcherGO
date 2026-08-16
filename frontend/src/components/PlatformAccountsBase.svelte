@@ -10,6 +10,9 @@
   import ReorderPointerGrid from "./ReorderPointerGrid.svelte";
   import TagFilterBar from "./TagFilterBar.svelte";
   import AccountCard from "./accountcard/AccountCard.svelte";
+  import { availableBlockKinds } from "./accountcard/blockRegistry";
+  import { accountCardConfig, applyCardGeometry, clearCardGeometry } from "../stores/accountCard";
+  import { resolveLayout } from "../lib/accountCard/resolve";
   import AccountListSkeleton from "./AccountListSkeleton.svelte";
   import SearchOverlay, { type SearchResultRow } from "./SearchOverlay.svelte";
   import { route, previousPage, appBarTitle } from "../stores/nav";
@@ -149,6 +152,12 @@
 
   let gameStatsByAccount: Record<string, Record<string, Record<string, { statValue: string; indicatorMarkup: string }>>> = {};
   let hasGameStatsSupport = false;
+
+  // The card's shape for this platform, and the geometry that goes with it.
+  // Written to the document root rather than the list, because the drag ghost
+  // renders outside the list and would not inherit it.
+  $: cardLayout = resolveLayout($accountCardConfig, availableBlockKinds(adapter));
+  $: applyCardGeometry(cardLayout);
 
   // Reactive declarations
   $: so = $searchOverlayCtrl;
@@ -981,6 +990,7 @@
   });
 
   onDestroy(() => {
+    clearCardGeometry();
     accountLoadGuard.invalidate();
     for (const t of refreshTimers) clearTimeout(t);
     refreshTimers = [];
@@ -1079,6 +1089,7 @@
                   {acc}
                   {adapter}
                   {rid}
+                  layout={cardLayout}
                   {radioId}
                   {labelId}
                   {descId}

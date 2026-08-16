@@ -166,6 +166,20 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
   HasGameStatsSupport: () => false,
 };
 
+/**
+ * Lets a preset be chosen from the URL (`?card=medium`) while there is no
+ * settings UI to choose it from yet. Persistence replaces this later.
+ */
+export async function applyDevCardPreset(): Promise<void> {
+  const raw = new URLSearchParams(location.search).get("card");
+  if (!raw) return;
+  const preset = raw.trim().toLowerCase();
+  if (!["small", "medium", "large"].includes(preset)) return;
+  const { accountCardConfig } = await import("../stores/accountCard");
+  accountCardConfig.set({ version: 1, preset: preset as "small" | "medium" | "large" });
+  console.info(`[wailsStub] card preset forced to ${preset}`);
+}
+
 export function installWailsStub(): void {
   const bindings = buildBindingIndex();
   const unknown = new Set<number>();
