@@ -12,6 +12,7 @@
     type GridNavigationKey,
   } from "../lib/gridNavigation";
   import { moveFocusSpatially, type SpatialDirection } from "../lib/spatialFocus";
+  import { appliedZoom } from "../lib/uiScale";
 
   /** Unique string ids; order is the canonical list. */
   export let items: string[] = [];
@@ -156,11 +157,15 @@
 
     dragIndex = pd.fromIndex;
     dragOverIndex = pd.fromIndex;
-    ghostW = pd.width;
-    ghostH = pd.height;
+    // Measured rects and pointer coordinates are visual, so they already carry
+    // the interface zoom. The ghost's own lengths are CSS, which the zoom then
+    // scales again, so divide it back out or the ghost drags at zoom squared.
+    const z = appliedZoom();
+    ghostW = pd.width / z;
+    ghostH = pd.height / z;
     draggingId = pd.id;
-    ghostX = e.clientX - pd.grabOffsetX;
-    ghostY = e.clientY - pd.grabOffsetY;
+    ghostX = (e.clientX - pd.grabOffsetX) / z;
+    ghostY = (e.clientY - pd.grabOffsetY) / z;
     document.body.style.userSelect = "none";
     document.body.dataset.dragging = "true";
   }
@@ -200,8 +205,11 @@
     }
 
     if (dragIndex !== null && pendingDrag) {
-      ghostX = e.clientX - pendingDrag.grabOffsetX;
-      ghostY = e.clientY - pendingDrag.grabOffsetY;
+      // Same conversion as when the drag began: pointer coordinates are visual,
+      // the ghost's left/top are CSS lengths the zoom scales again.
+      const z = appliedZoom();
+      ghostX = (e.clientX - pendingDrag.grabOffsetX) / z;
+      ghostY = (e.clientY - pendingDrag.grabOffsetY) / z;
       hitTestDragOver(e.clientX, e.clientY);
     }
   }

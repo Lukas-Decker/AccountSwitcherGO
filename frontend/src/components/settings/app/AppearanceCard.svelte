@@ -35,6 +35,8 @@
   import SettingsSelect from "./SettingsSelect.svelte";
   import SettingsSwitch from "./SettingsSwitch.svelte";
   import BackgroundControls from "./BackgroundControls.svelte";
+  import { uiScaleEffective, uiScaleSetting, setUiScale } from "../../../stores/uiScale";
+  import { applyUiScale, UI_SCALE_AUTO, UI_SCALE_MAX, UI_SCALE_MIN } from "../../../lib/uiScale";
 
   const CUSTOM_ACCENT_KEY = "__custom__";
 
@@ -93,6 +95,31 @@
       return;
     }
     customAccentInput?.focus();
+  }
+
+  // Shown as a percentage. Dragging applies live so the effect is visible while
+  // choosing it; only the committed value is written to settings.
+  let uiScaleDraft = 100;
+  let uiScaleDragging = false;
+  $: if (!uiScaleDragging) {
+    uiScaleDraft = Math.round($uiScaleEffective * 100);
+  }
+
+  function onUiScaleInput(e: Event): void {
+    uiScaleDragging = true;
+    uiScaleDraft = Number((e.currentTarget as HTMLInputElement).value);
+    applyUiScale(uiScaleDraft / 100);
+  }
+
+  function onUiScaleCommit(): void {
+    if (!uiScaleDragging) return;
+    uiScaleDragging = false;
+    void setUiScale(uiScaleDraft / 100);
+  }
+
+  function resetUiScale(): void {
+    uiScaleDragging = false;
+    void setUiScale(UI_SCALE_AUTO);
   }
 
   function onHueInput(e: Event): void {
@@ -200,6 +227,36 @@
       on:click={resetHue}
     >
       {$t("Settings_ThemeHueReset")}
+    </button>
+  </SettingsRow>
+
+  <SettingsRow
+    label={$t("Settings_UiScale")}
+    hint={$t("Settings_UiScale_Hint")}
+    controlId="settings-ui-scale"
+    stacked
+    keywords="ui scale zoom dpi size resolution readability"
+  >
+    <input
+      id="settings-ui-scale"
+      class="settings-slider"
+      type="range"
+      min={UI_SCALE_MIN * 100}
+      max={UI_SCALE_MAX * 100}
+      step="5"
+      value={uiScaleDraft}
+      on:input={onUiScaleInput}
+      on:change={onUiScaleCommit}
+      on:pointerup={onUiScaleCommit}
+    />
+    <span class="settings-value">{uiScaleDraft}%</span>
+    <button
+      type="button"
+      class="settings-btn settings-btn--ghost"
+      disabled={$uiScaleSetting === 0}
+      on:click={resetUiScale}
+    >
+      {$t("Settings_UiScale_Auto")}
     </button>
   </SettingsRow>
 

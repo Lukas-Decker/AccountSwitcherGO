@@ -55,6 +55,14 @@ func (p *PlatformService) SetThemeHueRotate(deg int) error {
 	})
 }
 
+// SetUIScale stores the interface scale. Zero restores automatic.
+func (p *PlatformService) SetUIScale(scale float64) error {
+	return p.withSettingsWrite(func(s *AppSettings) error {
+		s.UIScale = NormalizeUIScale(scale)
+		return nil
+	})
+}
+
 func (p *PlatformService) SetRoundedCorners(enabled bool) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {
 		s.RoundedCorners = enabled

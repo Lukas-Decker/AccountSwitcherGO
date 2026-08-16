@@ -34,6 +34,12 @@ type AppSettings struct {
 	// own rounded corners.
 	RoundedCorners bool `json:"roundedCorners,omitempty"`
 
+	// UIScale scales the whole interface. Zero means "work it out from the
+	// display": Windows already scales the webview when the OS is set above
+	// 100%, so this only has to cover the case it does not, which is a high
+	// resolution monitor left at 100%.
+	UIScale float64 `json:"uiScale,omitempty"`
+
 	// AnimationsEnabled controls whether UI motion is active.
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	AnimationsEnabled bool `json:"animationsEnabled"`

@@ -14,6 +14,7 @@ import { initOfflineMode } from './stores/offlineMode'
 import { resolveInitialRoute, installHashSync } from './stores/nav'
 import { initTheme } from './lib/themes'
 import { initRoundedCorners } from './stores/roundedCorners'
+import { initUiScale } from './stores/uiScale'
 
 const app = void (async () => {
   // Lets the UI be driven in a plain browser, where Wails' native IPC is not
@@ -28,6 +29,7 @@ const app = void (async () => {
   await initOfflineMode()
   await initTheme()
   await initRoundedCorners()
+  await initUiScale()
   await resolveInitialRoute()
   installHashSync()
   new App({ target: document.getElementById('app')! })

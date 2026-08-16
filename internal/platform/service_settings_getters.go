@@ -52,6 +52,16 @@ func (p *PlatformService) GetThemeHueRotate() (int, error) {
 	return val, err
 }
 
+// GetUIScale returns the stored interface scale, or 0 when it is automatic.
+func (p *PlatformService) GetUIScale() (float64, error) {
+	var val float64
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		val = NormalizeUIScale(s.UIScale)
+		return nil
+	})
+	return val, err
+}
+
 func (p *PlatformService) GetRoundedCorners() (bool, error) {
 	var val bool
 	err := p.withSettingsRead(func(s *AppSettings) error {
