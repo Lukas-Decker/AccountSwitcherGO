@@ -106,10 +106,12 @@
 
 .steam-acclist label.acc p.steamId {
   font-family: ui-monospace, monospace;
-  // Was 0.7em, which is 8.4px against the app's 12px base: a monospace digit
-  // string small enough that nobody can actually read it off the tile.
-  font-size: 0.85em;
+  // Matches the login name's size and sits a step fainter: a 17-digit number
+  // is the least-read line on the card and must not outweigh the name the
+  // user actually identifies accounts by.
+  font-size: 0.75em;
   letter-spacing: -0.01em;
+  opacity: 0.8;
 }
 
 // Streamer mode. The identifier leaves the layout entirely rather than being

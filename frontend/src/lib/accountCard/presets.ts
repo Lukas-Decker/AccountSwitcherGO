@@ -18,9 +18,10 @@ function metaRow(...blocks: { kind: CardBlockKind; display?: CardBlockDisplay }[
 }
 
 /**
- * Today's card, exactly: 100px tracks, a 6em avatar, one block per line and no
- * icons anywhere. Existing installs migrate onto this, so upgrading changes
- * nothing they can see.
+ * The historical card: 100px tracks, a 6em avatar, one block per line and no
+ * icons anywhere. One deliberate change from the layout installs migrate off:
+ * the display name leads, as it does on every other preset, so changing card
+ * size never swaps which line a grid is scanned by.
  */
 const SMALL: CardLayout = {
   minWidth: 100,
@@ -31,8 +32,8 @@ const SMALL: CardLayout = {
   statusBadgeStyle: "border",
   rows: [
     line("avatar"),
-    line("accountLogin"),
     line("displayName"),
+    line("accountLogin"),
     line("tags"),
     line("note"),
     line("gameStats"),
@@ -77,6 +78,9 @@ const LARGE: CardLayout = {
   statusBadgeStyle: "corner",
   rows: [
     line("avatar"),
+    // A ban is the highest-consequence fact on the card, so it sits with the
+    // identity rather than below the timestamp where a scan never reaches.
+    line("badges"),
     line("displayName"),
     line("accountLogin"),
     line("platformId"),
@@ -84,7 +88,6 @@ const LARGE: CardLayout = {
     line("note"),
     line("gameStats"),
     metaRow({ kind: "lastUsed", display: "iconText" }, { kind: "statusLine", display: "iconText" }),
-    line("badges"),
   ],
 };
 
