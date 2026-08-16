@@ -128,7 +128,7 @@
     tags: (a: BasicRow) => a.tags,
     note: (a: BasicRow) => a.note ?? "",
     shouldShowNote: (a: BasicRow) => !!(a.note ?? "").trim(),
-    shouldShowLastUsed: (a: BasicRow) => a.showLastUsed === true && !!(a.lastUsed ?? "").trim(),
+    shouldShowLastUsed: (a: BasicRow) => !!(a.lastUsed ?? "").trim(),
     lastUsed: (a: BasicRow) => a.lastUsed ?? "",
     accountLogin: () => "",
 

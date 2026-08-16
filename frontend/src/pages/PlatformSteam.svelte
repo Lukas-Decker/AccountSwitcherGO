@@ -109,7 +109,7 @@
     profileFallback: PROFILE_PLACEHOLDER,
 
     // What Steam adds to the card beyond the blocks every platform has.
-    cardBlocks: ["accountLogin", "platformId", "statusLine"],
+    cardBlocks: ["accountLogin", "platformId", "statusLine", "badges"],
     avatarComponent: SteamAccountAvatar as unknown as ComponentType,
 
     id: (a: SteamAccountRow) => a.steamId64,
@@ -120,19 +120,19 @@
     manualProfileImage: (a: SteamAccountRow) => a.manualProfileImage ?? false,
     tags: (a: SteamAccountRow) => a.tags,
     note: (a: SteamAccountRow) => a.note ?? "",
-    shouldShowNote: (a: SteamAccountRow) => a.showShortNotes === true && !!(a.note ?? "").trim(),
-    shouldShowLastUsed: (a: SteamAccountRow) => a.showLastLogin === true && !!(a.lastLogin ?? "").trim(),
+    shouldShowNote: (a: SteamAccountRow) => !!(a.note ?? "").trim(),
+    shouldShowLastUsed: (a: SteamAccountRow) => !!(a.lastLogin ?? "").trim(),
     lastUsed: (a: SteamAccountRow) => a.lastLogin ?? "",
     accountLogin: (a: SteamAccountRow) => (a.accountName ?? "").trim(),
-    shouldShowAccountLogin: (a: SteamAccountRow) => a.showAccUsername === true,
+    shouldShowAccountLogin: (a: SteamAccountRow) => !!(a.accountName ?? "").trim(),
 
     platformId: (a: SteamAccountRow) => a.steamId64 ?? "",
-    shouldShowPlatformId: (a: SteamAccountRow) => a.showSteamId === true,
+    shouldShowPlatformId: (a: SteamAccountRow) => !!(a.steamId64 ?? "").trim(),
 
     badges: (a: SteamAccountRow) => {
       const out: AccountBadge[] = [];
-      if (a.showVac && a.vac) out.push({ id: "vac", labelKey: "Steam_Badge_Vac", tone: "danger" });
-      if (a.showLimited && a.ltd) out.push({ id: "limited", labelKey: "Steam_Badge_Limited", tone: "warning" });
+      if (a.vac) out.push({ id: "vac", labelKey: "Steam_Badge_Vac", tone: "danger" });
+      if (a.ltd) out.push({ id: "limited", labelKey: "Steam_Badge_Limited", tone: "warning" });
       return out;
     },
 

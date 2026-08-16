@@ -56,8 +56,8 @@
   {#if avatarIsVideo}
     <video
       class="steam-acc-avatar"
-      class:status_vac={account.showVac && account.vac}
-      class:status_limited={account.showLimited && account.ltd}
+      class:status_vac={account.vac}
+      class:status_limited={account.ltd}
       src={avatarSrc}
       autoplay loop muted playsinline
       aria-hidden="true" draggable="false"
@@ -66,8 +66,8 @@
   {:else}
     <img
       class="steam-acc-avatar"
-      class:status_vac={account.showVac && account.vac}
-      class:status_limited={account.showLimited && account.ltd}
+      class:status_vac={account.vac}
+      class:status_limited={account.ltd}
       src={avatarSrc}
       alt="" draggable="false"
       use:miniProfileHover={hoverOpts}

@@ -204,9 +204,50 @@
   white-space: nowrap;
 }
 
-// Warnings as a mark in the avatar's corner rather than as a border round it.
-.acc--badges-corner .steam-acc-avatar-wrap {
-  overflow: visible;
+// Where account warnings are drawn is the user's choice. The border is the
+// long-standing look and stays the default; the other two are the badges block
+// and a mark in the avatar's corner.
+.acc--badges-border {
+  .steam-acc-avatar.status_vac,
+  img.status_vac {
+    border-color: var(--red) !important;
+  }
+
+  .steam-acc-avatar.status_limited,
+  img.status_limited {
+    border-color: var(--preview-control-border, var(--form-checkbox-border, var(--yellow))) !important;
+  }
+}
+
+.acc--badges-corner {
+  .steam-acc-avatar-wrap {
+    overflow: visible;
+  }
+
+  // A dot in the corner: enough to notice at a glance without the border
+  // competing with the current-account ring for the same few pixels.
+  .steam-acc-avatar.status_vac::after,
+  .steam-acc-avatar-wrap:has(.status_vac)::after,
+  .steam-acc-avatar-wrap:has(.status_limited)::after {
+    content: "";
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 0.55em;
+    height: 0.55em;
+    border: 1px solid var(--mainContentBackground, var(--code-background));
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .steam-acc-avatar-wrap:has(.status_limited)::after {
+    background: var(--preview-control-border, var(--form-checkbox-border, var(--yellow)));
+  }
+
+  // VAC is the more serious of the two, so it wins the corner when both apply.
+  .steam-acc-avatar-wrap:has(.status_vac)::after {
+    background: var(--red);
+  }
 }
 
 .acc_list_item--ghost,
@@ -442,14 +483,6 @@ label.acc {
     margin: 0;
     border: 2px solid transparent;
     object-fit: cover;
-
-    &.status_vac {
-      border: 2px solid var(--red) !important;
-    }
-
-    &.status_limited {
-      border: 2px solid var(--preview-control-border, var(--form-checkbox-border, var(--yellow))) !important;
-    }
   }
 
   .steam-acc-avatar-frame {

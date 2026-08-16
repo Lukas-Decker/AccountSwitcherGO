@@ -72,24 +72,6 @@
     dispatch("save");
   }}
 />
-<SharedSettingCheckbox
-  id="gp-shortnotes"
-  checked={genericPS.ShowShortNotes}
-  label={$t("Settings_ShowShortNotes")}
-  on:change={() => {
-    genericPS.ShowShortNotes = !genericPS.ShowShortNotes;
-    dispatch("save");
-  }}
-/>
-<SharedSettingCheckbox
-  id="gp-show-lastused"
-  checked={genericPS.ShowLastUsed}
-  label={$t("Settings_ShowLastUsed")}
-  on:change={() => {
-    genericPS.ShowLastUsed = !genericPS.ShowLastUsed;
-    dispatch("save");
-  }}
-/>
 <h2 class="SettingsHeader">{$t("Settings_Header_LaunchOptions")}</h2>
 <div class="rowSetting form-text launch-args-row">
   <label for="gp-launch-args">{$t("Settings_LaunchArgumentsForPlatform", { platform: name })}</label>

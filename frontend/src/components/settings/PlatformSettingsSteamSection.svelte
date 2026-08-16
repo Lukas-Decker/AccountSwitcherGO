@@ -72,62 +72,8 @@
     dispatch("save");
   }}
 />
-<SharedSettingCheckbox
-  id="ps-shortnotes"
-  checked={steamSettings.ShowShortNotes}
-  label={$t("Settings_ShowShortNotes")}
-  on:change={() => {
-    steamSettings.ShowShortNotes = !steamSettings.ShowShortNotes;
-    dispatch("save");
-  }}
-/>
 
 <h2 class="SettingsHeader">{$t("Settings_Header_AccountDisplay")}</h2>
-<SharedSettingCheckbox
-  id="ps-show-user"
-  checked={steamSettings.Steam_ShowAccUsername}
-  label={$t("Steam_ShowAccUsername")}
-  on:change={() => {
-    steamSettings.Steam_ShowAccUsername = !steamSettings.Steam_ShowAccUsername;
-    dispatch("save");
-  }}
-/>
-<SharedSettingCheckbox
-  id="ps-show-sid"
-  checked={steamSettings.Steam_ShowSteamID}
-  label={$t("Steam_ShowSteamID")}
-  on:change={() => {
-    steamSettings.Steam_ShowSteamID = !steamSettings.Steam_ShowSteamID;
-    dispatch("save");
-  }}
-/>
-<SharedSettingCheckbox
-  id="ps-show-ll"
-  checked={steamSettings.Steam_ShowLastLogin}
-  label={$t("Steam_ShowLastLogin")}
-  on:change={() => {
-    steamSettings.Steam_ShowLastLogin = !steamSettings.Steam_ShowLastLogin;
-    dispatch("save");
-  }}
-/>
-<SharedSettingCheckbox
-  id="ps-show-vac"
-  checked={steamSettings.Steam_ShowVAC}
-  label={$t("Steam_ShowVac")}
-  on:change={() => {
-    steamSettings.Steam_ShowVAC = !steamSettings.Steam_ShowVAC;
-    dispatch("save");
-  }}
-/>
-<SharedSettingCheckbox
-  id="ps-show-ltd"
-  checked={steamSettings.Steam_ShowLimited}
-  label={$t("Steam_ShowLimited")}
-  on:change={() => {
-    steamSettings.Steam_ShowLimited = !steamSettings.Steam_ShowLimited;
-    dispatch("save");
-  }}
-/>
 <SharedSettingCheckbox
   id="ps-show-miniprofile"
   checked={steamSettings.Steam_ShowMiniProfile}

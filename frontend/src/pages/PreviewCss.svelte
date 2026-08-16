@@ -22,6 +22,12 @@
   import { platformIconFgHref } from "../lib/platformIcon";
   import ToastTypeIcon from "../components/ToastTypeIcon.svelte";
   import ReorderPointerGrid from "../components/ReorderPointerGrid.svelte";
+  import AccountCard from "../components/accountcard/AccountCard.svelte";
+  import { availableBlockKinds } from "../components/accountcard/blockRegistry";
+  import { previewAdapter, type PreviewAccount } from "../lib/accountCard/previewAdapter";
+  import { resolveLayout } from "../lib/accountCard/resolve";
+  import { accountCardConfig } from "../stores/accountCard";
+  import { ALL_BLOCK_KINDS } from "../lib/accountCard/types";
   import ThemePickerControls from "../components/ThemePickerControls.svelte";
   import {
     focusShortcutArrowNavigationTarget,
@@ -29,13 +35,7 @@
   } from "../lib/actions/shortcutArrowNavigation";
   import { controllerSpatialNavigation } from "../lib/actions/controllerSpatialNavigation";
 
-  type PvAccRow = {
-    name: string;
-    status?: "vac" | "limited";
-    current?: boolean;
-    steamId: string;
-    when: string;
-  };
+  type PvAccRow = PreviewAccount & { status?: "vac" | "limited"; steamId: string; when: string };
 
   type PvShortcut = { label: string };
   type PvPlatformEdgeState = {
@@ -88,36 +88,44 @@
   let accIds = ["pv-1", "pv-2", "pv-3", "pv-4", "pv-5"];
   let selectedPvAccId = "pv-1";
 
+  function pvAcc(id: string, name: string, steamId: string, when: string, extra: Partial<PvAccRow> = {}): PvAccRow {
+    return {
+      id,
+      name,
+      login: name.toLowerCase().replace(/\s+/g, "_"),
+      platformId: steamId,
+      note: "",
+      lastUsed: when,
+      current: false,
+      broken: false,
+      vac: false,
+      limited: false,
+      syncError: "",
+      tags: [],
+      steamId,
+      when,
+      ...extra,
+    };
+  }
+
   const pvAccounts: Record<string, PvAccRow> = {
-    "pv-1": {
-      name: "Current Account",
+    "pv-1": pvAcc("pv-1", "Current Account", "76561198000000001", "2022-03-07T17:33:00Z", {
       current: true,
-      steamId: "76561198000000001",
-      when: "07/03/2022 17:33",
-    },
-    "pv-2": {
-      name: "Normal account",
-      steamId: "76561198000000002",
-      when: "07/03/2022 12:06",
-    },
-    "pv-3": {
-      name: "Banned account",
-      status: "vac",
-      steamId: "76561198000000003",
-      when: "07/03/2022 9:20",
-    },
-    "pv-4": {
-      name: "Limited account",
-      status: "limited",
-      steamId: "76561198000000004",
-      when: "07/03/2022 6:33",
-    },
-    "pv-5": {
-      name: "Another account",
-      steamId: "76561198000000005",
-      when: "06/03/2022 14:00",
-    },
+      note: "main",
+      tags: [{ id: "t", name: "main" }],
+    }),
+    "pv-2": pvAcc("pv-2", "Normal account", "76561198000000002", "2022-03-07T12:06:00Z"),
+    "pv-3": pvAcc("pv-3", "Banned account", "76561198000000003", "2022-03-07T09:20:00Z", { status: "vac", vac: true }),
+    "pv-4": pvAcc("pv-4", "Limited account", "76561198000000004", "2022-03-07T06:33:00Z", { status: "limited", limited: true }),
+    "pv-5": pvAcc("pv-5", "Another account", "76561198000000005", "2022-03-06T14:00:00Z", {
+      syncError: "Could not reach the Steam Web API",
+    }),
   };
+
+  // Every block a card can draw, so a theme is previewed against the busiest
+  // version of the tile rather than the emptiest.
+  const previewCardAdapter = previewAdapter(ALL_BLOCK_KINDS);
+  $: previewCardLayout = resolveLayout($accountCardConfig, availableBlockKinds(previewCardAdapter));
 
   let pinnedShortcutIds = ["pv-pin-1", "pv-pin-2"];
   let dropdownShortcutIds = ["pv-dd-a", "pv-dd-b", "pv-dd-c"];
@@ -477,24 +485,24 @@
                 tabindex="-1"
                 bind:group={selectedPvAccId}
               />
-              <label
-                for={radioId}
-                class="acc"
-                class:currentAcc={acc.current}
-                title={acc.current ? $t("Tooltip_CurrentAccount") : undefined}
-                use:contextMenu={noopAccMenu}
-              >
-                <img
-                  src="/img/BasicDefault.webp"
-                  alt=""
-                  draggable="false"
-                  class:status_vac={acc.status === "vac"}
-                  class:status_limited={acc.status === "limited"}
-                />
-                <h6>{acc.name}</h6>
-                <p class="streamerCensor steamId">{acc.steamId}</p>
-                <p>{acc.when}</p>
-              </label>
+              <!-- The real card, not an imitation of it. This page exists to
+                   show a theme what an account tile looks like, and a hand-made
+                   copy is how it drifted into missing tags, game stats and the
+                   live-session marker. -->
+              <AccountCard
+                {acc}
+                adapter={previewCardAdapter}
+                layout={previewCardLayout}
+                {rid}
+                {radioId}
+                labelId={`${radioId}-label`}
+                descId={`${radioId}-desc`}
+                contextMenuItems={noopAccMenu}
+                onContextMenuOpen={() => { selectedPvAccId = rid; }}
+                onDragOver={() => {}}
+                onDragLeave={() => {}}
+                onActivate={() => {}}
+              />
             </div>
           {/if}
         </svelte:fragment>
