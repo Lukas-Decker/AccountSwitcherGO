@@ -2,7 +2,7 @@
   import AccountCard from "./AccountCard.svelte";
   import { availableBlockKinds } from "./blockRegistry";
   import { previewAdapter, PREVIEW_ACCOUNT, type PreviewAccount } from "../../lib/accountCard/previewAdapter";
-  import { resolveLayout, layoutCssVars } from "../../lib/accountCard/resolve";
+  import { colorCssVars, layoutCssVars, resolveLayout } from "../../lib/accountCard/resolve";
   import type { AccountCardConfig, CardBlockKind } from "../../lib/accountCard/types";
 
   export let config: AccountCardConfig;
@@ -15,7 +15,7 @@
 
   // Scoped to this element rather than the document root: a preview must not
   // resize the real account list sitting behind the settings page.
-  $: styleVars = Object.entries(layoutCssVars(layout))
+  $: styleVars = Object.entries({ ...layoutCssVars(layout), ...colorCssVars(config) })
     .map(([k, v]) => `${k}: ${v}`)
     .join("; ");
 </script>

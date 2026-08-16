@@ -14,16 +14,30 @@
   --acc-avatar-size: 6em;
 
   // The card's own surface. Cards used to paint nothing at rest, so they read
-  // as text floating on the page rather than as the things you click. Built
-  // from existing theme tokens so every theme, including community ones, gets
-  // a sensible surface without being updated.
+  // as text floating on the page rather than as the things you click.
+  //
+  // A card is told apart from the page by being lighter than it and by casting
+  // a shadow, not by being outlined. An outline is a line drawn round a flat
+  // thing; the point here is that the card is above the page.
   --acc-card-bg: var(--code-background);
   --acc-card-bg-hover: var(--button-bg-hover, var(--button-bg));
   --acc-card-bg-selected: var(--button-bg);
-  --acc-card-border: var(--accent-overlay-border, var(--button-bg));
-  --acc-card-border-hover: var(--accent-overlay-border-strong, var(--accent));
   --acc-card-shadow: 0 1px 2px var(--shadow-color-30), 0 2px 6px -3px var(--shadow-color-35);
   --acc-card-shadow-hover: 0 2px 4px var(--shadow-color-35), 0 8px 18px -6px var(--shadow-color-45);
+
+  // A single sheen laid over whatever colour the card currently is: lighter at
+  // the top, darker at the foot. Because it sits on top of the fill rather
+  // than replacing it, every state and every theme is lit the same way, and a
+  // custom colour cannot come out looking flat next to the built-in ones.
+  // A flat lift under the sheen. The fill alone sits only a step or two off the
+  // page in most themes, which is not enough to read as raised; this makes the
+  // whole card lighter than what is behind it whatever colour it has been given.
+  --acc-card-lift: rgba(255, 255, 255, 0.05);
+  --acc-card-sheen-top: rgba(255, 255, 255, 0.08);
+  --acc-card-sheen-bottom: rgba(0, 0, 0, 0.10);
+  --acc-card-sheen:
+    linear-gradient(180deg, var(--acc-card-sheen-top), var(--acc-card-sheen-bottom)),
+    linear-gradient(var(--acc-card-lift), var(--acc-card-lift));
 }
 
 .steam-acclist {
@@ -422,10 +436,13 @@ label.acc {
   padding: 0.5em;
   border-width: 0.1em;
   border-style: solid;
-  // A card is a surface you act on, so it sits above the page rather than on
-  // it. The border carries the state changes; the shadow only says "raised".
-  border-color: var(--acc-card-border);
-  background: var(--acc-card-bg);
+  // The border box is kept so focus and the signed-in ring have something to
+  // paint on and the card never changes size, but nothing is drawn on it at
+  // rest. A background image sits above the fill and below the content, which
+  // is what lets the sheen apply without any stacking-order work.
+  border-color: transparent;
+  background-color: var(--acc-card-bg);
+  background-image: var(--acc-card-sheen);
   box-shadow: var(--acc-card-shadow);
   color: var(--whiteSecondary);
   text-align: center;
@@ -445,13 +462,14 @@ label.acc {
   > img {
     -webkit-user-drag: none;
     display: inline-block;
-    // Never wider than the card: a large avatar on a narrow preset would
-    // otherwise push past the tile's own edge.
-    width: min(var(--acc-avatar-size), 100%);
+    width: var(--acc-avatar-used);
     height: auto;
     aspect-ratio: 1;
     flex: none;
-    margin-bottom: 0.5em;
+    // Same reserved space as a framed avatar, so an avatar sits at the same
+    // height on every card whether or not this one happens to have a frame.
+    margin-top: var(--acc-avatar-frame-overhang);
+    margin-bottom: calc(0.5em + var(--acc-avatar-frame-overhang));
     border: 2px solid transparent;
 
     &.status_vac {
@@ -463,32 +481,16 @@ label.acc {
     }
   }
 
-  // Avatar frames are drawn scaled up past the avatar's own box, so a framed
-  // avatar needs the overhang reserved. Without it the frame lands on the
-  // tile's top edge and on the current-account ring, which are both painted
-  // in the outermost few pixels.
   .steam-acc-avatar-wrap {
-    --acc-avatar-frame-scale: 1.22;
-    --acc-avatar-used: min(var(--acc-avatar-size), 100%);
-
     position: relative;
     display: inline-block;
     width: var(--acc-avatar-used);
     height: auto;
     aspect-ratio: 1;
     flex: none;
-    margin-bottom: 0.75em;
-    vertical-align: top;
-  }
-
-  .steam-acc-avatar-wrap--framed {
-    --acc-avatar-used: min(var(--acc-avatar-size), calc(100% / var(--acc-avatar-frame-scale)));
-    --acc-avatar-frame-overhang: calc(var(--acc-avatar-used) * (var(--acc-avatar-frame-scale) - 1) / 2);
-
-    // Reserved above and below. Reserving only above still let the frame land
-    // on the name underneath it, which is the same mistake one edge along.
     margin-top: var(--acc-avatar-frame-overhang);
     margin-bottom: calc(0.75em + var(--acc-avatar-frame-overhang));
+    vertical-align: top;
   }
 
   img.steam-acc-avatar,
@@ -567,8 +569,7 @@ label.acc {
 // get stuck showing the raised state after a tap.
 @media (hover: hover) {
   label.acc:hover {
-    border-color: var(--acc-card-border-hover);
-    background: var(--acc-card-bg-hover);
+    background-color: var(--acc-card-bg-hover);
     box-shadow: var(--acc-card-shadow-hover);
     transform: translateY(-1px);
   }
@@ -598,8 +599,8 @@ label.acc:active {
 }
 
 input.acc:checked + label.acc {
-  border-color: var(--shortcut-active-border, var(--accent));
-  background: var(--acc-card-bg-selected);
+  border-color: var(--acc-card-selected-edge, var(--shortcut-active-border, var(--accent)));
+  background-color: var(--acc-card-bg-selected);
   box-shadow: var(--acc-card-shadow-hover);
 }
 

@@ -66,3 +66,32 @@ export function layoutCssVars(layout: CardLayout): Record<string, string> {
 export function layoutBlockKinds(layout: CardLayout): CardBlockKind[] {
   return layout.rows.flatMap((row) => row.blocks.map((b) => b.kind));
 }
+
+/**
+ * The colour overrides for a config, as CSS variables.
+ *
+ * Only states the user actually set are emitted, so anything untouched keeps
+ * falling through to the theme. The signed-in colour drives the ring rather
+ * than a fill, because that is how that state has always been shown.
+ */
+export function colorCssVars(config: AccountCardConfig): Record<string, string> {
+  const colors = config.colors ?? {};
+  const vars: Record<string, string> = {};
+  if (colors.rest) vars["--acc-card-bg"] = colors.rest;
+  if (colors.hover) vars["--acc-card-bg-hover"] = colors.hover;
+  if (colors.selected) {
+    vars["--acc-card-bg-selected"] = colors.selected;
+    vars["--acc-card-selected-edge"] = colors.selected;
+  }
+  if (colors.current) vars["--acc-ring-color"] = colors.current;
+  return vars;
+}
+
+/** Colour variables the card sets, so a page can clear the ones it did not set. */
+export const CARD_COLOR_VAR_NAMES = [
+  "--acc-card-bg",
+  "--acc-card-bg-hover",
+  "--acc-card-bg-selected",
+  "--acc-card-selected-edge",
+  "--acc-ring-color",
+] as const;

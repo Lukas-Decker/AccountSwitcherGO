@@ -34,6 +34,18 @@ export type StatusBadgeStyle = "border" | "corner" | "block";
 
 export type CardSizePreset = "small" | "medium" | "large" | "custom";
 
+/**
+ * The states a card can be in that are worth colouring differently. Kept apart
+ * from the size presets: which colours you like has nothing to do with how big
+ * the card is, and a colour should survive switching preset.
+ */
+export type CardColorState = "rest" | "hover" | "selected" | "current";
+
+/** Hex colours per state. An absent state keeps the theme's own colour. */
+export type CardColors = Partial<Record<CardColorState, string>>;
+
+export const CARD_COLOR_STATES: readonly CardColorState[] = ["rest", "hover", "selected", "current"];
+
 export interface CardBlockConfig {
   kind: CardBlockKind;
   enabled: boolean;
@@ -81,6 +93,8 @@ export interface AccountCardConfig {
   blocks?: Partial<Record<CardBlockKind, boolean>>;
   displays?: Partial<Record<CardBlockKind, CardBlockDisplay>>;
   statusBadgeStyle?: StatusBadgeStyle;
+  /** Overrides the theme's colour for one or more card states. */
+  colors?: CardColors;
   /** Only meaningful when preset is "custom". */
   custom?: CardLayout;
 }
@@ -140,6 +154,19 @@ function isDisplay(value: unknown): value is CardBlockDisplay {
 
 function isBadgeStyle(value: unknown): value is StatusBadgeStyle {
   return value === "border" || value === "corner" || value === "block";
+}
+
+/**
+ * Accepts only a plain hex colour. Anything else is dropped rather than passed
+ * through: these values are written into a stylesheet, so a value that is not
+ * a colour has no business reaching one.
+ */
+function isHexColor(value: unknown): value is string {
+  return typeof value === "string" && /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(value.trim());
+}
+
+function isColorState(value: unknown): value is CardColorState {
+  return typeof value === "string" && (CARD_COLOR_STATES as readonly string[]).includes(value);
 }
 
 function isPreset(value: unknown): value is CardSizePreset {
@@ -203,12 +230,18 @@ export function validateConfig(raw: unknown, fallbackLayout: CardLayout): Accoun
     if (isBlockKind(k) && isDisplay(v)) displays[k] = v;
   }
 
+  const colors: CardColors = {};
+  for (const [k, v] of Object.entries(r.colors ?? {})) {
+    if (isColorState(k) && isHexColor(v)) colors[k] = v.trim().toLowerCase();
+  }
+
   return {
     version: CARD_CONFIG_VERSION,
     preset: isPreset(r.preset) ? r.preset : "small",
     blocks: Object.keys(blocks).length > 0 ? blocks : undefined,
     displays: Object.keys(displays).length > 0 ? displays : undefined,
     statusBadgeStyle: isBadgeStyle(r.statusBadgeStyle) ? r.statusBadgeStyle : undefined,
+    colors: Object.keys(colors).length > 0 ? colors : undefined,
     custom: r.custom ? validateLayout(r.custom, fallbackLayout) : undefined,
   };
 }

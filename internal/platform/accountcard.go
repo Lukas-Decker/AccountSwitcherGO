@@ -47,8 +47,11 @@ type AccountCardConfig struct {
 	Blocks   map[string]bool   `json:"blocks,omitempty"`
 	Displays map[string]string `json:"displays,omitempty"`
 
-	StatusBadgeStyle string      `json:"statusBadgeStyle,omitempty"`
-	Custom           *CardLayout `json:"custom,omitempty"`
+	StatusBadgeStyle string `json:"statusBadgeStyle,omitempty"`
+	// Per-state colour overrides. An absent state keeps the theme's own colour.
+	Colors map[string]string `json:"colors,omitempty"`
+
+	Custom *CardLayout `json:"custom,omitempty"`
 }
 
 var validPresets = map[string]bool{"small": true, "medium": true, "large": true, "custom": true}
@@ -62,6 +65,29 @@ var validBlockKinds = map[string]bool{
 var validDisplays = map[string]bool{"text": true, "icon": true, "iconText": true}
 
 var validBadgeStyles = map[string]bool{"border": true, "corner": true, "block": true}
+
+var validColorStates = map[string]bool{"rest": true, "hover": true, "selected": true, "current": true}
+
+// isHexColor accepts only a plain hex colour. These values end up in a
+// stylesheet, so anything that is not a colour has no business reaching one.
+func isHexColor(v string) bool {
+	v = strings.TrimSpace(v)
+	if len(v) != 4 && len(v) != 7 && len(v) != 9 {
+		return false
+	}
+	if v[0] != '#' {
+		return false
+	}
+	for _, c := range v[1:] {
+		isDigit := c >= '0' && c <= '9'
+		isLower := c >= 'a' && c <= 'f'
+		isUpper := c >= 'A' && c <= 'F'
+		if !isDigit && !isLower && !isUpper {
+			return false
+		}
+	}
+	return true
+}
 
 // DefaultAccountCardConfig is the card as it has always shipped: the small
 // preset, with nothing overridden.
@@ -127,6 +153,18 @@ func NormalizeAccountCardConfig(c AccountCardConfig) AccountCardConfig {
 
 	if validBadgeStyles[c.StatusBadgeStyle] {
 		out.StatusBadgeStyle = c.StatusBadgeStyle
+	}
+
+	if len(c.Colors) > 0 {
+		colors := map[string]string{}
+		for k, v := range c.Colors {
+			if validColorStates[k] && isHexColor(v) {
+				colors[k] = strings.ToLower(strings.TrimSpace(v))
+			}
+		}
+		if len(colors) > 0 {
+			out.Colors = colors
+		}
 	}
 
 	if c.Custom != nil {

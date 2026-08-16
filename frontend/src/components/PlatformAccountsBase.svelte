@@ -11,7 +11,7 @@
   import TagFilterBar from "./TagFilterBar.svelte";
   import AccountCard from "./accountcard/AccountCard.svelte";
   import { availableBlockKinds } from "./accountcard/blockRegistry";
-  import { accountCardConfig, applyCardGeometry, clearCardGeometry } from "../stores/accountCard";
+  import { accountCardConfig, applyCardColors, applyCardGeometry, clearCardGeometry } from "../stores/accountCard";
   import { resolveLayout } from "../lib/accountCard/resolve";
   import {
     resolvePlatformCardConfig,
@@ -164,6 +164,7 @@
   $: effectiveCardConfig = resolvePlatformCardConfig($accountCardConfig, platformCardSettings);
   $: cardLayout = resolveLayout(effectiveCardConfig, availableBlockKinds(adapter));
   $: applyCardGeometry(cardLayout);
+  $: applyCardColors(effectiveCardConfig);
 
   /** A platform may override the global card shape; most never do. */
   async function loadPlatformCardSettings(platformKey: string): Promise<void> {

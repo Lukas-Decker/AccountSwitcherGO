@@ -1,7 +1,7 @@
 import { derived, get, writable, type Readable } from "svelte/store";
 import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
 import { DEFAULT_CARD_CONFIG, presetLayout } from "../lib/accountCard/presets";
-import { layoutCssVars } from "../lib/accountCard/resolve";
+import { CARD_COLOR_VAR_NAMES, colorCssVars, layoutCssVars } from "../lib/accountCard/resolve";
 import { validateConfig, type AccountCardConfig, type CardLayout } from "../lib/accountCard/types";
 
 const STORAGE_KEY = "tcno:account-card";
@@ -69,11 +69,30 @@ export function applyCardGeometry(layout: CardLayout): void {
   }
 }
 
+/**
+ * Applies the user's state colours, clearing any it does not set so a colour
+ * removed in the editor actually goes back to the theme's rather than
+ * lingering from the last page.
+ */
+export function applyCardColors(config: AccountCardConfig): void {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const vars = colorCssVars(config);
+  for (const name of CARD_COLOR_VAR_NAMES) {
+    const value = vars[name];
+    if (value) root.style.setProperty(name, value);
+    else root.style.removeProperty(name);
+  }
+}
+
 /** Restores the stylesheet's own values, so no page leaks its geometry to the next. */
 export function clearCardGeometry(): void {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   for (const name of Object.keys(layoutCssVars(presetLayout("small")))) {
+    root.style.removeProperty(name);
+  }
+  for (const name of CARD_COLOR_VAR_NAMES) {
     root.style.removeProperty(name);
   }
 }

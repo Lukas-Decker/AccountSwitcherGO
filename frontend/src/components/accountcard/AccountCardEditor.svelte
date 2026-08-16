@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount, tick } from "svelte";
   import AccountCardPreview from "./AccountCardPreview.svelte";
   import { blockDef } from "./blockRegistry";
   import { t } from "../../stores/i18n";
@@ -13,7 +13,9 @@
   } from "../../lib/accountCard/flatLayout";
   import {
     CARD_BOUNDS,
+    CARD_COLOR_STATES,
     type AccountCardConfig,
+    type CardColorState,
     type CardBlockDisplay,
     type CardBlockKind,
     type CardSizePreset,
@@ -72,6 +74,72 @@
 
   function setBadgeStyle(style: StatusBadgeStyle): void {
     emit({ ...config, statusBadgeStyle: style });
+  }
+
+  /**
+   * The theme's own colour per state, read once when the editor opens.
+   *
+   * Deliberately not read during render: the preview writes its own colour
+   * variables, and reading them mid-update returns whichever value happened to
+   * be there first, which showed a stale swatch after resetting to the theme.
+   */
+  let themeColors: Record<CardColorState, string> = {
+    rest: "#000000", hover: "#000000", selected: "#000000", current: "#000000",
+  };
+
+  onMount(async () => {
+    // After the preview has rendered, and read from the card rather than from
+    // :root: a custom property declared as var(--other) reads back unresolved
+    // on the element that declares it, and resolved on one that inherits it.
+    await tick();
+    const probe = document.querySelector(".acc-preview label.acc") ?? document.documentElement;
+    const cs = getComputedStyle(probe);
+    const sources: Record<CardColorState, string[]> = {
+      rest: ["--acc-card-bg"],
+      hover: ["--acc-card-bg-hover"],
+      selected: ["--acc-card-bg-selected"],
+      // The ring's fallback chain lives in the stylesheet, so the variable on
+      // its own reports nothing until someone has set it.
+      current: ["--acc-ring-color", "--shortcut-active-border", "--green"],
+    };
+    const next = { ...themeColors };
+    for (const state of CARD_COLOR_STATES) {
+      for (const name of sources[state]) {
+        const hex = toHex(cs.getPropertyValue(name).trim());
+        if (hex) { next[state] = hex; break; }
+      }
+    }
+    themeColors = next;
+  });
+
+  // A reactive map rather than a function call in the markup: Svelte tracks the
+  // variables an expression names, and a function call names neither the config
+  // nor the theme snapshot it happens to read.
+  $: swatchColors = Object.fromEntries(
+    CARD_COLOR_STATES.map((state) => [state, config.colors?.[state] ?? themeColors[state]]),
+  ) as Record<CardColorState, string>;
+
+  /** A colour input only accepts hex, and the theme's value may be anything. */
+  function toHex(value: string): string {
+    if (!value) return "";
+    if (value.startsWith("#")) return value.length === 4
+      ? "#" + value.slice(1).split("").map((c) => c + c).join("")
+      : value.slice(0, 7);
+    const m = value.match(/rgba?\(([^)]+)\)/);
+    if (!m) return "";
+    const [r, g, b] = m[1].split(",").map((n) => Number(n.trim()));
+    if ([r, g, b].some((n) => !Number.isFinite(n))) return "";
+    return "#" + [r, g, b].map((n) => Math.max(0, Math.min(255, n)).toString(16).padStart(2, "0")).join("");
+  }
+
+  function setColor(state: CardColorState, value: string): void {
+    emit({ ...config, colors: { ...(config.colors ?? {}), [state]: value } });
+  }
+
+  function clearColor(state: CardColorState): void {
+    const next = { ...(config.colors ?? {}) };
+    delete next[state];
+    emit({ ...config, colors: Object.keys(next).length > 0 ? next : undefined });
   }
 
   /** Ordering, joining and dimensions only exist for the custom shape. */
@@ -193,6 +261,34 @@
         >
           {$t(`CardBadges_${style}`)}
         </button>
+      {/each}
+    </div>
+  </fieldset>
+
+  <fieldset class="cardeditor__colors" {disabled}>
+    <legend class="cardeditor__legend">{$t("CardEditor_Colors")}</legend>
+    <p class="cardeditor__hint">{$t("CardEditor_Colors_Hint")}</p>
+    <div class="cardeditor__colorgrid">
+      {#each CARD_COLOR_STATES as state (state)}
+        <div class="cardeditor__color">
+          <label for={`cardcolor-${state}`}>{$t(`CardColor_${state}`)}</label>
+          <span class="cardeditor__colorrow">
+            <input
+              type="color"
+              id={`cardcolor-${state}`}
+              value={swatchColors[state]}
+              on:input={(e) => setColor(state, e.currentTarget.value)}
+            />
+            <button
+              type="button"
+              class="cardeditor__reset"
+              disabled={!config.colors?.[state]}
+              on:click={() => clearColor(state)}
+            >
+              {$t("CardEditor_Colors_Reset")}
+            </button>
+          </span>
+        </div>
       {/each}
     </div>
   </fieldset>
@@ -376,6 +472,51 @@
 
     &:disabled {
       opacity: 0.4;
+      cursor: default;
+    }
+  }
+
+  .cardeditor__colorgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .cardeditor__color {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+  }
+
+  .cardeditor__colorrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    input[type="color"] {
+      width: 2.6rem;
+      height: 1.7rem;
+      padding: 0;
+      border: 1px solid var(--role-field-border, var(--button-bg));
+      border-radius: 3px;
+      background: none;
+      cursor: pointer;
+    }
+  }
+
+  .cardeditor__reset {
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--role-field-border, var(--button-bg));
+    border-radius: 3px;
+    background: var(--button-bg);
+    color: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.45;
       cursor: default;
     }
   }
