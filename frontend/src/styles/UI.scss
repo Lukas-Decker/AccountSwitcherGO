@@ -118,6 +118,30 @@ button,
   }
 }
 
+/* Destructive actions. Red border and label on the normal surface: loud
+   enough to triage a row of controls before reading them, quiet enough for a
+   page that carries twelve. Reserve it for actions that delete or reset. */
+button.danger,
+.button.danger {
+  border-color: var(--error-border-soft, var(--red));
+  color: var(--red);
+
+  svg {
+    fill: var(--red);
+  }
+
+  &:hover {
+    background: var(--error-bg-dim, var(--button-bg-hover));
+    border-color: var(--red);
+  }
+
+  &:active,
+  &:target {
+    background: var(--error-bg-hover, var(--button-bg-hover));
+    border-color: var(--red);
+  }
+}
+
 .btnicontext {
   svg {
     height: 1rem;

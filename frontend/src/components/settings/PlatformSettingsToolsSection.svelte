@@ -23,7 +23,7 @@
 </p>
 <div class="buttoncol">
   <button type="button" on:click={() => dispatch("pickFolder")}>{$t("Settings_PickFolder", { platform: name })}</button>
-  <button type="button" on:click={() => dispatch("reset")}>{$t("Button_ResetSettings")}</button>
+  <button type="button" class="danger" on:click={() => dispatch("reset")}>{$t("Button_ResetSettings")}</button>
 </div>
 {#if hasCachePaths}
   <div class="buttoncol">
