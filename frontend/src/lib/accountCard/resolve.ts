@@ -58,6 +58,7 @@ export function layoutCssVars(layout: CardLayout): Record<string, string> {
     "--acc-card-max-w": `${layout.maxWidth}px`,
     "--acc-card-min-h": `${layout.minHeight}px`,
     "--acc-avatar-size": `${layout.avatarEm}em`,
+    "--acc-card-font-scale": String(layout.fontScale),
   };
 }
 

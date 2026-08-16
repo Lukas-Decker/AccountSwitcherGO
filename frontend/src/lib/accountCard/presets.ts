@@ -27,6 +27,7 @@ const SMALL: CardLayout = {
   maxWidth: 120,
   minHeight: 135,
   avatarEm: 6,
+  fontScale: 1,
   statusBadgeStyle: "border",
   rows: [
     line("avatar"),
@@ -50,6 +51,7 @@ const MEDIUM: CardLayout = {
   maxWidth: 170,
   minHeight: 175,
   avatarEm: 7.5,
+  fontScale: 1.15,
   statusBadgeStyle: "corner",
   rows: [
     line("avatar"),
@@ -71,6 +73,7 @@ const LARGE: CardLayout = {
   maxWidth: 230,
   minHeight: 225,
   avatarEm: 9,
+  fontScale: 1.3,
   statusBadgeStyle: "corner",
   rows: [
     line("avatar"),

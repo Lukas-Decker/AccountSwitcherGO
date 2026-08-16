@@ -28,6 +28,9 @@ type CardLayout struct {
 	MinHeight int `json:"minHeight"`
 	// In em rather than px, matching the card's long-standing avatar sizing.
 	AvatarEm float64 `json:"avatarEm"`
+	// Multiplies the card's text size, so a larger preset reads larger rather
+	// than only sitting in more whitespace.
+	FontScale float64 `json:"fontScale"`
 
 	Rows             []CardRow `json:"rows"`
 	StatusBadgeStyle string    `json:"statusBadgeStyle,omitempty"`
@@ -140,6 +143,7 @@ func normalizeCardLayout(l CardLayout) CardLayout {
 		MaxWidth:  clampInt(l.MaxWidth, 72, 320),
 		MinHeight: clampInt(l.MinHeight, 80, 400),
 		AvatarEm:  clampFloat(l.AvatarEm, 1.5, 12),
+		FontScale: clampFloat(l.FontScale, 0.8, 2),
 	}
 	// A max below the min would make the grid track invalid. Widen rather than
 	// reject: the user's intent is still readable from the two numbers.

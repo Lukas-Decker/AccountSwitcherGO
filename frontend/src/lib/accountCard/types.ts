@@ -60,6 +60,12 @@ export interface CardLayout {
    * then scales with the app's font size instead of pinning itself to one.
    */
   avatarEm: number;
+  /**
+   * Multiplies the card's text size. Without this a bigger preset only buys
+   * whitespace: every label still renders at the app's base size, and the
+   * secondary lines stay as hard to read as they were on the small card.
+   */
+  fontScale: number;
   rows: CardRow[];
   statusBadgeStyle: StatusBadgeStyle;
 }
@@ -110,6 +116,7 @@ export const CARD_BOUNDS = {
   maxWidth: { min: 72, max: 320 },
   minHeight: { min: 80, max: 400 },
   avatarEm: { min: 1.5, max: 12 },
+  fontScale: { min: 0.8, max: 2 },
 } as const;
 
 function clamp(value: number, lo: number, hi: number): number {
@@ -174,6 +181,7 @@ export function validateLayout(raw: unknown, fallback: CardLayout): CardLayout {
     maxWidth: Math.max(minWidth, maxWidth),
     minHeight: clamp(Number(r.minHeight ?? fallback.minHeight), CARD_BOUNDS.minHeight.min, CARD_BOUNDS.minHeight.max),
     avatarEm: clampEm(Number(r.avatarEm ?? fallback.avatarEm), CARD_BOUNDS.avatarEm.min, CARD_BOUNDS.avatarEm.max),
+    fontScale: clampEm(Number(r.fontScale ?? fallback.fontScale), CARD_BOUNDS.fontScale.min, CARD_BOUNDS.fontScale.max),
     rows: rows.length > 0 ? rows : fallback.rows,
     statusBadgeStyle: isBadgeStyle(r.statusBadgeStyle) ? r.statusBadgeStyle : fallback.statusBadgeStyle,
   };

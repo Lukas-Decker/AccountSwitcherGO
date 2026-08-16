@@ -80,7 +80,10 @@
 
 .steam-acclist label.acc p.steamId {
   font-family: ui-monospace, monospace;
-  font-size: 0.7em;
+  // Was 0.7em, which is 8.4px against the app's 12px base: a monospace digit
+  // string small enough that nobody can actually read it off the tile.
+  font-size: 0.85em;
+  letter-spacing: -0.01em;
 }
 
 // Streamer mode. The identifier leaves the layout entirely rather than being
@@ -357,6 +360,9 @@ label.acc {
   display: flex;
   flex-direction: column;
   align-items: center;
+  // The preset's text scale. A larger card that still renders every label at
+  // the app's base size only buys whitespace, not legibility.
+  font-size: calc(1em * var(--acc-card-font-scale, 1));
   min-height: var(--acc-card-min-h);
   height: 100%;
   padding: 0.5em;
@@ -418,11 +424,13 @@ label.acc {
   }
 
   .steam-acc-avatar-wrap--framed {
-    // Leave room for the frame on every side rather than only above, so it
-    // stays clear of the tile's edges at any preset.
     --acc-avatar-used: min(var(--acc-avatar-size), calc(100% / var(--acc-avatar-frame-scale)));
+    --acc-avatar-frame-overhang: calc(var(--acc-avatar-used) * (var(--acc-avatar-frame-scale) - 1) / 2);
 
-    margin-top: calc(var(--acc-avatar-used) * (var(--acc-avatar-frame-scale) - 1) / 2);
+    // Reserved above and below. Reserving only above still let the frame land
+    // on the name underneath it, which is the same mistake one edge along.
+    margin-top: var(--acc-avatar-frame-overhang);
+    margin-bottom: calc(0.75em + var(--acc-avatar-frame-overhang));
   }
 
   img.steam-acc-avatar,

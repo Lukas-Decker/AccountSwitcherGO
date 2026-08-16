@@ -25,9 +25,12 @@
 
 <style>
   .acc_icon {
-    width: 1.15em;
-    height: 1.15em;
+    width: 1.05em;
+    height: 1.05em;
     flex: none;
-    vertical-align: -0.2em;
+    /* Digits carry their visual weight above the line box's centre, so an icon
+       centred on the box reads as sitting low next to them. Nudged up to match
+       what the eye lines up with rather than what the box says. */
+    margin-top: -0.08em;
   }
 </style>
