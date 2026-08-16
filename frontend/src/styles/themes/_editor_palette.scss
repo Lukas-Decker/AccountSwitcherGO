@@ -63,6 +63,8 @@
   $hotkey: pick($is-light, color.mix($orange, $fg, 22%), color.mix($orange, $bg, 36%));
 
   :root {
+    /* Keep native widgets on the theme's own scheme, not the OS app mode. */
+    color-scheme: #{if($is-light, light, dark)};
     --accent: #{$accent};
     --accentHS: #{$accent-hs};
     --accentL: #{$accent-l};

@@ -71,6 +71,8 @@
   $ace-bg: pick($is-light, $mantle, $base);
 
   :root {
+    /* Keep native widgets on the theme's own scheme, not the OS app mode. */
+    color-scheme: #{if($is-light, light, dark)};
     --accent: #{$blue};
     --accentHS: #{$accent-hs};
     --accentL: #{$accent-l};

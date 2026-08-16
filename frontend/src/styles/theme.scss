@@ -5,6 +5,9 @@
     This file is temporarily here before theming is implemented properly.
 */
 :root {
+    /* Native widgets (select, option, scrollbar defaults) must follow the
+       app's theme, not the OS app mode; light themes override this. */
+    color-scheme: dark;
     --code: #263440;
     --code-background: #131a20;
     --slightly-darker-code-background: hsl(208, 25%, 6%);
