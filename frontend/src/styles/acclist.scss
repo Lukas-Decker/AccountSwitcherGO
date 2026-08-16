@@ -1,5 +1,19 @@
 ﻿/* DISABLED DRAGGING ON ITEMS: */
 
+// Card geometry, in one place. Every rule that sizes an account card reads these
+// rather than repeating a literal, so a size preset is a token swap instead of
+// four coordinated edits.
+//
+// Defined on :root rather than on .acc_list because the drag ghost is rendered
+// as a sibling of the list, outside it, and would not inherit them otherwise.
+// Values here are the Small preset, which is the card as it has always shipped.
+:root {
+  --acc-card-min-w: 100px;
+  --acc-card-max-w: 120px;
+  --acc-card-min-h: 135px;
+  --acc-avatar-size: 6em;
+}
+
 .steam-acclist {
   flex: 1 1 auto;
   min-height: 0;
@@ -90,7 +104,9 @@
   gap: 4px;
   display: grid;
   position: relative;
-  grid-template-columns: repeat(auto-fill, 100px);
+  // Fluid within the preset's range: tracks absorb whatever the row has left
+  // over instead of leaving a ragged edge, and stop growing at the maximum.
+  grid-template-columns: repeat(auto-fill, minmax(var(--acc-card-min-w), var(--acc-card-max-w)));
   grid-auto-rows: minmax(min-content, max-content);
   width: 100%;
   height: 100%;
@@ -99,7 +115,6 @@
 }
 
 .acc_list_item {
-  border: 0.1em solid transparent;
   cursor: pointer;
   position: relative;
 
@@ -144,6 +159,12 @@
   }
 }
 
+// The label's `height: 100%` needs a definite height to resolve against, and
+// this wrapper is what sits between it and the grid cell.
+.acc_list_item_inner {
+  height: 100%;
+}
+
 .acc_list_item--ghost,
 .placeHolderAcc {
   transform: none !important;
@@ -156,8 +177,7 @@
 }
 
 .placeHolderAcc {
-  width: 100px;
-  height: 135px;
+  min-height: var(--acc-card-min-h);
   border: 2px dashed var(--accent-border-strong);
   background: var(--code-background);
 }
@@ -167,8 +187,7 @@
 }
 
 .acc_list_item--skeleton {
-  width: 100px;
-  min-height: 135px;
+  min-height: var(--acc-card-min-h);
   padding: 0.35rem 0.25rem 0.5rem;
   border: 0.1em solid var(--accent-border-strong);
   background: var(--code-background);
@@ -280,6 +299,12 @@ input.acc {
   white-space: nowrap;
 }
 
+// A label is inline by default, and an inline box ignores width, height and
+// their min/max variants entirely. This one used to declare all four and get
+// none of them: it painted a blob narrower and much shorter than the cell it
+// sits in, which is what the old `margin: -0.1em` was compensating for.
+// As a flex column it fills the cell exactly, so the background, the border,
+// the focus ring and the current-account ring all land on the card itself.
 label.acc {
   -moz-transition: all 50ms ease-in;
   -moz-user-select: none;
@@ -288,11 +313,11 @@ label.acc {
   -webkit-transition: all 50ms ease-in;
   -webkit-user-select: none;
   user-select: none;
-  min-width: 100px;
-  max-width: 100px;
-  min-height: 135px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: var(--acc-card-min-h);
   height: 100%;
-  margin: -0.1em;
   padding: 0.5em;
   border-width: 0.1em;
   border-style: solid;
@@ -315,8 +340,9 @@ label.acc {
   > img {
     -webkit-user-drag: none;
     display: inline-block;
-    width: 6em;
-    height: 6em;
+    width: var(--acc-avatar-size);
+    height: var(--acc-avatar-size);
+    flex: none;
     margin-bottom: 0.5em;
     border: 2px solid transparent;
 
@@ -332,8 +358,9 @@ label.acc {
   .steam-acc-avatar-wrap {
     position: relative;
     display: inline-block;
-    width: 6em;
-    height: 6em;
+    width: var(--acc-avatar-size);
+    height: var(--acc-avatar-size);
+    flex: none;
     margin-bottom: 0.75em;
     vertical-align: top;
   }
@@ -370,8 +397,10 @@ label.acc {
     transform: scale(1.22);
   }
 
+  // Clamped to the card rather than to a fixed 9em, so text keeps ellipsing at
+  // whatever width the preset gives it.
   h6 {
-    max-width: 9em;
+    max-width: 100%;
     margin: 0;
     overflow: hidden;
     font-size: 1em;
@@ -380,7 +409,7 @@ label.acc {
   }
 
   p {
-    max-width: 9em;
+    max-width: 100%;
     margin: 0 auto;
     overflow: hidden;
     color: var(--text-muted-gray);
@@ -391,7 +420,7 @@ label.acc {
 
   .acc_broken_badge {
     display: block;
-    max-width: 9em;
+    max-width: 100%;
     margin: 0 auto 0.35rem;
     overflow: hidden;
     color: var(--red);

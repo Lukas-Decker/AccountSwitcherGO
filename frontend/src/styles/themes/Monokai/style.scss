@@ -529,7 +529,8 @@ button#LocateProgramExe,
 }
 
 label.acc {
-    height: 101.9%;
+    // The 101.9% height here compensated for the card label being an inline box
+    // that under-covered its cell. The label fills the cell on its own now.
 
     &.currentAcc {
         border-color: var(--shortcut-active-border, var(--accent));

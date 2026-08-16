@@ -1209,7 +1209,7 @@
 
   /* Mirror .steam-acclist ghost/drag rules so preview account DnD matches Platform.svelte */
   .preview-acc-list-wrap :global(.acc_list) {
-    grid-template-rows: repeat(auto-fill, 135px);
+    grid-template-rows: repeat(auto-fill, var(--acc-card-min-h));
   }
 
   .preview-acc-list-wrap :global(.acc_list_item--drag) {
