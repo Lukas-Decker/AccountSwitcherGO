@@ -1,15 +1,11 @@
 <script lang="ts" generics="TAccount">
   import AccountLiveSessionIndicator from "../AccountLiveSessionIndicator.svelte";
-  import AccountTagBubbles from "../AccountTagBubbles.svelte";
-  import AvatarBlock from "./blocks/AvatarBlock.svelte";
-  import DisplayNameBlock from "./blocks/DisplayNameBlock.svelte";
-  import NoteBlock from "./blocks/NoteBlock.svelte";
-  import GameStatsBlock from "./blocks/GameStatsBlock.svelte";
-  import LastUsedBlock from "./blocks/LastUsedBlock.svelte";
   import { t } from "../../stores/i18n";
   import { contextMenu as ctxMenuAction } from "../../lib/actions/contextMenu";
   import type { MenuItemDef } from "../../stores/contextMenu";
   import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
+  import { BLOCK_ORDER, type CardBlockKind } from "./blockKinds";
+  import { availableBlockKinds, blockComponent, type CardBlockProps } from "./blockRegistry";
 
   export let acc: TAccount;
   export let adapter: PlatformAccountAdapter<TAccount>;
@@ -26,6 +22,8 @@
 
   /** Clamps the live-session tooltip to the scrolling list. */
   export let boundary: HTMLElement | undefined = undefined;
+  /** Clamps larger hover surfaces to the page instead. */
+  export let hoverBoundary: HTMLElement | undefined = undefined;
 
   export let profileDropActive = false;
   export let dropTarget = false;
@@ -38,6 +36,13 @@
 
   $: isCurrent = adapter.currentSession(acc);
   $: isBroken = adapter.savedDataBroken?.(acc) === true;
+
+  $: available = new Set<CardBlockKind>(availableBlockKinds(adapter));
+  $: blocks = BLOCK_ORDER.filter((kind) => available.has(kind));
+
+  $: blockProps = {
+    acc, adapter, rid, epoch, labelId, gameStats, boundary, hoverBoundary,
+  } satisfies CardBlockProps<TAccount>;
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -74,27 +79,10 @@
     </div>
   {/if}
 
-  <slot name="account-avatar">
-    <AvatarBlock {acc} {adapter} {rid} {epoch} />
-  </slot>
-
-  <slot name="account-before-name" />
-
-  <DisplayNameBlock {acc} {adapter} {labelId} />
-
-  {#if a11yDescription}
-    <span id={descId} class="sr-only">{a11yDescription}</span>
-  {/if}
-
-  <AccountTagBubbles tags={adapter.tags(acc) ?? []} />
-
-  <NoteBlock {acc} {adapter} />
-
-  <GameStatsBlock stats={gameStats} />
-
-  <slot name="account-after-stats" />
-
-  <LastUsedBlock {acc} {adapter} />
-
-  <slot name="account-footer" />
+  {#each blocks as kind (kind)}
+    <svelte:component this={blockComponent(kind, adapter)} block={blockProps} />
+    {#if kind === "displayName" && a11yDescription}
+      <span id={descId} class="sr-only">{a11yDescription}</span>
+    {/if}
+  {/each}
 </label>

@@ -1,7 +1,9 @@
+import type { ComponentType } from "svelte";
 import type { MenuItemDef } from "../stores/contextMenu";
 import type { PlatformSortKind } from "../stores/platformListSort";
 import type { SearchResultRow } from "./SearchOverlay.svelte";
 import type { TagDefRow } from "../lib/accountTagsContext";
+import type { CardBlockKind } from "./accountcard/blockKinds";
 
 export type GameStatMetricDTO = { statValue: string; indicatorMarkup: string };
 
@@ -31,7 +33,28 @@ export interface AccountRowProjection<TAccount> {
   lastUsed(a: TAccount): string;
   accountLogin(a: TAccount): string;
   visualKey(a: TAccount): string;
+
+  /** Whether the login name is meant to be drawn on the card. */
+  shouldShowAccountLogin?(a: TAccount): boolean;
+
+  /**
+   * The platform's own public identifier for the account (Steam's SteamID64,
+   * for example). Anything returned here is treated as identifying and is
+   * hidden by streamer mode.
+   */
+  platformId?(a: TAccount): string;
+  shouldShowPlatformId?(a: TAccount): boolean;
+
+  /** A short sync state for the card's footer. */
+  statusLine?(a: TAccount): AccountStatusLine | null;
 }
+
+export type AccountStatusLine = {
+  kind: "error" | "pending";
+  text: string;
+  /** Long errors are truncated on the card and shown in full on hover. */
+  title?: string;
+};
 
 export interface AccountDataSource<TAccount> {
   loadAccountsList(): Promise<TAccount[]>;
@@ -100,4 +123,17 @@ export interface PlatformAccountAdapter<TAccount>
 
   /** Default placeholder image when no profile image is available. */
   profileFallback: string;
+
+  /**
+   * Card blocks this platform offers on top of the ones every platform has.
+   * Declared rather than inferred from the platform's name, so the card never
+   * needs to know which platform it is drawing.
+   */
+  cardBlocks?: CardBlockKind[];
+
+  /**
+   * Replaces the default avatar for platforms whose avatars carry more than an
+   * image, such as Steam's animated avatars and frames.
+   */
+  avatarComponent?: ComponentType;
 }

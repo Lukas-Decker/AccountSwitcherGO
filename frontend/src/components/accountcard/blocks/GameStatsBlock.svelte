@@ -1,11 +1,11 @@
-<script lang="ts">
+<script lang="ts" generics="TAccount">
   import { t } from "../../../stores/i18n";
   import { sanitizeHtml } from "../../../lib/sanitizeHtml";
-  import type { GameStatMetricDTO } from "../../PlatformAccountAdapter";
+  import type { CardBlockProps } from "../blockRegistry";
 
-  /** Metrics for one account, keyed by game and then by metric. */
-  export let stats: Record<string, Record<string, GameStatMetricDTO>> | undefined = undefined;
+  export let block: CardBlockProps<TAccount>;
 
+  $: stats = block.gameStats;
   $: hasStats = !!stats && Object.keys(stats).length > 0;
 </script>
 

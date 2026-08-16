@@ -1,9 +1,8 @@
 <script lang="ts" generics="TAccount">
+  import AccountTagBubbles from "../../AccountTagBubbles.svelte";
   import type { CardBlockProps } from "../blockRegistry";
 
   export let block: CardBlockProps<TAccount>;
 </script>
 
-{#if block.adapter.shouldShowNote(block.acc)}
-  <p class="acc_note">{block.adapter.note(block.acc)}</p>
-{/if}
+<AccountTagBubbles tags={block.adapter.tags(block.acc) ?? []} />

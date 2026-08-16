@@ -1,21 +1,20 @@
 <script lang="ts">
-  import { get } from "svelte/store";
   import { offlineMode } from "../stores/offlineMode";
   import { avatarSalt, streamerMode } from "../stores/streamerMode";
   import { accountAvatarSrc } from "../lib/accountAvatarSrc";
   import { isProfileVideoUrl } from "../lib/profileImageDrop";
   import { miniProfileHover } from "../lib/actions/miniProfileHover";
   import type { SteamAccountRow } from "../lib/steam/types";
+  import type { CardBlockProps } from "./accountcard/blockRegistry";
 
-  export let account: SteamAccountRow;
-  export let epoch = 0;
-  export let fallback = "";
-  export let boundary: HTMLElement | null = null;
+  /** Steam's avatar is a card block: it carries frames, video and a hover card. */
+  export let block: CardBlockProps<SteamAccountRow>;
+
+  $: account = block.acc;
 
   function steamListAvatarUrl(): string | undefined {
-    const acc = account;
-    const primary = acc.imageUrl?.trim() || undefined;
-    const fb = acc.staticImageUrl?.trim() || undefined;
+    const primary = account.imageUrl?.trim() || undefined;
+    const fb = account.staticImageUrl?.trim() || undefined;
     if ($offlineMode) {
       if (fb) return fb;
       if (primary && !isProfileVideoUrl(primary)) return primary;
@@ -31,15 +30,21 @@
     accountKey: account.accountName || account.steamId64 || "",
     imageUrl: steamListAvatarUrl(),
     pending: account.avatarPending === true,
-    epoch,
+    epoch: block.epoch,
     offline: $offlineMode,
-    fallback,
+    fallback: block.adapter.profileFallback,
   });
   $: avatarIsVideo = !$offlineMode && !$streamerMode && isProfileVideoUrl(avatarSrc);
   // The hover card is a slab of the account's Steam profile - persona name, level,
   // games. Exactly what streamer mode exists to keep off the screen.
   $: miniProfileEnabled =
     !$streamerMode && !!(account.showMiniProfile && (account.miniProfileHtml ?? "").trim() !== "");
+  $: hoverOpts = {
+    html: account.miniProfileHtml ?? "",
+    boundary: block.hoverBoundary ?? block.boundary ?? null,
+    offline: $offlineMode,
+    enabled: miniProfileEnabled,
+  };
 </script>
 
 <span class="steam-acc-avatar-wrap">
@@ -51,12 +56,7 @@
       src={avatarSrc}
       autoplay loop muted playsinline
       aria-hidden="true" draggable="false"
-      use:miniProfileHover={{
-        html: account.miniProfileHtml ?? "",
-        boundary,
-        offline: $offlineMode,
-        enabled: miniProfileEnabled,
-      }}
+      use:miniProfileHover={hoverOpts}
     ></video>
   {:else}
     <img
@@ -65,12 +65,7 @@
       class:status_limited={account.showLimited && account.ltd}
       src={avatarSrc}
       alt="" draggable="false"
-      use:miniProfileHover={{
-        html: account.miniProfileHtml ?? "",
-        boundary,
-        offline: $offlineMode,
-        enabled: miniProfileEnabled,
-      }}
+      use:miniProfileHover={hoverOpts}
     />
   {/if}
   {#if account.showAvatarFrame && (account.avatarFrameUrl ?? "").trim() !== "" && !$offlineMode && !$streamerMode}

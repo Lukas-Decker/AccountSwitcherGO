@@ -2,25 +2,22 @@
   import { avatarSalt, streamerMode } from "../../../stores/streamerMode";
   import { offlineMode } from "../../../stores/offlineMode";
   import { accountAvatarSrc } from "../../../lib/accountAvatarSrc";
-  import type { PlatformAccountAdapter } from "../../PlatformAccountAdapter";
+  import type { CardBlockProps } from "../blockRegistry";
 
-  export let acc: TAccount;
-  export let adapter: PlatformAccountAdapter<TAccount>;
-  export let rid: string;
-  export let epoch = 0;
+  export let block: CardBlockProps<TAccount>;
 </script>
 
 <img
   src={accountAvatarSrc({
     streamer: $streamerMode,
     salt: $avatarSalt,
-    platformKey: adapter.platformKey,
-    accountKey: adapter.accountLogin(acc) || rid,
-    imageUrl: adapter.imageUrl(acc),
-    pending: adapter.imagePending(acc),
-    epoch,
+    platformKey: block.adapter.platformKey,
+    accountKey: block.adapter.accountLogin(block.acc) || block.rid,
+    imageUrl: block.adapter.imageUrl(block.acc),
+    pending: block.adapter.imagePending(block.acc),
+    epoch: block.epoch,
     offline: $offlineMode,
-    fallback: adapter.profileFallback,
+    fallback: block.adapter.profileFallback,
   })}
   alt=""
   draggable="false"

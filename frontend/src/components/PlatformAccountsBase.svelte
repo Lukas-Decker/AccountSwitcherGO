@@ -10,7 +10,6 @@
   import ReorderPointerGrid from "./ReorderPointerGrid.svelte";
   import TagFilterBar from "./TagFilterBar.svelte";
   import AccountCard from "./accountcard/AccountCard.svelte";
-  import AvatarBlock from "./accountcard/blocks/AvatarBlock.svelte";
   import AccountListSkeleton from "./AccountListSkeleton.svelte";
   import SearchOverlay, { type SearchResultRow } from "./SearchOverlay.svelte";
   import { route, previousPage, appBarTitle } from "../stores/nav";
@@ -127,6 +126,8 @@
   let tagExpiryTimer: ReturnType<typeof setTimeout> | undefined;
   let tagExpiryPruneRunning = false;
   let acclistEl: HTMLDivElement | undefined;
+  /** Clamps large hover surfaces to the page rather than to the list. */
+  let rootEl: HTMLDivElement | undefined;
   let overlayQuery = "";
   let overlayQueryDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   let debouncedOverlayQuery = "";
@@ -1003,7 +1004,7 @@
   });
 </script>
 
-<div class="main-content platform-accounts-root">
+<div class="main-content platform-accounts-root" bind:this={rootEl}>
   {#if name}
     <div class="platformTableHost">
       <SearchOverlay
@@ -1085,6 +1086,7 @@
                   epoch={avatarEpoch[rid] ?? 0}
                   gameStats={gameStatsByAccount[rid]}
                   boundary={acclistEl}
+                  hoverBoundary={rootEl}
                   profileDropActive={$accountProfileImageDropActive && !imagePick.open}
                   dropTarget={fileDragHoverRowId === rid}
                   contextMenuItems={ctxMenu(rid)}
@@ -1098,25 +1100,7 @@
                     touchStatus();
                     void swapToLogin();
                   }}
-                >
-                  <svelte:fragment slot="account-avatar">
-                    <slot name="account-avatar" {acc} epoch={avatarEpoch[rid] ?? 0} fallback={adapter.profileFallback}>
-                      <AvatarBlock {acc} {adapter} {rid} epoch={avatarEpoch[rid] ?? 0} />
-                    </slot>
-                  </svelte:fragment>
-
-                  <svelte:fragment slot="account-before-name">
-                    <slot name="account-before-name" {acc} />
-                  </svelte:fragment>
-
-                  <svelte:fragment slot="account-after-stats">
-                    <slot name="account-after-stats" {acc} />
-                  </svelte:fragment>
-
-                  <svelte:fragment slot="account-footer">
-                    <slot name="account-footer" {acc} />
-                  </svelte:fragment>
-                </AccountCard>
+                />
               </div>
               {/key}
             {/if}

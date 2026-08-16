@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, type ComponentType } from "svelte";
   import { get } from "svelte/store";
   import { Events } from "@wailsio/runtime";
   import SteamAccountAvatar from "../components/SteamAccountAvatar.svelte";
@@ -56,7 +56,6 @@
   let steamShortcutIconByAppId: Record<string, string> = {};
   let steamShortcutIconByStemKey: Record<string, string> = {};
   let gameDataBySteamId: Record<string, { userdata: Set<string>; backup: Set<string> }> = {};
-  let steamMainEl: HTMLDivElement | null = null;
   let offShortcutsUpdated: (() => void) | undefined;
 
   function applyShortcutIconsFromShortcutList(list: unknown[]): void {
@@ -109,6 +108,10 @@
     platformKey: "Steam",
     profileFallback: PROFILE_PLACEHOLDER,
 
+    // What Steam adds to the card beyond the blocks every platform has.
+    cardBlocks: ["accountLogin", "platformId", "statusLine"],
+    avatarComponent: SteamAccountAvatar as unknown as ComponentType,
+
     id: (a: SteamAccountRow) => a.steamId64,
     name: (a: SteamAccountRow) => a.displayName?.trim() || a.personaName?.trim() || a.steamId64,
     imageUrl: (a: SteamAccountRow) => a.imageUrl,
@@ -121,6 +124,18 @@
     shouldShowLastUsed: (a: SteamAccountRow) => a.showLastLogin === true && !!(a.lastLogin ?? "").trim(),
     lastUsed: (a: SteamAccountRow) => a.lastLogin ?? "",
     accountLogin: (a: SteamAccountRow) => (a.accountName ?? "").trim(),
+    shouldShowAccountLogin: (a: SteamAccountRow) => a.showAccUsername === true,
+
+    platformId: (a: SteamAccountRow) => a.steamId64 ?? "",
+    shouldShowPlatformId: (a: SteamAccountRow) => a.showSteamId === true,
+
+    statusLine: (a: SteamAccountRow) => {
+      if (a.syncError) return { kind: "error" as const, text: a.syncError, title: a.syncError };
+      if (a.metaPending || a.avatarPending) {
+        return { kind: "pending" as const, text: get(t)("Status_Updating") };
+      }
+      return null;
+    },
 
     visualKey: steamAccountVisualKey,
 
@@ -273,7 +288,7 @@
   });
 </script>
 
-<div class="main-content platform-accounts-root" bind:this={steamMainEl}>
+<div class="main-content platform-accounts-root">
   <div class="steam-tabs" role="tablist">
     <button
       type="button"
@@ -304,34 +319,7 @@
   </div>
 
   <div class="steam-tab-panel" class:hidden={$steamPageTab !== "accounts"}>
-  <PlatformAccountsBase {name} {adapter}>
-    <svelte:fragment slot="account-avatar" let:acc let:epoch let:fallback>
-      <SteamAccountAvatar account={acc} {epoch} {fallback} boundary={steamMainEl} />
-    </svelte:fragment>
-
-    <svelte:fragment slot="account-before-name" let:acc>
-      {@const a = acc}
-      {#if a.showAccUsername && a.accountName}
-        <p class="streamerCensor">{a.accountName}</p>
-      {/if}
-    </svelte:fragment>
-
-    <svelte:fragment slot="account-after-stats" let:acc>
-      {@const a = acc}
-      {#if a.showSteamId}
-        <p class="streamerCensor steamId">{a.steamId64}</p>
-      {/if}
-    </svelte:fragment>
-
-    <svelte:fragment slot="account-footer" let:acc>
-      {@const a = acc}
-      {#if a.syncError}
-        <div class="steam_meta_err" title={a.syncError}>{a.syncError}</div>
-      {:else if a.metaPending || a.avatarPending}
-        <div class="steam_meta_pending">{$t("Status_Updating")}</div>
-      {/if}
-    </svelte:fragment>
-  </PlatformAccountsBase>
+    <PlatformAccountsBase {name} {adapter} />
   </div>
 </div>
 
