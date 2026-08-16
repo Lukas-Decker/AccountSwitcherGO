@@ -9,8 +9,8 @@
   import AccountImagePickOverlay from "./AccountImagePickOverlay.svelte";
   import ReorderPointerGrid from "./ReorderPointerGrid.svelte";
   import TagFilterBar from "./TagFilterBar.svelte";
-  import AccountTagBubbles from "./AccountTagBubbles.svelte";
-  import AccountLiveSessionIndicator from "./AccountLiveSessionIndicator.svelte";
+  import AccountCard from "./accountcard/AccountCard.svelte";
+  import AvatarBlock from "./accountcard/blocks/AvatarBlock.svelte";
   import AccountListSkeleton from "./AccountListSkeleton.svelte";
   import SearchOverlay, { type SearchResultRow } from "./SearchOverlay.svelte";
   import { route, previousPage, appBarTitle } from "../stores/nav";
@@ -38,11 +38,9 @@
     preflightAdminForPlatform,
     reportLaunchFailure,
   } from "../lib/adminFlow";
-  import { contextMenu as ctxMenuAction } from "../lib/actions/contextMenu";
   import type { MenuItemDef } from "../stores/contextMenu";
   import { offlineMode } from "../stores/offlineMode";
-  import { avatarSalt, censoredName, censorName, streamerMode } from "../stores/streamerMode";
-  import { accountAvatarSrc } from "../lib/accountAvatarSrc";
+  import { avatarSalt, censorName, streamerMode } from "../stores/streamerMode";
   import { formatLastLoginForLocale } from "../lib/formatLastLogin";
   import {
     openTagFilterMenu,
@@ -52,7 +50,6 @@
   import { closeSearchOverlay, searchOverlayCtrl } from "../stores/searchOverlay";
   import { platformListSort, type PlatformSortKind } from "../stores/platformListSort";
   import { actionBarStatus, fileDropInterceptor, accountProfileImageDropActive } from "../stores/fileDrop";
-  import { sanitizeHtml } from "../lib/sanitizeHtml";
   import type { PlatformAccountAdapter } from "./PlatformAccountAdapter";
   import {
     commandRows,
@@ -1077,20 +1074,24 @@
                   aria-describedby={a11yDescription ? descId : undefined}
                   on:change={touchStatus}
                 />
-                <label
-                  for={radioId}
-                  class="acc"
-                  class:currentAcc={adapter.currentSession(acc)}
-                  class:acc--broken={adapter.savedDataBroken?.(acc) === true}
-                  class:acc--profile-drop-target={$accountProfileImageDropActive && !imagePick.open}
-                  class:acc--drop-target={fileDragHoverRowId === rid}
-                  on:dragover={(e) => onAccDragOver(e, rid)}
-                  on:dragleave={(e) => onAccDragLeave(e, rid)}
-                  use:ctxMenuAction={{
-                    items: ctxMenu(rid),
-                    beforeOpen: () => { selectedId = rid; touchStatus(); },
-                  }}
-                  on:dblclick|preventDefault={() => {
+                <AccountCard
+                  {acc}
+                  {adapter}
+                  {rid}
+                  {radioId}
+                  {labelId}
+                  {descId}
+                  {a11yDescription}
+                  epoch={avatarEpoch[rid] ?? 0}
+                  gameStats={gameStatsByAccount[rid]}
+                  boundary={acclistEl}
+                  profileDropActive={$accountProfileImageDropActive && !imagePick.open}
+                  dropTarget={fileDragHoverRowId === rid}
+                  contextMenuItems={ctxMenu(rid)}
+                  onContextMenuOpen={() => { selectedId = rid; touchStatus(); }}
+                  onDragOver={(e) => onAccDragOver(e, rid)}
+                  onDragLeave={(e) => onAccDragLeave(e, rid)}
+                  onActivate={() => {
                     if (isActionBusy) return;
                     if (adapter.savedDataBroken?.(acc)) return;
                     selectedId = rid;
@@ -1098,81 +1099,24 @@
                     void swapToLogin();
                   }}
                 >
-                  <AccountLiveSessionIndicator
-                    active={adapter.currentSession(acc)}
-                    tooltipText={$t("Tooltip_CurrentAccount")}
-                    boundary={acclistEl}
-                  />
-                  {#if adapter.savedDataBroken?.(acc)}
-                    <span class="acc_broken_badge">{$t("Security_AccountDataBroken")}</span>
-                  {/if}
-                  {#if $accountProfileImageDropActive && !imagePick.open}
-                    <div class="acc_profile_drop_overlay" class:acc_profile_drop_overlay--hover={fileDragHoverRowId === rid} aria-hidden="true">
-                      <div class="acc_profile_drop_overlay__center">
-                        <div class="acc_profile_drop_overlay__icon" aria-hidden="true">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
-                        </div>
-                        <span class="acc_profile_drop_overlay__label">{$t("Drop_SetAccountIcon")}</span>
-                      </div>
-                    </div>
-                  {/if}
+                  <svelte:fragment slot="account-avatar">
+                    <slot name="account-avatar" {acc} epoch={avatarEpoch[rid] ?? 0} fallback={adapter.profileFallback}>
+                      <AvatarBlock {acc} {adapter} {rid} epoch={avatarEpoch[rid] ?? 0} />
+                    </slot>
+                  </svelte:fragment>
 
-                  <slot name="account-avatar" {acc} epoch={avatarEpoch[rid] ?? 0} fallback={adapter.profileFallback}>
-                    <img
-                      src={accountAvatarSrc({
-                        streamer: $streamerMode,
-                        salt: $avatarSalt,
-                        platformKey: adapter.platformKey,
-                        accountKey: adapter.accountLogin(acc) || rid,
-                        imageUrl: adapter.imageUrl(acc),
-                        pending: adapter.imagePending(acc),
-                        epoch: avatarEpoch[rid] ?? 0,
-                        offline: $offlineMode,
-                        fallback: adapter.profileFallback,
-                      })}
-                      alt="" draggable="false"
-                    />
-                  </slot>
+                  <svelte:fragment slot="account-before-name">
+                    <slot name="account-before-name" {acc} />
+                  </svelte:fragment>
 
-                  <slot name="account-before-name" {acc} />
+                  <svelte:fragment slot="account-after-stats">
+                    <slot name="account-after-stats" {acc} />
+                  </svelte:fragment>
 
-                  <h6 id={labelId} class="displayName">{$censoredName(adapter.name(acc))}</h6>
-
-                  {#if a11yDescription}
-                    <span id={descId} class="sr-only">{a11yDescription}</span>
-                  {/if}
-
-                  <AccountTagBubbles tags={adapter.tags(acc) ?? []} />
-
-                  {#if adapter.shouldShowNote(acc)}
-                    <p class="acc_note">{adapter.note(acc)}</p>
-                  {/if}
-
-                  {#if gameStatsByAccount[rid] && Object.keys(gameStatsByAccount[rid]).length > 0}
-                    <div class="acc_inline_gamestats" aria-label={$t("Context_ManageGameStats")}>
-                      <span class="acc_inline_gamestats_metrics">
-                        {#each Object.values(gameStatsByAccount[rid]) as metrics}
-                          {#each Object.values(metrics) as dto}
-                            <span class="acc_inline_gamestats_metric">
-                              {#if dto.indicatorMarkup}
-                                <span class="acc_inline_gamestats_ind">{@html sanitizeHtml(dto.indicatorMarkup, "gameStats")}</span>
-                              {/if}
-                              <span class="acc_inline_gamestats_val">{@html sanitizeHtml(dto.statValue, "gameStats")}</span>
-                            </span>
-                          {/each}
-                        {/each}
-                      </span>
-                    </div>
-                  {/if}
-
-                  <slot name="account-after-stats" {acc} />
-
-                  {#if adapter.shouldShowLastUsed(acc)}
-                    <p class="acc_lastused">{formatLastLoginForLocale(adapter.lastUsed(acc), $locale)}</p>
-                  {/if}
-
-                  <slot name="account-footer" {acc} />
-                </label>
+                  <svelte:fragment slot="account-footer">
+                    <slot name="account-footer" {acc} />
+                  </svelte:fragment>
+                </AccountCard>
               </div>
               {/key}
             {/if}
