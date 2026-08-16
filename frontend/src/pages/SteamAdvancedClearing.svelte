@@ -7,31 +7,54 @@
   import { openExternalUrl } from "../lib/openExternalUrl";
   import { sanitizeHtml } from "../lib/sanitizeHtml";
   import { pushToast } from "../stores/toast";
-  import { activeModal } from "../stores/modal";
+  import { activeModal, openConfirm } from "../stores/modal";
   import { RunAdvancedClearingAction } from "../../bindings/account-switcher/internal/steam/steamservice.js";
   import "../styles/Settings.scss";
 
   const WIKI_URL =
     "https://github.com/TCNOCo/Account-Switcher/wiki/Platform:-Steam#steam-cleaning";
 
-  type Row = { actions: string[] };
-
-  /** Button rows (left-to-right); IDs match Go `RunAdvancedClearingAction`. */
-  const generalRows: Row[] = [
-    { actions: ["clear_logs", "clear_dumps"] },
-    { actions: ["clear_htmlcache", "clear_ui_logs"] },
-    { actions: ["clear_appcache", "clear_httpcache"] },
-    { actions: ["clear_depotcache"] },
+  /** Action IDs match Go `RunAdvancedClearingAction`. */
+  const generalActions = [
+    "clear_logs",
+    "clear_dumps",
+    "clear_htmlcache",
+    "clear_ui_logs",
+    "clear_appcache",
+    "clear_httpcache",
+    "clear_depotcache",
   ];
 
-  const loginRows: Row[] = [
-    { actions: ["delete_loginusers_vdf", "clear_ssfn"] },
-    { actions: ["delete_config_vdf", "reg_autologinuser"] },
-    { actions: ["reg_lastgamenameused", "reg_pseudouuid"] },
-    { actions: ["reg_rememberpassword"] },
+  const loginActions = [
+    "delete_loginusers_vdf",
+    "clear_ssfn",
+    "delete_config_vdf",
+    "reg_autologinuser",
+    "reg_lastgamenameused",
+    "reg_pseudouuid",
+    "reg_rememberpassword",
   ];
 
-  const labelText: Record<string, string> = {
+  /* The label leads with the outcome; the path is the second, smaller line.
+     Spelled out per id rather than built from it so key greps find them. */
+  const actionLabelKey: Record<string, string> = {
+    clear_logs: "Cleaning_Action_clear_logs",
+    clear_dumps: "Cleaning_Action_clear_dumps",
+    clear_htmlcache: "Cleaning_Action_clear_htmlcache",
+    clear_ui_logs: "Cleaning_Action_clear_ui_logs",
+    clear_appcache: "Cleaning_Action_clear_appcache",
+    clear_httpcache: "Cleaning_Action_clear_httpcache",
+    clear_depotcache: "Cleaning_Action_clear_depotcache",
+    delete_loginusers_vdf: "Cleaning_Action_delete_loginusers_vdf",
+    clear_ssfn: "Cleaning_Action_clear_ssfn",
+    delete_config_vdf: "Cleaning_Action_delete_config_vdf",
+    reg_autologinuser: "Cleaning_Action_reg_autologinuser",
+    reg_lastgamenameused: "Cleaning_Action_reg_lastgamenameused",
+    reg_pseudouuid: "Cleaning_Action_reg_pseudouuid",
+    reg_rememberpassword: "Cleaning_Action_reg_rememberpassword",
+  };
+
+  const pathText: Record<string, string> = {
     clear_logs: "..\\Steam\\logs",
     clear_dumps: "..\\Steam\\dumps",
     clear_htmlcache: "%Local%\\Steam\\htmlcache",
@@ -104,6 +127,18 @@
 
   async function runAction(id: string): Promise<void> {
     if (!acceptedRisk || busy) return;
+    // The one action that empties the switcher itself gets its warning at the
+    // moment of deciding, not only in the paragraph at the top of the page.
+    if (id === "delete_loginusers_vdf") {
+      const ok = await openConfirm({
+        title: $t("Cleaning_ConfirmLoginusers_Title"),
+        body: `<p>${$t("Cleaning_ConfirmLoginusers_Body")}</p>`,
+        style: "yesno",
+        positiveLabel: $t("Yes"),
+        negativeLabel: $t("No"),
+      });
+      if (!ok) return;
+    }
     busy = true;
     try {
       const res = await RunAdvancedClearingAction(id);
@@ -160,63 +195,59 @@
 
   <button
     type="button"
-    class="steam-adv-kill"
+    class="danger steam-adv-kill"
     disabled={!acceptedRisk || busy}
     on:click={() => void runAction("close_steam")}
   >
     {$t("Cleaning_Button_KillProcess", { platform: "Steam" })}
   </button>
 
-  <div class="steam-adv-layout">
-    <div class="steam-adv-actions">
-      <h2 class="SettingsHeader">{$t("Cleaning_Header_General")}</h2>
-      {#each generalRows as row}
-        <div class="buttoncol">
-          {#each row.actions as id}
-            {#if showAction(id)}
-              <button
-                type="button"
-                disabled={!acceptedRisk || busy || (isRegistryAction(id) && !registrySupported)}
-                on:click={() => void runAction(id)}
-              >
-                {labelText[id]}
-              </button>
-            {/if}
-          {/each}
-        </div>
-      {/each}
+  <h2 class="SettingsHeader">{$t("Cleaning_Header_General")}</h2>
+  <div class="steam-adv-grid">
+    {#each generalActions as id}
+      {#if showAction(id)}
+        <button
+          type="button"
+          class="danger steam-adv-action"
+          disabled={!acceptedRisk || busy || (isRegistryAction(id) && !registrySupported)}
+          on:click={() => void runAction(id)}
+        >
+          <span class="steam-adv-action__label">{$t(actionLabelKey[id])}</span>
+          <span class="steam-adv-action__path">{pathText[id]}</span>
+        </button>
+      {/if}
+    {/each}
+  </div>
 
-      <h2 class="SettingsHeader">{$t("Cleaning_Header_LoginHistory")}</h2>
-      {#each loginRows as row}
-        <div class="buttoncol">
-          {#each row.actions as id}
-            {#if showAction(id)}
-              <button
-                type="button"
-                disabled={!acceptedRisk || busy || (isRegistryAction(id) && !registrySupported)}
-                on:click={() => void runAction(id)}
-              >
-                {labelText[id]}
-              </button>
-            {/if}
-          {/each}
-        </div>
-      {/each}
+  <h2 class="SettingsHeader">{$t("Cleaning_Header_LoginHistory")}</h2>
+  <div class="steam-adv-grid">
+    {#each loginActions as id}
+      {#if showAction(id)}
+        <button
+          type="button"
+          class="danger steam-adv-action"
+          disabled={!acceptedRisk || busy || (isRegistryAction(id) && !registrySupported)}
+          on:click={() => void runAction(id)}
+        >
+          <span class="steam-adv-action__label">{$t(actionLabelKey[id])}</span>
+          <span class="steam-adv-action__path">{pathText[id]}</span>
+        </button>
+      {/if}
+    {/each}
+  </div>
+
+  <div class="steam-adv-log-wrap">
+    <div class="steam-adv-log" bind:this={logEl} role="log" aria-live="polite">
+      {#if logLines.length === 0}
+        <p class="steam-adv-log-empty">{$t("SteamAdvanced_LogPlaceholder")}</p>
+      {:else}
+        {#each logLines as line, i (i)}
+          <div class="steam-adv-log-line">{line || "\u00a0"}</div>
+        {/each}
+      {/if}
     </div>
-
-    <div class="steam-adv-log-wrap">
-      <div class="steam-adv-log" bind:this={logEl} role="log" aria-live="polite">
-        {#if logLines.length === 0}
-          <p class="steam-adv-log-empty">{$t("SteamAdvanced_LogPlaceholder")}</p>
-        {:else}
-          {#each logLines as line, i (i)}
-            <div class="steam-adv-log-line">{line || "\u00a0"}</div>
-          {/each}
-        {/if}
-      </div>
-      <div class="steam-adv-log-actions">
-        <button type="button" class="steam-adv-clear-log" on:click={clearLog}>{$t("Button_ClearLog")}</button>
-      </div>
+    <div class="steam-adv-log-actions">
+      <button type="button" class="steam-adv-clear-log" on:click={clearLog}>{$t("Button_ClearLog")}</button>
     </div>
   </div>
 
@@ -253,38 +284,46 @@
     line-height: 1.35;
   }
 
-  /* The grid buttons get this from .buttoncol; this one sits outside it. */
-  .steam-adv-kill:disabled {
+  /* No .buttoncol here, so these buttons carry their own disabled treatment. */
+  .steam-adv-kill:disabled,
+  .steam-adv-action:disabled {
     opacity: 0.5;
     cursor: default;
   }
 
-  .steam-adv-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+  /* Full-width action grid: three or four across on a laptop, one column at
+     the app's minimum width, no empty right-hand gutter. */
+  .steam-adv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
-  @media (min-width: 720px) {
-    .steam-adv-layout {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 1.25rem;
-    }
+  .steam-adv-action {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.45em 0.75em;
+    text-align: start;
 
-    .steam-adv-actions {
-      flex: 1 1 52%;
-      min-width: 0;
+    /* The global 2.5em button-span rule is a one-line centring device; these
+       labels are two lines and set their own rhythm. */
+    span {
+      line-height: 1.35;
     }
+  }
 
-    .steam-adv-log-wrap {
-      flex: 1 1 42%;
-      position: sticky;
-      top: 0;
-      align-self: flex-start;
-      max-height: min(70vh, 32rem);
-    }
+  .steam-adv-action__label {
+    font-weight: 500;
+  }
+
+  .steam-adv-action__path {
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    opacity: 0.65;
   }
 
   .steam-adv-log-wrap {
@@ -292,13 +331,13 @@
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
-    min-height: 12rem;
+    margin-top: 1rem;
   }
 
   .steam-adv-log {
     flex: 1;
-    min-height: 12rem;
-    max-height: min(50vh, 28rem);
+    min-height: 8rem;
+    max-height: min(40vh, 22rem);
     overflow-y: auto;
     padding: 0.6rem 0.75rem;
     background: var(--backdrop-dark-35);
