@@ -106,6 +106,14 @@ type PlatformSettings struct {
 	LaunchArguments           string              `json:"LaunchArguments,omitempty"`
 	ProfileImageExpiryDays    int                 `json:"ProfileImageExpiryDays,omitempty"`
 	PullAccountImagesOnSwitch bool                `json:"PullAccountImagesOnSwitch,omitempty"`
+
+	// AccountCardCustomizationEnabled decides whether this platform uses its own
+	// card shape or follows the global one.
+	AccountCardCustomizationEnabled bool `json:"AccountCardCustomizationEnabled,omitempty"`
+	// AccountCard is this platform's own card shape. Kept on disk while the
+	// toggle above is off, so turning customisation off and on again returns
+	// the layout the user built rather than a blank one.
+	AccountCard *AccountCardConfig `json:"AccountCard,omitempty"`
 }
 
 func DefaultPlatformSettings() PlatformSettings {
@@ -310,6 +318,10 @@ func loadPlatformSettingsFromDisk(platformKey string) (PlatformSettings, error) 
 	}
 	if s.Shortcuts == nil {
 		s.Shortcuts = []GameShortcutEntry{}
+	}
+	if s.AccountCard != nil {
+		normalized := NormalizeAccountCardConfig(*s.AccountCard)
+		s.AccountCard = &normalized
 	}
 	if s.ProfileImageExpiryDays <= 0 {
 		s.ProfileImageExpiryDays = 7

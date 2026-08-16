@@ -13,6 +13,10 @@
   import { availableBlockKinds } from "./accountcard/blockRegistry";
   import { accountCardConfig, applyCardGeometry, clearCardGeometry } from "../stores/accountCard";
   import { resolveLayout } from "../lib/accountCard/resolve";
+  import {
+    resolvePlatformCardConfig,
+    type PlatformCardSettings,
+  } from "../lib/accountCard/platformOverride";
   import AccountListSkeleton from "./AccountListSkeleton.svelte";
   import SearchOverlay, { type SearchResultRow } from "./SearchOverlay.svelte";
   import { route, previousPage, appBarTitle } from "../stores/nav";
@@ -34,7 +38,7 @@
   import { activeModal, openConfirm, openPrompt } from "../stores/modal";
   import { locale, t } from "../stores/i18n";
   import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
-  import { GetPlatformExeIcon } from "../../bindings/account-switcher/internal/platform/platformservice.js";
+  import { GetPlatformExeIcon, GetPlatformSettings } from "../../bindings/account-switcher/internal/platform/platformservice.js";
   import { formatToastWithError, formatWailsError } from "../lib/formatWailsError";
   import {
     preflightAdminForPlatform,
@@ -156,8 +160,20 @@
   // The card's shape for this platform, and the geometry that goes with it.
   // Written to the document root rather than the list, because the drag ghost
   // renders outside the list and would not inherit it.
-  $: cardLayout = resolveLayout($accountCardConfig, availableBlockKinds(adapter));
+  let platformCardSettings: PlatformCardSettings | null = null;
+  $: effectiveCardConfig = resolvePlatformCardConfig($accountCardConfig, platformCardSettings);
+  $: cardLayout = resolveLayout(effectiveCardConfig, availableBlockKinds(adapter));
   $: applyCardGeometry(cardLayout);
+
+  /** A platform may override the global card shape; most never do. */
+  async function loadPlatformCardSettings(platformKey: string): Promise<void> {
+    try {
+      platformCardSettings = (await GetPlatformSettings(platformKey)) as unknown as PlatformCardSettings;
+    } catch {
+      // The global shape is a fine answer when the file cannot be read.
+      platformCardSettings = null;
+    }
+  }
 
   // Reactive declarations
   $: so = $searchOverlayCtrl;
@@ -950,6 +966,7 @@
     void refreshGameStatsSupportInternal();
     void loadAccounts();
     void GetPlatformExeIcon(name).then((u: string) => platformExeIconUrl.set(u ?? ""));
+    void loadPlatformCardSettings(name);
 
     offSort = platformListSort.subscribe((sig) => {
       if (!sig || sig.id <= lastHandledSortId) return;

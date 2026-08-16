@@ -52,6 +52,19 @@ func (p *PlatformService) GetThemeHueRotate() (int, error) {
 	return val, err
 }
 
+// GetAccountCardConfig returns the global card shape, normalised. A file that
+// has never had one returns the default rather than an empty config.
+func (p *PlatformService) GetAccountCardConfig() (AccountCardConfig, error) {
+	val := DefaultAccountCardConfig()
+	err := p.withSettingsRead(func(s *AppSettings) error {
+		if s.AccountCard != nil {
+			val = NormalizeAccountCardConfig(*s.AccountCard)
+		}
+		return nil
+	})
+	return val, err
+}
+
 // GetUIScale returns the stored interface scale, or 0 when it is automatic.
 func (p *PlatformService) GetUIScale() (float64, error) {
 	var val float64

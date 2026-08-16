@@ -40,6 +40,10 @@ type AppSettings struct {
 	// resolution monitor left at 100%.
 	UIScale float64 `json:"uiScale,omitempty"`
 
+	// AccountCard is the card shape used everywhere a platform has not been
+	// given one of its own.
+	AccountCard *AccountCardConfig `json:"accountCard,omitempty"`
+
 	// AnimationsEnabled controls whether UI motion is active.
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
 	AnimationsEnabled bool `json:"animationsEnabled"`

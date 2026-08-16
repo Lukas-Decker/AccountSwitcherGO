@@ -55,6 +55,15 @@ func (p *PlatformService) SetThemeHueRotate(deg int) error {
 	})
 }
 
+// SetAccountCardConfig stores the global card shape.
+func (p *PlatformService) SetAccountCardConfig(cfg AccountCardConfig) error {
+	return p.withSettingsWrite(func(s *AppSettings) error {
+		normalized := NormalizeAccountCardConfig(cfg)
+		s.AccountCard = &normalized
+		return nil
+	})
+}
+
 // SetUIScale stores the interface scale. Zero restores automatic.
 func (p *PlatformService) SetUIScale(scale float64) error {
 	return p.withSettingsWrite(func(s *AppSettings) error {

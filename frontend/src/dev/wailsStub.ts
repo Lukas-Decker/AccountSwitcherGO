@@ -160,6 +160,14 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
       manualProfileImage: false,
     })),
 
+  // Stands in for a settings file that already has a card shape stored, so the
+  // boot path that reads one can actually be exercised.
+  GetAccountCardConfig: () => ({
+    version: 1,
+    preset: "medium",
+    blocks: { note: false },
+  }),
+
   GetTagDefs: () => TAGS,
   GetAccountNote: () => "",
   GetPlatformExeIcon: () => "",
