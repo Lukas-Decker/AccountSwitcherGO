@@ -39,12 +39,20 @@ export type CardSizePreset = "small" | "medium" | "large" | "custom";
  * from the size presets: which colours you like has nothing to do with how big
  * the card is, and a colour should survive switching preset.
  */
-export type CardColorState = "rest" | "hover" | "selected" | "current";
+export type CardColorState = "rest" | "hover" | "selected" | "current" | "currentGlint";
 
 /** Hex colours per state. An absent state keeps the theme's own colour. */
 export type CardColors = Partial<Record<CardColorState, string>>;
 
-export const CARD_COLOR_STATES: readonly CardColorState[] = ["rest", "hover", "selected", "current"];
+export const CARD_COLOR_STATES: readonly CardColorState[] = [
+  "rest",
+  "hover",
+  "selected",
+  // The signed-in ring is a gradient, so it takes two: its own colour and the
+  // glint that travels around it.
+  "current",
+  "currentGlint",
+];
 
 export interface CardBlockConfig {
   kind: CardBlockKind;
@@ -95,6 +103,12 @@ export interface AccountCardConfig {
   statusBadgeStyle?: StatusBadgeStyle;
   /** Overrides the theme's colour for one or more card states. */
   colors?: CardColors;
+  /**
+   * Where the signed-in ring's glint sits, as a percentage of the way round.
+   * Only visible in its own right when the ring is not turning; while it is,
+   * this is the phase it starts from.
+   */
+  ringGlintStart?: number;
   /** Only meaningful when preset is "custom". */
   custom?: CardLayout;
 }
@@ -131,6 +145,7 @@ export const CARD_BOUNDS = {
   minHeight: { min: 80, max: 400 },
   avatarEm: { min: 1.5, max: 12 },
   fontScale: { min: 0.8, max: 2 },
+  ringGlintStart: { min: 0, max: 100 },
 } as const;
 
 function clamp(value: number, lo: number, hi: number): number {
@@ -242,6 +257,10 @@ export function validateConfig(raw: unknown, fallbackLayout: CardLayout): Accoun
     displays: Object.keys(displays).length > 0 ? displays : undefined,
     statusBadgeStyle: isBadgeStyle(r.statusBadgeStyle) ? r.statusBadgeStyle : undefined,
     colors: Object.keys(colors).length > 0 ? colors : undefined,
+    ringGlintStart:
+      typeof r.ringGlintStart === "number" && Number.isFinite(r.ringGlintStart)
+        ? clamp(r.ringGlintStart, CARD_BOUNDS.ringGlintStart.min, CARD_BOUNDS.ringGlintStart.max)
+        : undefined,
     custom: r.custom ? validateLayout(r.custom, fallbackLayout) : undefined,
   };
 }

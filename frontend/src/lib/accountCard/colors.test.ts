@@ -21,6 +21,16 @@ describe("card state colours", () => {
     expect(vars["--acc-ring-color"]).toBe("#40ff40");
   });
 
+  it("carries both of the signed-in ring's colours, because it is a gradient", () => {
+    const vars = colorCssVars({
+      version: 1,
+      preset: "small",
+      colors: { current: "#40ff40", currentGlint: "#ffee88" },
+    });
+    expect(vars["--acc-ring-color"]).toBe("#40ff40");
+    expect(vars["--acc-ring-highlight"]).toBe("#ffee88");
+  });
+
   it("only emits the states that were set", () => {
     const vars = colorCssVars({ version: 1, preset: "small", colors: { hover: "#123456" } });
     expect(Object.keys(vars)).toEqual(["--acc-card-bg-hover"]);

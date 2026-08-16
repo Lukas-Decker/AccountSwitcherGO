@@ -30,6 +30,10 @@
   const dispatch = createEventDispatcher<{ change: AccountCardConfig }>();
 
   const PRESETS: CardSizePreset[] = ["small", "medium", "large", "custom"];
+  /** Card fills, one per state. */
+  const FILL_STATES: CardColorState[] = ["rest", "hover", "selected"];
+  /** The signed-in ring is one thing made of two colours plus a position. */
+  const RING_STATES: CardColorState[] = ["current", "currentGlint"];
   const BADGE_STYLES: StatusBadgeStyle[] = ["border", "corner", "block"];
 
   $: isCustom = config.preset === "custom";
@@ -84,7 +88,13 @@
    * be there first, which showed a stale swatch after resetting to the theme.
    */
   let themeColors: Record<CardColorState, string> = {
-    rest: "#000000", hover: "#000000", selected: "#000000", current: "#000000",
+    rest: "#000000",
+    hover: "#000000",
+    selected: "#000000",
+    current: "#000000",
+    // The glint has no variable set until someone picks one; white is what the
+    // stylesheet falls back to.
+    currentGlint: "#ffffff",
   };
 
   onMount(async () => {
@@ -101,6 +111,7 @@
       // The ring's fallback chain lives in the stylesheet, so the variable on
       // its own reports nothing until someone has set it.
       current: ["--acc-ring-color", "--shortcut-active-border", "--green"],
+      currentGlint: ["--acc-ring-highlight"],
     };
     const next = { ...themeColors };
     for (const state of CARD_COLOR_STATES) {
@@ -134,6 +145,10 @@
 
   function setColor(state: CardColorState, value: string): void {
     emit({ ...config, colors: { ...(config.colors ?? {}), [state]: value } });
+  }
+
+  function setGlintStart(value: number): void {
+    emit({ ...config, ringGlintStart: value });
   }
 
   function clearColor(state: CardColorState): void {
@@ -269,7 +284,7 @@
     <legend class="cardeditor__legend">{$t("CardEditor_Colors")}</legend>
     <p class="cardeditor__hint">{$t("CardEditor_Colors_Hint")}</p>
     <div class="cardeditor__colorgrid">
-      {#each CARD_COLOR_STATES as state (state)}
+      {#each FILL_STATES as state (state)}
         <div class="cardeditor__color">
           <label for={`cardcolor-${state}`}>{$t(`CardColor_${state}`)}</label>
           <span class="cardeditor__colorrow">
@@ -290,6 +305,51 @@
           </span>
         </div>
       {/each}
+    </div>
+
+    <div class="cardeditor__ring">
+      <p class="cardeditor__subhead">{$t("CardEditor_Ring")}</p>
+      <p class="cardeditor__hint">{$t("CardEditor_Ring_Hint")}</p>
+      <div class="cardeditor__colorgrid">
+        {#each RING_STATES as state (state)}
+          <div class="cardeditor__color">
+            <label for={`cardcolor-${state}`}>{$t(`CardColor_${state}`)}</label>
+            <span class="cardeditor__colorrow">
+              <input
+                type="color"
+                id={`cardcolor-${state}`}
+                value={swatchColors[state]}
+                on:input={(e) => setColor(state, e.currentTarget.value)}
+              />
+              <button
+                type="button"
+                class="cardeditor__reset"
+                disabled={!config.colors?.[state]}
+                on:click={() => clearColor(state)}
+              >
+                {$t("CardEditor_Colors_Reset")}
+              </button>
+            </span>
+          </div>
+        {/each}
+
+        <div class="cardeditor__color">
+          <label for="cardring-glintstart">{$t("CardEditor_GlintStart")}</label>
+          <span class="cardeditor__colorrow">
+            <input
+              id="cardring-glintstart"
+              class="cardeditor__slider"
+              type="range"
+              min={CARD_BOUNDS.ringGlintStart.min}
+              max={CARD_BOUNDS.ringGlintStart.max}
+              step="1"
+              value={config.ringGlintStart ?? 0}
+              on:input={(e) => setGlintStart(Number(e.currentTarget.value))}
+            />
+            <span class="cardeditor__slidervalue">{config.ringGlintStart ?? 0}%</span>
+          </span>
+        </div>
+      </div>
     </div>
   </fieldset>
 
@@ -474,6 +534,33 @@
       opacity: 0.4;
       cursor: default;
     }
+  }
+
+  // The ring is one thing made of two colours and a position, so it is boxed
+  // off from the plain per-state fills above it.
+  .cardeditor__ring {
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--role-field-border, var(--button-bg));
+    border-radius: 4px;
+  }
+
+  .cardeditor__subhead {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .cardeditor__slider {
+    width: 7rem;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .cardeditor__slidervalue {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    opacity: 0.8;
   }
 
   .cardeditor__colorgrid {

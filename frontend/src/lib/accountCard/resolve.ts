@@ -84,6 +84,10 @@ export function colorCssVars(config: AccountCardConfig): Record<string, string> 
     vars["--acc-card-selected-edge"] = colors.selected;
   }
   if (colors.current) vars["--acc-ring-color"] = colors.current;
+  if (colors.currentGlint) vars["--acc-ring-highlight"] = colors.currentGlint;
+  if (typeof config.ringGlintStart === "number") {
+    vars["--acc-ring-glint-start"] = `${(config.ringGlintStart / 100) * 360}deg`;
+  }
   return vars;
 }
 
@@ -94,4 +98,6 @@ export const CARD_COLOR_VAR_NAMES = [
   "--acc-card-bg-selected",
   "--acc-card-selected-edge",
   "--acc-ring-color",
+  "--acc-ring-highlight",
+  "--acc-ring-glint-start",
 ] as const;

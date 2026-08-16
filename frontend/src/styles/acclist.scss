@@ -504,6 +504,13 @@ label.acc {
     object-fit: cover;
   }
 
+  // Holds the frame's footprint on accounts that have no frame, so every
+  // avatar occupies the same box whether or not one is drawn in it.
+  .steam-acc-avatar-frame--empty {
+    background: none;
+    border: 0;
+  }
+
   .steam-acc-avatar-frame {
     position: absolute;
     inset: 0;
@@ -645,16 +652,21 @@ input.acc:checked + label.acc {
     inset: 0;
     padding: var(--acc-ring-width);
     border-radius: inherit;
-    // A solid ring in the theme's active colour, with a bright glint travelling
-    // around it. The ring itself never disappears, so the account stays marked
-    // even at the moment the glint is on the far side.
+    // Two colours: the ring's own, and a glint travelling around it. The peak
+    // used to be hardcoded white, which meant a chosen glint colour was washed
+    // out by it and never actually showed; it is the glint colour itself now,
+    // and the default glint is white, so the built-in look is unchanged.
+    //
+    // The ring never disappears, so the account stays marked even at the moment
+    // the glint is on the far side.
+    // The glint's start is applied by rotating the gradient rather than by
+    // moving its stops: stops have to stay in order, and one near 0 or 360
+    // would wrap and tear the ring in half.
     background: conic-gradient(
-      from var(--acc-ring-angle),
+      from calc(var(--acc-ring-angle) + var(--acc-ring-glint-start, 0deg)),
       var(--acc-ring-base) 0deg,
       var(--acc-ring-base) 190deg,
-      var(--acc-ring-glint) 250deg,
-      #ffffff 270deg,
-      var(--acc-ring-glint) 290deg,
+      var(--acc-ring-glint) 270deg,
       var(--acc-ring-base) 350deg,
       var(--acc-ring-base) 360deg
     );

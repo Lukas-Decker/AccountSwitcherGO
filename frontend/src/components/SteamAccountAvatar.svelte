@@ -52,7 +52,7 @@
   };
 </script>
 
-<span class="steam-acc-avatar-wrap" class:steam-acc-avatar-wrap--framed={hasFrame}>
+<span class="steam-acc-avatar-wrap">
   {#if avatarIsVideo}
     <video
       class="steam-acc-avatar"
@@ -73,7 +73,13 @@
       use:miniProfileHover={hoverOpts}
     />
   {/if}
+  <!-- The frame layer is always present, empty when this account has none.
+       Only some Steam accounts have a frame, and letting the layer come and go
+       meant the avatar sat in a different sized box depending on whose card it
+       was, so no amount of padding lined the two up. -->
   {#if hasFrame}
     <img class="steam-acc-avatar-frame" src={account.avatarFrameUrl ?? ""} alt="" draggable="false" />
+  {:else}
+    <span class="steam-acc-avatar-frame steam-acc-avatar-frame--empty" aria-hidden="true"></span>
   {/if}
 </span>

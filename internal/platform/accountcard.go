@@ -50,6 +50,8 @@ type AccountCardConfig struct {
 	StatusBadgeStyle string `json:"statusBadgeStyle,omitempty"`
 	// Per-state colour overrides. An absent state keeps the theme's own colour.
 	Colors map[string]string `json:"colors,omitempty"`
+	// Where the signed-in ring's glint starts, as a percentage of the way round.
+	RingGlintStart int `json:"ringGlintStart,omitempty"`
 
 	Custom *CardLayout `json:"custom,omitempty"`
 }
@@ -66,7 +68,11 @@ var validDisplays = map[string]bool{"text": true, "icon": true, "iconText": true
 
 var validBadgeStyles = map[string]bool{"border": true, "corner": true, "block": true}
 
-var validColorStates = map[string]bool{"rest": true, "hover": true, "selected": true, "current": true}
+var validColorStates = map[string]bool{
+	"rest": true, "hover": true, "selected": true,
+	// The signed-in ring is a gradient and takes two colours.
+	"current": true, "currentGlint": true,
+}
 
 // isHexColor accepts only a plain hex colour. These values end up in a
 // stylesheet, so anything that is not a colour has no business reaching one.
@@ -166,6 +172,8 @@ func NormalizeAccountCardConfig(c AccountCardConfig) AccountCardConfig {
 			out.Colors = colors
 		}
 	}
+
+	out.RingGlintStart = clampInt(c.RingGlintStart, 0, 100)
 
 	if c.Custom != nil {
 		layout := normalizeCardLayout(*c.Custom)
