@@ -323,6 +323,9 @@ func loadPlatformSettingsFromDisk(platformKey string) (PlatformSettings, error) 
 		normalized := NormalizeAccountCardConfig(*s.AccountCard)
 		s.AccountCard = &normalized
 	}
+	if s.AccountCard == nil {
+		s, _ = EnsurePlatformCardConfig(s, LegacyCardFlagsFromPlatform(s))
+	}
 	if s.ProfileImageExpiryDays <= 0 {
 		s.ProfileImageExpiryDays = 7
 	}

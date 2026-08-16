@@ -177,7 +177,29 @@ func LoadSettings() (Settings, error) {
 	if !gjson.GetBytes(data2, "Steam_ShowAvatarFrame").Exists() {
 		s.SteamShowAvatarFrame = true
 	}
+
+	// Steam carries more display flags than any other platform, so its card is
+	// the one most likely to look wrong if they are not carried across.
+	if s.AccountCard == nil {
+		ps, _ := platform.EnsurePlatformCardConfig(s.PlatformSettings, legacyCardFlags(s))
+		s.PlatformSettings = ps
+	}
 	return s, nil
+}
+
+// legacyCardFlags reads what the old Steam display settings said, for the one
+// time it is translated into a card configuration.
+func legacyCardFlags(s Settings) platform.LegacyCardFlags {
+	return platform.LegacyCardFlags{
+		ShowShortNotes:  s.ShowShortNotes,
+		ShowLastUsed:    s.SteamShowLastLogin,
+		HasSteamFlags:   true,
+		ShowAccUsername: s.SteamShowAccUsername,
+		ShowSteamID:     s.SteamShowSteamID,
+		ShowVAC:         s.SteamShowVAC,
+		ShowLimited:     s.SteamShowLimited,
+		ShowAvatarFrame: s.SteamShowAvatarFrame,
+	}
 }
 
 // SaveSettings writes Settings/SteamSettings.json.
