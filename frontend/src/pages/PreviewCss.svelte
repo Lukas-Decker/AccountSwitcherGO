@@ -1015,29 +1015,29 @@
 
 <style lang="scss">
   .preview-css-page {
-    padding-bottom: 2rem;
+    padding-bottom: 1.5rem;
   }
 
   .preview-css-toolbar {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.375rem;
   }
 
   .preview-css-intro {
-    margin: 0 0 1.25rem;
+    margin: 0 0 0.9375rem;
     color: var(--blackTernary, #a7abbe);
     line-height: 1.45;
   }
 
   .preview-overlay-drop-intro {
-    margin: 0 0 1rem;
+    margin: 0 0 0.75rem;
     color: var(--blackTernary, #a7abbe);
     line-height: 1.45;
-    font-size: 0.95rem;
+    font-size: 0.7125rem;
   }
 
   .preview-overlay-drop-grid {
     display: grid;
-    gap: 1.25rem;
+    gap: 0.9375rem;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   }
 
@@ -1048,15 +1048,15 @@
   }
 
   .preview-overlay-drop-caption {
-    margin: 0 0 0.5rem;
-    font-size: 0.9rem;
+    margin: 0 0 0.375rem;
+    font-size: 0.675rem;
     font-weight: 600;
     color: var(--blackSecondary, #c8cbd9);
   }
 
   .preview-overlay-drop-subhead {
-    margin: 1.25rem 0 0.65rem;
-    font-size: 1.05rem;
+    margin: 0.9375rem 0 0.4875rem;
+    font-size: 0.7875rem;
     border-bottom: none;
   }
 
@@ -1070,7 +1070,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 0.35rem 0 0;
+    padding: 0.2625rem 0 0;
     min-height: 148px;
     width: 100%;
   }
@@ -1101,12 +1101,12 @@
 
   .preview_fake_actionbar {
     position: relative;
-    margin-top: 0.25rem;
+    margin-top: 0.1875rem;
   }
 
   .preview-edge-subhead {
-    margin: 0 0 0.65rem;
-    font-size: 1.05rem;
+    margin: 0 0 0.4875rem;
+    font-size: 0.7875rem;
     border-bottom: none;
   }
 
@@ -1117,7 +1117,7 @@
 
   .preview-platform-edge-list {
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: 0.1875rem;
   }
 
   .preview-platform-edge {
@@ -1126,15 +1126,15 @@
 
   .preview-platform-state-badge {
     position: absolute;
-    top: 0.4rem;
-    left: 0.4rem;
+    top: 0.3rem;
+    left: 0.3rem;
     z-index: 2;
-    padding: 0.12rem 0.32rem;
+    padding: 0.09rem 0.24rem;
     border: 1px solid var(--preview-control-border, var(--accent));
     border-radius: 2px;
     background: var(--mainContentBackground, var(--code-background));
     color: var(--white);
-    font-size: 0.68rem;
+    font-size: 0.51rem;
     line-height: 1.2;
     font-weight: 700;
   }
@@ -1181,7 +1181,7 @@
 
   .preview-account-edge-grid {
     display: grid;
-    gap: 0.9rem;
+    gap: 0.675rem;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 155px), 1fr));
     justify-items: center;
   }
@@ -1204,13 +1204,13 @@
 
   .preview-account-edge--broken .acc_broken_badge {
     display: inline-block;
-    margin: 0.15rem 0.35rem 0;
-    padding: 0.08rem 0.24rem;
+    margin: 0.1125rem 0.2625rem 0;
+    padding: 0.06rem 0.18rem;
     border: 1px solid var(--whiteSecondary);
     border-radius: 2px;
     background: var(--mainContentBackground, var(--code-background));
     color: var(--whiteSecondary);
-    font-size: 0.72rem;
+    font-size: 0.54rem;
     font-weight: 700;
     line-height: 1.2;
   }
@@ -1270,7 +1270,7 @@
   }
 
   .preview-static-toast-host {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     display: flex;
     flex-direction: row-reverse;
     padding:1em;
@@ -1285,8 +1285,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
-    max-width: 22rem;
+    gap: 0.375rem;
+    max-width: 16.5rem;
     width: 100%;
     position: relative;
     z-index: 1;
@@ -1295,7 +1295,7 @@
   .preview-static-toast {
     position: relative;
     width: 100%;
-    padding: 0.65rem 2.25rem 0.65rem 0.65rem;
+    padding: 0.4875rem 1.6875rem 0.4875rem 0.4875rem;
     border-radius: 2px;
     border: 1px solid transparent;
     box-shadow: var(--shadow, 0 4px 14px var(--shadow-color-35));
@@ -1308,7 +1308,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.45rem;
     min-width: 0;
   }
 
@@ -1326,12 +1326,12 @@
 
   .preview-static-toast .toast__title {
     font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 0.2rem;
+    font-size: 0.825rem;
+    margin-bottom: 0.15rem;
   }
 
   .preview-static-toast .toast__message {
-    font-size: 1rem;
+    font-size: 0.75rem;
     line-height: 1.35;
     color: var(--whiteSecondary);
     opacity: 0.92;
@@ -1357,9 +1357,9 @@
   }
 
   .preview-toast-live-heading {
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    margin-top: 0.1875rem;
+    margin-bottom: 0.375rem;
+    font-size: 0.825rem;
     border-bottom: none;
   }
 
@@ -1367,19 +1367,19 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem 0.6rem;
-    margin: 0 0 0.75rem;
+    gap: 0.3rem 0.45rem;
+    margin: 0 0 0.5625rem;
     cursor: pointer;
     user-select: none;
-    font-size: 0.9rem;
+    font-size: 0.675rem;
     color: var(--whiteSecondary);
   }
 
   .toastPermanentCheckbox {
     opacity: 1;
     z-index: auto;
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 0.825rem;
+    height: 0.825rem;
     margin: 0;
     cursor: pointer;
     accent-color: var(--accent);
@@ -1387,8 +1387,8 @@
 
   .toastPermanentNote {
     flex: 1 1 100%;
-    margin-left: 1.5rem;
-    font-size: 0.78rem;
+    margin-left: 1.125rem;
+    font-size: 0.585rem;
     color: var(--blackTernary, #a7abbe);
     font-weight: normal;
     cursor: pointer;
@@ -1406,9 +1406,9 @@
   }
 
   .modalTestOutput {
-    margin: 0 0 0.75rem;
-    padding: 0.65rem 0.75rem;
-    max-height: 11rem;
+    margin: 0 0 0.5625rem;
+    padding: 0.4875rem 0.5625rem;
+    max-height: 8.25rem;
     overflow: auto;
     background: var(--even-darker-code-background);
     border: 1px solid var(--preview-control-border, var(--input-number-border, var(--button-bg)));
@@ -1426,7 +1426,7 @@
   .modalTestButtons {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     align-items: center;
   }
 </style>

@@ -524,36 +524,36 @@
     max-width: 640px;
   }
   .modal-lead {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.5625rem;
     line-height: 1.4;
   }
   .gamestats-scroll {
     overflow: visible;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    --gamestats-row-indent: calc(1rem + 0.35rem);
+    gap: 0.375rem;
+    --gamestats-row-indent: calc(0.75rem + 0.2625rem);
   }
   .gamestats-sub {
-    margin: 0.5rem 0 0.15rem;
-    font-size: 0.8rem;
+    margin: 0.375rem 0 0.1125rem;
+    font-size: 0.6rem;
     opacity: 0.85;
   }
   .gamestats-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 0.375rem;
   }
   .gamestats-check {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     cursor: pointer;
   }
   .gamestats-actions {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     flex-shrink: 0;
   }
   .linkbtn {
@@ -561,7 +561,7 @@
     border: 0;
     color: var(--accent);
     cursor: pointer;
-    padding: 0.15rem 0.35rem;
+    padding: 0.1125rem 0.2625rem;
     font: inherit;
     &:disabled {
       opacity: 0.45;
@@ -571,10 +571,10 @@
   .field-row {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.1875rem;
   }
   .field-label {
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     opacity: 0.9;
   }
   .modal-input {
@@ -589,18 +589,18 @@
   .metric-row {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    font-size: 0.85rem;
+    gap: 0.2625rem;
+    font-size: 0.6375rem;
   }
   .gamestats-attribution {
-    margin-top: 0.15rem;
+    margin-top: 0.1125rem;
   }
   .attribution-inset {
     padding-left: var(--gamestats-row-indent);
   }
   .attribution-text {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     line-height: 1.4;
   }
   .attribution-link {
@@ -608,8 +608,8 @@
     padding: 0;
   }
   .attribution-note {
-    margin: 0.35rem 0 0;
-    font-size: 0.85rem;
+    margin: 0.2625rem 0 0;
+    font-size: 0.6375rem;
     line-height: 1.4;
     opacity: 0.85;
   }
@@ -622,7 +622,7 @@
     cursor: pointer;
     line-height: 0;
     img {
-      max-height: 2.25rem;
+      max-height: 1.6875rem;
       width: auto;
       display: block;
       &.has-dimensions {
@@ -637,12 +637,12 @@
   .modal-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     justify-content: flex-end;
-    margin-top: 0.75rem;
+    margin-top: 0.5625rem;
   }
   .muted {
     opacity: 0.7;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
   }
 </style>

@@ -132,7 +132,7 @@
     --button-bg: #{$surface0};
     --button-bg-hover: #{$surface1};
     --tooltip-bg: #{$tooltip-bg};
-    --main-padding: 0.75rem;
+    --main-padding: 0.5625rem;
     --document-canvas-bg: #{$base};
 
     --shadow-color-heavy: #{rgba($shadow-base, pick($is-light, 0.24, 0.88))};

@@ -43,25 +43,25 @@
   .crowdin {
     text-align: initial;
     min-width: 0;
-    max-width: 36rem;
+    max-width: 27rem;
   }
 
   .crowdin__title {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    margin: 0 0 0.5rem;
-    font-size: 1.1rem;
+    gap: 0.2625rem;
+    margin: 0 0 0.375rem;
+    font-size: 0.825rem;
     font-weight: 600;
   }
 
   .crowdin__info {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.5625rem;
   }
 
   .crowdin__list {
     list-style-type: none;
-    padding-left: 1rem;
+    padding-left: 0.75rem;
     overflow: auto;
     max-height: 40vh;
     margin: 0;

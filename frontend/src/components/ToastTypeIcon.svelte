@@ -18,8 +18,8 @@
 <style lang="scss">
   .toast-type-icon__svg {
     display: block;
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
     flex-shrink: 0;
   }
 </style>

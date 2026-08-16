@@ -39,8 +39,8 @@
   }
 
   .userDataMoveOverlay__spinner {
-    width: 3rem;
-    height: 3rem;
+    width: 2.25rem;
+    height: 2.25rem;
     border: 3px solid var(--overlay-white-15);
     border-top-color: var(--accent-text-heading);
     border-radius: 50%;
@@ -84,7 +84,7 @@
 
   .userDataMoveOverlay__pct {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.7125rem;
     font-weight: 600;
     color: var(--whiteSecondary);
   }

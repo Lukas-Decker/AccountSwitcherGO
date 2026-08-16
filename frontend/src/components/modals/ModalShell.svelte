@@ -245,7 +245,7 @@
     inset: 0;
     z-index: 50;
     background: var(--modal-scrim, var(--backdrop-scrim-55));
-    padding: 1rem;
+    padding: 0.75rem;
     box-sizing: border-box;
   }
 
@@ -274,9 +274,9 @@
     top: 50%;
     transform: translate(-50%, -50%);
     width: max-content;
-    min-width: min(320px, calc(100% - 2rem));
-    max-width: min(80%, calc(100% - 2rem));
-    max-height: min(75%, calc(100% - 2rem));
+    min-width: min(320px, calc(100% - 1.5rem));
+    max-width: min(80%, calc(100% - 1.5rem));
+    max-height: min(75%, calc(100% - 1.5rem));
     height: auto;
 
     .modalFG-inner {
@@ -300,7 +300,7 @@
   }
 
   .modalFG.modalFilePicker:not(.modalFG--ready) {
-    min-width: min(720px, calc(100% - 2rem));
+    min-width: min(720px, calc(100% - 1.5rem));
   }
 
   $modal-resize-handle: 16px;
@@ -471,13 +471,13 @@
     flex: 1;
     min-height: 0;
     overflow: auto;
-    padding: 1.25rem 1.5rem;
+    padding: 0.9375rem 1.125rem;
   }
 
   :global(.modal-block) {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5625rem;
   }
 
   :global(.modal-inline-actions) {
@@ -485,12 +485,12 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     width: 100%;
-    margin-top: 0.15rem;
+    margin-top: 0.1125rem;
 
     button {
-      min-width: 7.5rem;
+      min-width: 5.625rem;
     }
   }
 
@@ -528,7 +528,7 @@
   }
 
   :global(.modal-input--multiline) {
-    min-height: 7.5rem;
+    min-height: 5.625rem;
     resize: vertical;
     line-height: 1.35;
     white-space: pre-wrap;

@@ -27,18 +27,18 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    gap: 0.5625rem;
+    margin-bottom: 0.5625rem;
   }
 
   .cardsection__state {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     opacity: 0.75;
   }
 
   .cardsection__open {
-    padding: 0.35rem 0.9rem;
+    padding: 0.2625rem 0.675rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
     background: var(--button-bg);

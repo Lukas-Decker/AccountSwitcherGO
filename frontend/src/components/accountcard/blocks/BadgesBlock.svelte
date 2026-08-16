@@ -20,9 +20,9 @@
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.2rem 0.25rem;
+    gap: 0.15rem 0.1875rem;
     max-width: 100%;
-    margin: 0.15rem 0 0;
+    margin: 0.1125rem 0 0;
   }
 
   .acc_badge {

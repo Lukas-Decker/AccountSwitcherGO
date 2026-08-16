@@ -131,14 +131,14 @@
 
   .updateDialog__title {
     margin: 0 0 14px;
-    font-size: 1.15rem;
+    font-size: 0.8625rem;
     font-weight: 600;
     color: var(--text, #e2e8f0);
   }
 
   .updateDialog__message {
     color: var(--text-secondary, #94a3b8);
-    font-size: 0.9rem;
+    font-size: 0.675rem;
     line-height: 1.5;
     margin-bottom: 20px;
     white-space: pre-wrap;
@@ -154,7 +154,7 @@
     padding: 10px 16px;
     border: none;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.675rem;
     font-weight: 500;
     cursor: pointer;
     transition: opacity 0.15s;

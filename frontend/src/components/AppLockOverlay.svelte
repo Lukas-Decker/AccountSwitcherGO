@@ -105,14 +105,14 @@
     z-index: 50;
     display: grid;
     place-items: center;
-    padding: 1rem;
+    padding: 0.75rem;
     box-sizing: border-box;
     background: var(--modal-scrim, var(--backdrop-scrim-55));
   }
 
   .app-lock-panel {
-    width: min(420px, calc(100vw - 2rem));
-    max-height: min(75vh, calc(100vh - 2rem));
+    width: min(420px, calc(100vw - 1.5rem));
+    max-height: min(75vh, calc(100vh - 1.5rem));
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -169,19 +169,19 @@
   .app-lock-scroll {
     min-height: 0;
     overflow: auto;
-    padding: 1.25rem 1.5rem;
+    padding: 0.9375rem 1.125rem;
   }
 
   .app-lock-body {
-    margin: 0 0 0.85rem;
+    margin: 0 0 0.6375rem;
     color: var(--white, #fff);
     line-height: 1.45;
   }
 
   .app-lock-field {
     display: grid;
-    gap: 0.35rem;
-    margin-bottom: 0.75rem;
+    gap: 0.2625rem;
+    margin-bottom: 0.5625rem;
   }
 
   .app-lock-error {
@@ -190,6 +190,6 @@
   }
 
   .app-lock-actions {
-    margin-top: 0.35rem;
+    margin-top: 0.2625rem;
   }
 </style>

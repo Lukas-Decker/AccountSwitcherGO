@@ -89,35 +89,35 @@
     padding: 0;
     border: 0;
     display: grid;
-    gap: 0.45rem;
+    gap: 0.3375rem;
   }
 
   .tag-expiry__legend {
-    margin: 0 0 0.15rem;
-    font-size: 0.9rem;
+    margin: 0 0 0.1125rem;
+    font-size: 0.675rem;
     font-weight: 600;
   }
 
   .tag-expiry__option {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
   }
 
   .tag-expiry__row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(8rem, 11rem);
-    gap: 0.75rem;
+    grid-template-columns: minmax(0, 1fr) minmax(6rem, 8.25rem);
+    gap: 0.5625rem;
   }
 
   .tag-expiry__field {
     display: grid;
-    gap: 0.3rem;
+    gap: 0.225rem;
     min-width: 0;
   }
 
   .tag-expiry__label {
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     font-weight: 600;
   }
 

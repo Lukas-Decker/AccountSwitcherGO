@@ -342,13 +342,13 @@
 
   .steam-tabs {
     display: flex;
-    gap: 0.25rem;
-    margin: 0 0 0.25rem;
+    gap: 0.1875rem;
+    margin: 0 0 0.1875rem;
     border-bottom: 1px solid var(--border-bar-bg, #444);
   }
 
   .steam-tab {
-    padding: 0.45rem 1.1rem;
+    padding: 0.3375rem 0.825rem;
     border: none;
     border-bottom: 2px solid transparent;
     background: none;

@@ -24,9 +24,9 @@
   // adds the tile's own 10px margins so spacing matches the old flex layout.
   grid-template-columns: repeat(auto-fit, calc(min(20vw, 175px) + 20px));
   justify-content: center;
-  gap: 0.65rem;
+  gap: 0.4875rem;
   align-content: flex-start;
-  padding: 0.25rem;
+  padding: 0.1875rem;
 }
 
 .platform_tile_ctx {
@@ -152,7 +152,7 @@
     }
   
     &.noImageCenterText p {
-      font-size: 0.88rem;
+      font-size: 0.66rem;
       height: min(20vw, 175px);
       max-height: 175px;
     }
@@ -224,7 +224,7 @@
   min-height: 0;
 }
 .home-msg {
-  padding: 1rem;
+  padding: 0.75rem;
   color: var(--white);
 }
 

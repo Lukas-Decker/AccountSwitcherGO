@@ -64,6 +64,6 @@
 
 <style lang="scss">
   .modal-optout {
-    margin: 0.4rem 0 0.2rem;
+    margin: 0.3rem 0 0.15rem;
   }
 </style>

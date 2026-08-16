@@ -508,11 +508,11 @@
   }
   .skip-link {
     position: absolute;
-    left: 1rem;
-    top: 1rem;
+    left: 0.75rem;
+    top: 0.75rem;
     z-index: 1000000;
-    transform: translateY(calc(-100% - 1rem));
-    padding: 0.5rem 0.75rem;
+    transform: translateY(calc(-100% - 0.75rem));
+    padding: 0.375rem 0.5625rem;
     background: var(--mainContentBackground);
     color: var(--whiteSecondary);
     border: 2px solid var(--accent);

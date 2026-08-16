@@ -170,12 +170,12 @@
     flex-direction: row;
     gap: 0;
     width: 100%;
-    margin: 0.15rem 0 0;
+    margin: 0.1125rem 0 0;
   }
 
   .folder_indicator {
-    min-width: 0.5rem;
-    margin-right: 0.25rem;
+    min-width: 0.375rem;
+    margin-right: 0.1875rem;
     border-radius: 2px 2px 0 0;
     background: var(--success-solid);
     transition: background 0.15s ease;
@@ -193,7 +193,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.35rem 1rem 0.35rem 0.75rem;
+    padding: 0.2625rem 0.75rem 0.2625rem 0.5625rem;
     background: var(--success-soft-bg);
     color: var(--white);
     font-size: 12px;
@@ -215,8 +215,8 @@
     min-width: 0;
     width: 100%;
     max-width: none;
-    margin: 0.35rem 0 0;
+    margin: 0.2625rem 0 0;
     min-height: 280px;
-    max-height: calc(75vh - 11rem);
+    max-height: calc(75vh - 8.25rem);
   }
 </style>

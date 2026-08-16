@@ -86,8 +86,8 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: 0.5rem 0.75rem;
-    padding: 0.25rem 0 0.5rem;
+    gap: 0.375rem 0.5625rem;
+    padding: 0.1875rem 0 0.375rem;
   }
 
   .riot-link__label {
@@ -99,7 +99,7 @@
      A shared floor rather than a height on either field.
 
      Setting height on the select was the bug: .modal-input pairs 8px of padding
-     with a 24px line box, so 2.2rem left an 8.4px content box and cut the text
+     with a 24px line box, so 1.65rem left an 8.4px content box and cut the text
      through the middle. Chromium also ignores line-height on a select, so the
      two fields size by different rules and do not agree on their own: the input
      lands on 42px here and 36px on a page that loads Settings.scss, the select
@@ -108,7 +108,7 @@
   */
   .riot-link input,
   .riot-link select {
-    min-height: 3.5rem;
+    min-height: 2.625rem;
   }
 
   .riot-link__select {
@@ -116,8 +116,8 @@
   }
 
   .riot-link__hint {
-    margin: 0 0 0.5rem;
-    font-size: 0.85rem;
+    margin: 0 0 0.375rem;
+    font-size: 0.6375rem;
     opacity: 0.75;
   }
 </style>

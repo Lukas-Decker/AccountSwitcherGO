@@ -404,10 +404,10 @@
   .cardeditor {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.6375rem;
     // A settings list, not a page-wide table: capping the column keeps every
     // control within a glance of the label it belongs to.
-    max-width: 46rem;
+    max-width: 34.5rem;
   }
 
   .cardeditor--disabled {
@@ -424,24 +424,24 @@
   // The accent-bar heading the settings pages use: a section anchor has to
   // outrank the body text it introduces, not whisper under it.
   .cardeditor__legend {
-    padding: 0.15rem 0 0.15rem 0.65rem;
+    padding: 0.1125rem 0 0.1125rem 0.4875rem;
     border-left: 3px solid var(--settings-header-border, var(--accent));
     color: var(--whiteSecondary);
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 700;
   }
 
   .cardeditor__presets {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: 0.4rem;
+    gap: 0.2625rem;
+    margin-top: 0.3rem;
   }
 
   // Fill marks the current choice and nothing else: quiet outlines for the
   // options, the accent fill for the one that is active.
   .cardeditor__preset {
-    padding: 0.35rem 0.9rem;
+    padding: 0.2625rem 0.675rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
     background: transparent;
@@ -467,26 +467,26 @@
   }
 
   .cardeditor__hint {
-    margin: 0.4rem 0 0;
-    font-size: 0.8rem;
+    margin: 0.3rem 0 0;
+    font-size: 0.6rem;
     opacity: 0.7;
   }
 
   .cardeditor__list {
-    margin: 0.4rem 0 0;
+    margin: 0.3rem 0 0;
     padding: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1125rem;
   }
 
   .cardeditor__row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.4rem;
+    gap: 0.375rem;
+    padding: 0.1875rem 0.3rem;
     border-radius: 3px;
 
     &:hover {
@@ -497,7 +497,7 @@
   // Marks a block that shares a line with the one above it, so the list still
   // reads as rows rather than as a flat sequence.
   .cardeditor__row.is-joined {
-    margin-left: 1.1rem;
+    margin-left: 0.825rem;
     border-left: 2px solid var(--accent-overlay-border, var(--button-bg));
   }
 
@@ -505,7 +505,7 @@
   .cardeditor__join {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
 
     label:not(.form-check-label) {
       cursor: pointer;
@@ -526,17 +526,17 @@
   }
 
   .cardeditor__toggle {
-    flex: 1 1 8rem;
+    flex: 1 1 6rem;
     min-width: 0;
   }
 
   .cardeditor__join {
-    font-size: 0.78rem;
+    font-size: 0.585rem;
     opacity: 0.75;
   }
 
   .cardeditor__move button {
-    padding: 0.1rem 0.45rem;
+    padding: 0.075rem 0.3375rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
     background: var(--button-bg);
@@ -552,52 +552,52 @@
   // The ring is one thing made of two colours and a position, so it is boxed
   // off from the plain per-state fills above it.
   .cardeditor__ring {
-    margin-top: 0.7rem;
-    padding: 0.6rem 0.7rem;
+    margin-top: 0.525rem;
+    padding: 0.45rem 0.525rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 4px;
   }
 
   .cardeditor__subhead {
     margin: 0;
-    font-size: 0.82rem;
+    font-size: 0.615rem;
     font-weight: 600;
   }
 
   .cardeditor__slider {
-    width: 7rem;
+    width: 5.25rem;
     accent-color: var(--accent);
     cursor: pointer;
   }
 
   .cardeditor__slidervalue {
     font-variant-numeric: tabular-nums;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     opacity: 0.8;
   }
 
   .cardeditor__colorgrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-    gap: 0.6rem;
-    margin-top: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(8.25rem, 1fr));
+    gap: 0.45rem;
+    margin-top: 0.375rem;
   }
 
   .cardeditor__color {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    font-size: 0.82rem;
+    gap: 0.1875rem;
+    font-size: 0.615rem;
   }
 
   .cardeditor__colorrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
 
     input[type="color"] {
-      width: 2.6rem;
-      height: 1.7rem;
+      width: 1.95rem;
+      height: 1.275rem;
       padding: 0;
       border: 1px solid var(--role-field-border, var(--button-bg));
       border-radius: 3px;
@@ -609,12 +609,12 @@
   // A readable ghost button at full opacity: 0.45 opacity is the app's
   // disabled costume and stays reserved for the :disabled state below.
   .cardeditor__reset {
-    padding: 0.15rem 0.5rem;
+    padding: 0.1125rem 0.375rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 3px;
     background: transparent;
     color: inherit;
-    font-size: 1rem;
+    font-size: 0.75rem;
     cursor: pointer;
 
     &:hover:not(:disabled) {
@@ -629,19 +629,19 @@
 
   .cardeditor__metrics {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(6.75rem, 1fr));
+    gap: 0.375rem;
 
     label {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
-      font-size: 0.82rem;
+      gap: 0.15rem;
+      font-size: 0.615rem;
     }
 
     input {
       width: 100%;
-      padding: 0.25rem 0.4rem;
+      padding: 0.1875rem 0.3rem;
     }
   }
 </style>

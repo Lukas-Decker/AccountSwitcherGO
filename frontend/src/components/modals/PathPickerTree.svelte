@@ -174,7 +174,7 @@
 <style lang="scss">
   .pathPicker-err {
     color: var(--red);
-    margin: 0.5rem 0;
+    margin: 0.375rem 0;
     font-size: 12px;
   }
 

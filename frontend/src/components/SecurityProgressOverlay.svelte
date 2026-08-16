@@ -28,17 +28,17 @@
   .security-progress-panel {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    width: min(460px, calc(100vw - 2rem));
-    padding: 1.15rem;
+    gap: 0.75rem;
+    width: min(460px, calc(100vw - 1.5rem));
+    padding: 0.8625rem;
     border: 1px solid var(--input-number-border);
     background: var(--program-bg);
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
   }
 
   .security-progress-panel h2 {
-    margin: 0 0 0.25rem;
-    font-size: 1.05rem;
+    margin: 0 0 0.1875rem;
+    font-size: 0.7875rem;
   }
 
   .security-progress-panel p {

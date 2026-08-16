@@ -53,18 +53,18 @@
 
   .update-actions {
     display: flex;
-    gap: 0.65rem;
+    gap: 0.4875rem;
     width: 100%;
-    margin-top: 0.15rem;
+    margin-top: 0.1125rem;
   }
 
   .update-btn {
     flex: 1;
     min-width: 0;
-    padding: 0.65rem 1rem;
+    padding: 0.4875rem 0.75rem;
     border: none;
     font: inherit;
-    font-size: 0.9rem;
+    font-size: 0.675rem;
     font-weight: 500;
     cursor: pointer;
     transition:

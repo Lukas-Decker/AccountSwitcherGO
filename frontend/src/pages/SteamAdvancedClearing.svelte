@@ -264,18 +264,18 @@
     overflow-y: auto;
     flex: 1;
     min-height: 0;
-    padding-bottom: 1rem;
+    padding-bottom: 0.75rem;
   }
 
   .steam-adv-info {
     color: var(--text-white-90);
-    font-size: 0.95rem;
+    font-size: 0.7125rem;
     line-height: 1.45;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5625rem;
   }
 
   .steam-adv-ack {
-    margin: 0.5rem 0 1rem;
+    margin: 0.375rem 0 0.75rem;
     align-items: flex-start;
   }
 
@@ -295,15 +295,15 @@
      the app's minimum width, no empty right-hand gutter. */
   .steam-adv-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(15.75rem, 1fr));
+    gap: 0.375rem;
+    margin-bottom: 0.5625rem;
   }
 
   .steam-adv-action {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.1rem;
+    gap: 0.075rem;
     width: 100%;
     margin: 0;
     padding: 0.45em 0.75em;
@@ -322,29 +322,29 @@
 
   .steam-adv-action__path {
     font-family: ui-monospace, monospace;
-    font-size: 0.78rem;
+    font-size: 0.585rem;
     opacity: 0.65;
   }
 
   .steam-adv-log-wrap {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.375rem;
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
   }
 
   .steam-adv-log {
     flex: 1;
-    min-height: 8rem;
-    max-height: min(40vh, 22rem);
+    min-height: 6rem;
+    max-height: min(40vh, 16.5rem);
     overflow-y: auto;
-    padding: 0.6rem 0.75rem;
+    padding: 0.45rem 0.5625rem;
     background: var(--backdrop-dark-35);
     border: 1px solid var(--accent);
     border-radius: 4px;
     font-family: ui-monospace, monospace;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     line-height: 1.35;
     color: var(--text-white-92);
   }
@@ -379,7 +379,7 @@
     text-decoration: underline;
     cursor: pointer;
     font: inherit;
-    padding: 0.35rem 0.5rem;
+    padding: 0.2625rem 0.375rem;
   }
 
   .fancyLinkBtn:hover {
@@ -387,7 +387,7 @@
   }
 
   .steam-adv-footer {
-    margin-top: 1.5rem;
+    margin-top: 1.125rem;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;

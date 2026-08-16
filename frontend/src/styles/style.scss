@@ -10,7 +10,10 @@
 
 :root {
     font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 12px;
+    /* The browser-default root, so 1rem means what stylesheets elsewhere mean
+       by it. Every rem in this codebase was rebased in the same change, and
+       the body sets the app's own 12px text size below. */
+    font-size: 16px;
     /* Unitless so it scales with each element's own font size; a fixed value
        here inherits into small text and blows its line boxes apart. */
     line-height: 1.45;
@@ -33,13 +36,13 @@
 }
 
 ::-webkit-scrollbar {
-    width: 0.75rem;
+    width: 0.5625rem;
     background: var(--scrollbar-track-bg);
 }
 
 ::-webkit-scrollbar-track {
     background: var(--scrollbar-track-bg);
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -50,6 +53,8 @@
 body {
     margin: 0;
     display: flex;
+    /* The app's body text size: 12px against the 16px root. */
+    font-size: 0.75rem;
 }
 
 
@@ -69,12 +74,12 @@ body {
 }
 
 .main-spacing {
-    padding-top: var(--main-padding, .75rem);
-    padding-right: var(--main-padding, .75rem);
-    padding-left: var(--main-padding, .75rem);
+    padding-top: var(--main-padding, 0.5625rem);
+    padding-right: var(--main-padding, 0.5625rem);
+    padding-left: var(--main-padding, 0.5625rem);
     /* These pages scroll, so the last row needs room under it; without this it
        ends flush against the window edge and reads as cut off. */
-    padding-bottom: var(--main-padding-bottom, 1.5rem);
+    padding-bottom: var(--main-padding-bottom, 1.125rem);
 }
 
 ::selection {

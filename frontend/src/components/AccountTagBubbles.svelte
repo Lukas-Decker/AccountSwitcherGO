@@ -77,8 +77,8 @@
   .acc_tag_bubbles {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
-    margin: 0.2rem 0 0;
+    gap: 0.1875rem;
+    margin: 0.15rem 0 0;
     max-width: 100%;
     flex-direction: row;
     justify-content: center;
@@ -91,10 +91,10 @@
   .acc_tag_bubble {
     display: inline-flex;
     align-items: center;
-    gap: 0.22rem;
-    padding: 0.1rem 0.4rem;
+    gap: 0.165rem;
+    padding: 0.075rem 0.3rem;
     border-radius: 999px;
-    font-size: 0.65rem;
+    font-size: 0.4875rem;
     font-weight: 600;
     line-height: 1.3;
     max-width: 100%;
@@ -103,8 +103,8 @@
   }
 
   .acc_tag_bubble_icon {
-    width: 0.72rem;
-    height: 0.72rem;
+    width: 0.54rem;
+    height: 0.54rem;
     flex: 0 0 auto;
     fill: none;
     stroke: currentColor;

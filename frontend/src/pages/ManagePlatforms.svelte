@@ -128,6 +128,6 @@
 <style lang="scss">
   .settings-err {
     color: var(--red);
-    padding: 0.5rem;
+    padding: 0.375rem;
   }
 </style>

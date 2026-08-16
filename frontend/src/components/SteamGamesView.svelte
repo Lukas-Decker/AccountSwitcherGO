@@ -170,24 +170,24 @@
   .games-view {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5625rem;
     /* The Steam page is a bare .main-content with no spacing class, so the grid
        would otherwise run under the scrollbar and off the right edge. */
-    padding: 0.5rem 0.75rem 1.5rem;
+    padding: 0.375rem 0.5625rem 1.125rem;
     min-height: 0;
   }
 
   .games-toolbar {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
   }
 
   .games-search {
-    flex: 1 1 14rem;
+    flex: 1 1 10.5rem;
     min-width: 0;
-    padding: 0.4rem 0.6rem;
+    padding: 0.3rem 0.45rem;
     border-radius: 4px;
     border: 1px solid var(--border-bar-bg, #444);
     background: var(--backdrop-dark-25, rgba(0, 0, 0, 0.25));
@@ -198,20 +198,20 @@
   .games-launch-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
     cursor: pointer;
     white-space: nowrap;
   }
 
   .games-empty {
     opacity: 0.75;
-    margin: 1rem 0.25rem;
+    margin: 0.75rem 0.1875rem;
   }
 
   .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fill, minmax(6.75rem, 1fr));
+    gap: 0.6375rem;
   }
 
   .game-card {
@@ -227,7 +227,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.35rem;
+    gap: 0.2625rem;
     width: 100%;
     padding: 0;
     background: none;
@@ -264,15 +264,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
-    font-size: 0.8rem;
+    padding: 0.375rem;
+    font-size: 0.6rem;
     text-align: center;
     overflow: hidden;
     word-break: break-word;
   }
 
   .game-name {
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -280,7 +280,7 @@
   }
 
   .game-owners {
-    font-size: 0.75rem;
+    font-size: 0.5625rem;
     opacity: 0.7;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -293,11 +293,11 @@
     left: 0;
     right: 0;
     top: 100%;
-    margin-top: 0.25rem;
+    margin-top: 0.1875rem;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.3rem;
+    gap: 0.1125rem;
+    padding: 0.225rem;
     border-radius: 6px;
     border: 1px solid var(--border-bar-bg, #444);
     background: var(--modal-bg, #23252b);
@@ -305,7 +305,7 @@
   }
 
   .game-owner {
-    padding: 0.35rem 0.5rem;
+    padding: 0.2625rem 0.375rem;
     border: none;
     border-radius: 4px;
     background: none;

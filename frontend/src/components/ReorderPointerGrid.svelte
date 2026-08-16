@@ -523,7 +523,7 @@
     width: 100%;
     font-weight: 700;
     color: var(--accent);
-    padding: 0.5rem;
+    padding: 0.375rem;
     text-align: center;
     word-break: break-word;
   }

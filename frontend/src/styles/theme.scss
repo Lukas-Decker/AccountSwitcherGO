@@ -46,7 +46,7 @@
     --yellow-pink: linear-gradient(var(--gradientDegree),var(--yellow) 0%,var(--pink) 100%);
     --cyan-green: linear-gradient(var(--gradientDegree),var(--cyan) 0%,var(--green) 100%);
     --pink-purple: linear-gradient(var(--gradientDegree),var(--pink) 0%,var(--purple) 100%);
-    --border-size: 0.1rem;
+    --border-size: 0.075rem;
 
     // All these extra accent steps and redefinitions are required for Windows accent options
     // Elements that use these will be set by either Windows Accent or Theme
@@ -63,7 +63,7 @@
     --button-bg: #274560;
     --button-bg-hover: #28374E;
     --tooltip-bg: var(--even-darker-code-background);
-    --main-padding: .75rem;
+    --main-padding: 0.5625rem;
     --document-canvas-bg: #1b2636;
 
     /* --- Shared neutral / shadow tokens --- */

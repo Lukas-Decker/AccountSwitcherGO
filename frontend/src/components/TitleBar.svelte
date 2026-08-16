@@ -200,7 +200,7 @@
         position: relative;
         svg {
             fill: var(--whiteSecondary);
-            height: 0.8rem;
+            height: 0.6rem;
             display: block;
         }
         &:disabled {
@@ -214,10 +214,10 @@
         top: 2px;
         right: 2px;
         z-index: 3;
-        width: 1rem;
-        height: 1rem;
-        min-width: 1rem;
-        min-height: 1rem;
+        width: 0.75rem;
+        height: 0.75rem;
+        min-width: 0.75rem;
+        min-height: 0.75rem;
         border-radius: 50%;
         border: 2px solid var(--controller-back-prompt-border);
         box-sizing: border-box;
@@ -228,7 +228,7 @@
         color: var(--controller-back-prompt-fg);
         box-shadow: 0 2px 7px var(--shadow-color-45, rgba(0, 0, 0, 0.45));
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 0.66rem;
+        font-size: 0.495rem;
         font-weight: 800;
         line-height: 1;
         pointer-events: none;

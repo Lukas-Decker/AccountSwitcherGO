@@ -103,12 +103,12 @@
 <style lang="scss">
   .modal-field {
     display: grid;
-    gap: 0.35rem;
-    margin-top: 0.75rem;
+    gap: 0.2625rem;
+    margin-top: 0.5625rem;
   }
 
   .modal-error {
     color: var(--danger, #ff6b6b);
-    margin: 0.75rem 0 0;
+    margin: 0.5625rem 0 0;
   }
 </style>

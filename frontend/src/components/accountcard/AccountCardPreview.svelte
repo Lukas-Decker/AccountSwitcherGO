@@ -49,7 +49,7 @@
   .acc-preview {
     display: flex;
     justify-content: center;
-    padding: 0.75rem;
+    padding: 0.5625rem;
     border: 1px solid var(--role-field-border, var(--button-bg));
     border-radius: 4px;
     background: var(--mainContentBackground, var(--code-background));
@@ -57,11 +57,11 @@
     // Sized to the card it shows rather than the page it sits on, and sticky
     // so the feedback loop survives scrolling the block list it reflects.
     width: fit-content;
-    min-width: 14rem;
+    min-width: 10.5rem;
     max-width: 100%;
     align-self: center;
     position: sticky;
-    top: 0.25rem;
+    top: 0.1875rem;
     z-index: 5;
   }
 

@@ -24,8 +24,8 @@
     display: flex;
     align-items: center;
     width: 100%;
-    margin: 0 0 0.5rem;
-    padding: 0.4rem 0.5rem;
+    margin: 0 0 0.375rem;
+    padding: 0.3rem 0.375rem;
     border: 0px solid transparent;
     background: var(--backdrop-dark-20);
     color: inherit;
@@ -45,7 +45,7 @@
   .tag-filter-bar__label {
     flex: 1;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
   }
 
   .tag-filter-bar__icon {

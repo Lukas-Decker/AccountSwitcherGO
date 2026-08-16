@@ -128,52 +128,52 @@
 <style lang="scss">
   .riot-key {
     display: grid;
-    gap: 0.45rem;
-    max-width: 34rem;
-    margin-bottom: 1rem;
+    gap: 0.3375rem;
+    max-width: 25.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .riot-key__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.3rem;
   }
 
   .riot-key__field {
     display: grid;
-    gap: 0.2rem;
+    gap: 0.15rem;
 
     span {
-      font-size: 0.82rem;
+      font-size: 0.615rem;
       opacity: 0.8;
     }
 
     input {
-      padding: 0.35rem 0.5rem;
+      padding: 0.2625rem 0.375rem;
     }
   }
 
   .riot-key__status {
-    margin: 0.2rem 0 0;
-    font-size: 0.9rem;
+    margin: 0.15rem 0 0;
+    font-size: 0.675rem;
   }
 
   .riot-key__limit {
-    margin-left: 0.4rem;
+    margin-left: 0.3rem;
     font-family: ui-monospace, monospace;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     opacity: 0.7;
   }
 
   .riot-key__hint {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     opacity: 0.75;
   }
 
   .riot-key__error {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.6375rem;
     color: var(--danger, #ff6b6b);
   }
 </style>

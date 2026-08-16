@@ -159,8 +159,8 @@
   .cardeditor-page {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 1.25rem 2rem;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9375rem 1.5rem;
     overflow-y: auto;
   }
 
@@ -170,14 +170,14 @@
   }
 
   .cardeditor-page__override {
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5625rem;
     border-bottom: 1px solid var(--border-bar-bg, var(--button-bg));
   }
 
   .cardeditor-page__toggle {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.3375rem;
     font-weight: 600;
 
     label {
@@ -186,8 +186,8 @@
   }
 
   .cardeditor-page__hint {
-    margin: 0.3rem 0 0;
-    font-size: 0.82rem;
+    margin: 0.225rem 0 0;
+    font-size: 0.615rem;
     opacity: 0.72;
     max-width: 60ch;
   }

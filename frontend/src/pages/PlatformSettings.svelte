@@ -531,7 +531,7 @@
     overflow-y: auto;
     flex: 1;
     min-height: 0;
-    padding-bottom: 1rem;
+    padding-bottom: 0.75rem;
 
     // The shared settings rows normally live inside .settings-page, which is
     // where these tokens are declared; this page hosts them directly.
@@ -541,18 +541,18 @@
     // A settings list, not a page-wide table: without the cap the control
     // column drifts a full window-width away from its labels.
     :global(.setting-row) {
-      max-width: 46rem;
+      max-width: 34.5rem;
     }
   }
 
   .platform-settings-err {
     color: var(--red);
-    padding: 0.5rem 1rem;
+    padding: 0.375rem 0.75rem;
   }
 
   .settings-divider {
     border: 0;
     border-top: 1px solid var(--accent);
-    margin: 2rem 0 1.5rem;
+    margin: 1.5rem 0 1.125rem;
   }
 </style>
