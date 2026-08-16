@@ -12,6 +12,18 @@
   --acc-card-max-w: 120px;
   --acc-card-min-h: 135px;
   --acc-avatar-size: 6em;
+
+  // The card's own surface. Cards used to paint nothing at rest, so they read
+  // as text floating on the page rather than as the things you click. Built
+  // from existing theme tokens so every theme, including community ones, gets
+  // a sensible surface without being updated.
+  --acc-card-bg: var(--code-background);
+  --acc-card-bg-hover: var(--button-bg-hover, var(--button-bg));
+  --acc-card-bg-selected: var(--button-bg);
+  --acc-card-border: var(--accent-overlay-border, var(--button-bg));
+  --acc-card-border-hover: var(--accent-overlay-border-strong, var(--accent));
+  --acc-card-shadow: 0 1px 2px var(--shadow-color-30), 0 2px 6px -3px var(--shadow-color-35);
+  --acc-card-shadow-hover: 0 2px 4px var(--shadow-color-35), 0 8px 18px -6px var(--shadow-color-45);
 }
 
 .steam-acclist {
@@ -137,9 +149,13 @@
     --custom-focus-ring-color: var(--focus-ring-color, var(--whiteSecondary, var(--accent)));
     --custom-focus-ring-offset-color: var(--focus-ring-offset-color, var(--mainContentBackground, var(--code-background, #111)));
     border-color: var(--custom-focus-ring-color) !important;
+    // The card's own elevation is kept underneath the ring: box-shadow is a
+    // single property, so leaving it out would flatten a card the moment it
+    // took focus.
     box-shadow:
       0 0 0 2px var(--custom-focus-ring-offset-color),
-      0 0 0 5px var(--custom-focus-ring-color) !important;
+      0 0 0 5px var(--custom-focus-ring-color),
+      var(--acc-card-shadow) !important;
   }
 
   .acc_note {
@@ -340,11 +356,8 @@
   vertical-align: middle;
 }
 
-.accountHover > label.acc {
-  border: 0.1em solid var(--accent-border-strong);
-  /* Seperate because added by sortable */
-  background: var(--code-background);
-}
+/* .accountHover was applied by a drag library the app no longer uses, and was
+   the closest thing the card had to a hover state. Cards now have a real one. */
 
 input.acc {
   -moz-appearance: none;
@@ -409,7 +422,11 @@ label.acc {
   padding: 0.5em;
   border-width: 0.1em;
   border-style: solid;
-  border-color: transparent;
+  // A card is a surface you act on, so it sits above the page rather than on
+  // it. The border carries the state changes; the shadow only says "raised".
+  border-color: var(--acc-card-border);
+  background: var(--acc-card-bg);
+  box-shadow: var(--acc-card-shadow);
   color: var(--whiteSecondary);
   text-align: center;
   cursor: pointer;
@@ -546,9 +563,54 @@ label.acc {
   }
 }
 
+// Hover. Only where a pointer can actually hover, so a touch device does not
+// get stuck showing the raised state after a tap.
+@media (hover: hover) {
+  label.acc:hover {
+    border-color: var(--acc-card-border-hover);
+    background: var(--acc-card-bg-hover);
+    box-shadow: var(--acc-card-shadow-hover);
+    transform: translateY(-1px);
+  }
+
+  // A card whose data cannot be used is not offering an action, so it stays put.
+  label.acc.acc--broken:hover {
+    transform: none;
+    box-shadow: var(--acc-card-shadow);
+  }
+}
+
+// The lift is the one part of hover that is motion rather than colour, so it
+// goes when motion is not wanted. The colour change still marks the hover.
+@media (prefers-reduced-motion: reduce) {
+  label.acc:hover {
+    transform: none;
+  }
+}
+
+:root.animations-disabled label.acc:hover {
+  transform: none;
+}
+
+label.acc:active {
+  transform: translateY(0);
+  box-shadow: var(--acc-card-shadow);
+}
+
 input.acc:checked + label.acc {
   border-color: var(--shortcut-active-border, var(--accent));
-  background: var(--button-bg);
+  background: var(--acc-card-bg-selected);
+  box-shadow: var(--acc-card-shadow-hover);
+}
+
+// Shadows say nothing in forced-colors mode, where the OS palette replaces our
+// own; normalize.scss already pins the surface and border there.
+@media (forced-colors: active) {
+  label.acc,
+  label.acc:hover {
+    box-shadow: none !important;
+    transform: none !important;
+  }
 }
 
 // The account currently signed in. The ring is drawn by a pseudo-element rather

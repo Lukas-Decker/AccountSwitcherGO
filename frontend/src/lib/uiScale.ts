@@ -96,11 +96,14 @@ export function applyUiScale(scale: number): void {
   } else {
     host.style.zoom = String(scale);
     // Sizes resolve before the zoom multiplies the rendered result, so a plain
-    // 100% overflows the window by exactly the scale factor. Viewport units
-    // rather than percentages, because a percentage height needs a definite
-    // parent and would otherwise resolve against content that is itself
-    // growing from the overflow this is meant to prevent.
-    host.style.width = `calc(100vw / ${scale})`;
+    // 100% overflows the window by exactly the scale factor.
+    //
+    // Width comes from the parent rather than the viewport: 100vw counts the
+    // vertical scrollbar, which put a scrolling page 9px over the edge. Height
+    // has to come from the viewport, because a percentage height needs a
+    // definite parent and would otherwise resolve against content that is
+    // itself growing from the overflow this is meant to prevent.
+    host.style.width = `calc(100% / ${scale})`;
     host.style.height = `calc(100vh / ${scale})`;
   }
 
