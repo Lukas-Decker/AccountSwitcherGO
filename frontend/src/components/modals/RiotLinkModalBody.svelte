@@ -95,8 +95,23 @@
     white-space: nowrap;
   }
 
+  /*
+     A shared floor rather than a height on either field.
+
+     Setting height on the select was the bug: .modal-input pairs 8px of padding
+     with a 24px line box, so 2.2rem left an 8.4px content box and cut the text
+     through the middle. Chromium also ignores line-height on a select, so the
+     two fields size by different rules and do not agree on their own: the input
+     lands on 42px here and 36px on a page that loads Settings.scss, the select
+     on 34px. min-height on both makes them the same height everywhere while
+     still letting either grow if it needs to.
+  */
+  .riot-link input,
+  .riot-link select {
+    min-height: 3.5rem;
+  }
+
   .riot-link__select {
-    height: 2.2rem;
     cursor: pointer;
   }
 

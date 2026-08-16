@@ -65,9 +65,15 @@ tasks:
       - task: common:run:docker
 
   test:
-    summary: Runs all Go and frontend tests
+    summary: Runs the Go and frontend tests that touch nothing outside their own package
     cmds:
       - go test -race -count=1 ./internal/... ./cmd/...
+      - cd frontend && pnpm run test && cd ..
+
+  test:all:
+    summary: Also runs the tests that redirect %APPDATA% or read the running League Client
+    cmds:
+      - go test -race -count=1 -tags envtests ./internal/... ./cmd/...
       - cd frontend && pnpm run test && cd ..
 
   version:

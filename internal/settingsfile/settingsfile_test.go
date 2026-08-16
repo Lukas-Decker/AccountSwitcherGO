@@ -1,3 +1,9 @@
+//go:build envtests
+
+// Off by default. These tests redirect %APPDATA% and %USERPROFILE% or read
+// the running League Client, so they reach outside the package and are only
+// as isolated as their own setup. Run them with: go test -tags envtests ./...
+
 package settingsfile
 
 import (

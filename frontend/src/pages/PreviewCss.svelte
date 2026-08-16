@@ -13,6 +13,7 @@
     openAlertNoButton,
     openConfirm,
     openPrompt,
+    openRiotLinkModal,
     openFolderPicker,
   } from "../stores/modal";
   import { pushToast } from "../stores/toast";
@@ -242,6 +243,23 @@
       initialValue: "demo",
     });
     logModal("openPrompt (text)", r === null ? "null (cancel)" : JSON.stringify(r));
+  }
+
+  async function testRiotLink() {
+    // A real region list, so the select is exercised at the width it actually
+    // gets rather than with one short placeholder row.
+    const r = await openRiotLinkModal({
+      title: $t("Riot_CardTitle"),
+      riotId: "Average Tibbers#TR1",
+      region: "tr1",
+      regions: [
+        { platform: "euw1", display: "EU West" },
+        { platform: "tr1", display: "Turkey" },
+        { platform: "na1", display: "North America" },
+        { platform: "sg2", display: "Singapore & Malaysia" },
+      ],
+    });
+    logModal("openRiotLinkModal", r === null ? "null (cancel)" : JSON.stringify(r));
   }
 
   async function testPromptPassword() {
@@ -914,6 +932,7 @@
       <button type="button" class="btnicontext" on:click={() => void testConfirmOkCancel()}>Confirm OK/Cancel</button>
       <button type="button" class="btnicontext" on:click={() => void testPromptText()}>Prompt (text)</button>
       <button type="button" class="btnicontext" on:click={() => void testPromptPassword()}>Prompt (password)</button>
+      <button type="button" class="btnicontext" on:click={() => void testRiotLink()}>Riot link</button>
       <button type="button" class="btnicontext" on:click={() => void testFolderPicker()}>Folder picker</button>
       <button type="button" class="btnicontext" on:click={() => void testFolderPickerWithFiles()}>Folder + files</button>
     </div>

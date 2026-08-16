@@ -63,7 +63,8 @@ That one task installs the frontend dependencies, generates the Go bindings, bui
 | --- | --- |
 | `wails3 task dev` | Runs the app with the frontend hot-reloading |
 | `wails3 task run` | Runs the binary that was last built |
-| `wails3 task test` | Runs the Go and frontend test suites |
+| `wails3 task test` | Runs the tests that touch nothing outside their own package |
+| `wails3 task test:all` | Also runs the tests that redirect `%APPDATA%` or read the running League Client, which are behind the `envtests` build tag |
 | `wails3 task package` | Builds the NSIS installer. `FORMAT=msix` builds an MSIX package instead |
 | `wails3 task dist` | Stages a shippable build in `dist/`, with a zip beside it (Windows) |
 | `wails3 task build ARCH=arm64` | Cross-compiles for another architecture |
