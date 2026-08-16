@@ -10,6 +10,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -228,6 +229,68 @@ func (c *LCUClient) CurrentSummoner(ctx context.Context) (LCUSummoner, error) {
 		return LCUSummoner{}, err
 	}
 	return s, nil
+}
+
+// Currency keys as the client names them in the wallet.
+//
+// Blue Essence is still "lol_blue_essence" while Riot Points are plain "RP", in
+// capitals, which is the client's own inconsistency rather than a typo here.
+const (
+	currencyBlueEssence = "lol_blue_essence"
+	currencyRiotPoints  = "RP"
+)
+
+// walletPath asks for the two currencies by name.
+//
+// The bare /lol-inventory/v1/wallet answers 400: the currencies have to be named
+// in a JSON array in the query string. Asking for an unknown name returns the
+// whole wallet instead of an error, so naming them is also what keeps the answer
+// to the two figures actually wanted.
+var walletPath = "/lol-inventory/v1/wallet?currencyTypes=" +
+	url.QueryEscape(`["`+currencyBlueEssence+`","`+currencyRiotPoints+`"]`)
+
+// LCUWallet is the signed-in account's balance of the two currencies the client
+// shows in its own header.
+type LCUWallet struct {
+	BlueEssence int
+	RiotPoints  int
+}
+
+// CurrentWallet returns the balances for the account signed in to the client.
+//
+// There is no web API for this: a balance is private to the account, so the
+// running client is the only source, and the figures are worth storing because
+// they cannot be fetched again once it closes.
+func (c *LCUClient) CurrentWallet(ctx context.Context) (LCUWallet, error) {
+	// Decoded loosely on purpose. The client returns whatever currencies it feels
+	// like, has renamed them before, and a strict struct would turn a renamed key
+	// into a silent zero balance rather than something a caller can notice.
+	var raw map[string]json.Number
+	if err := c.get(ctx, walletPath, &raw); err != nil {
+		return LCUWallet{}, err
+	}
+	if len(raw) == 0 {
+		return LCUWallet{}, fmt.Errorf("riot: LCU wallet was empty")
+	}
+
+	var w LCUWallet
+	var found bool
+	for key, value := range raw {
+		amount, err := value.Int64()
+		if err != nil {
+			continue
+		}
+		switch {
+		case strings.EqualFold(key, currencyBlueEssence):
+			w.BlueEssence, found = int(amount), true
+		case strings.EqualFold(key, currencyRiotPoints):
+			w.RiotPoints, found = int(amount), true
+		}
+	}
+	if !found {
+		return LCUWallet{}, fmt.Errorf("riot: LCU wallet has neither %s nor %s", currencyBlueEssence, currencyRiotPoints)
+	}
+	return w, nil
 }
 
 // lcuRankedStats is the shape the client returns for ranked standings.

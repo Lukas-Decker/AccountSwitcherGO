@@ -130,6 +130,14 @@ type CardDTO struct {
 	Ranks   []RankDTO `json:"ranks"`
 	Links   []LinkDTO `json:"links"`
 	Error   string    `json:"error"`
+	// Currency balances from the League Client. HasWallet distinguishes a real
+	// balance of zero from never having read one, and WalletAt says when the
+	// figures were read, since they move whenever the account is played and the
+	// client is the only thing that can report them.
+	HasWallet   bool   `json:"hasWallet"`
+	BlueEssence int    `json:"blueEssence"`
+	RiotPoints  int    `json:"riotPoints"`
+	WalletAt    string `json:"walletAt"`
 	// Source is where the figures came from: "client", "api" or "snapshot".
 	Source string `json:"source"`
 	// CapturedAt is when a snapshot was taken, empty when the data is live. The
@@ -372,9 +380,23 @@ func (s *Service) cachedImage(ctx context.Context, remoteURL string) string {
 // ctx0 is a short-lived context for cache lookups that only touch disk.
 func ctx0() context.Context { return context.Background() }
 
+// fillWallet copies stored balances onto the card, if any were ever read.
+func fillWallet(card *CardDTO, link basic.RiotAccountLink) {
+	if link.WalletAt.IsZero() {
+		return
+	}
+	card.HasWallet = true
+	card.BlueEssence = link.BlueEssence
+	card.RiotPoints = link.RiotPoints
+	card.WalletAt = link.WalletAt.UTC().Format(time.RFC3339)
+}
+
 // fillFromSnapshot populates the card from what was last captured for the
 // account, and records when that was.
 func (s *Service) fillFromSnapshot(ctx context.Context, card *CardDTO, link basic.RiotAccountLink) {
+	// Before the check below: the balances have their own time, so a record that
+	// has them and nothing else is still worth showing.
+	fillWallet(card, link)
 	if link.CapturedAt.IsZero() {
 		return
 	}

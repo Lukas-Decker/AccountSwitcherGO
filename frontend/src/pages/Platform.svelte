@@ -5,7 +5,7 @@
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
   import { pushToast } from "../stores/toast";
-  import { t } from "../stores/i18n";
+  import { locale, t } from "../stores/i18n";
   import * as BasicService from "../../bindings/account-switcher/internal/basic/basicservice.js";
   import {
     AccountDTO,
@@ -45,6 +45,7 @@
   function riotMenuFor(uniqueId: string): MenuItemDef {
     return buildRiotMenu(riotCards[uniqueId] ?? null, {
       tr: (k, v) => get(t)(k, v),
+      locale: get(locale),
       openUrl: (url) => void openExternalUrl(url, { allowAnyHttps: true }),
       editLink: () => void editRiotLink(uniqueId),
       refresh: () => void refreshRiotCard(uniqueId),

@@ -632,5 +632,8 @@
   "Settings_UserDataLocation": "User data location",
   "Settings_Version": "Version",
   "Settings_DebugLogging_Hint": "Writes a far more detailed log, and mirrors it into the interface console. Worth turning on before reporting a problem.",
-  "Settings_SkipElevatePrompt_Hint": "Restarts as administrator straight away when a switch needs it, instead of asking first."
+  "Settings_SkipElevatePrompt_Hint": "Restarts as administrator straight away when a switch needs it, instead of asking first.",
+  "Riot_BlueEssence": "Blue Essence: {amount}",
+  "Riot_RiotPoints": "Riot Points: {amount}",
+  "Riot_Wallet_AsOf": "Balances as of {age}"
 }

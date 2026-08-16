@@ -62,6 +62,17 @@ type RiotAccountLink struct {
 	IconID     int                `json:"iconId,omitempty"`
 	Ranks      []RiotRankSnapshot `json:"ranks,omitempty"`
 	CapturedAt time.Time          `json:"capturedAt,omitempty"`
+
+	// Currency balances, which only the running League Client can report.
+	//
+	// WalletAt carries its own time rather than sharing CapturedAt: the balances
+	// come from a different source than the rest, so an API refresh updates the
+	// level and ranks while leaving these at whatever the client last said. It is
+	// also what tells a real balance of zero from never having read one, which a
+	// bare int cannot.
+	BlueEssence int       `json:"blueEssence,omitempty"`
+	RiotPoints  int       `json:"riotPoints,omitempty"`
+	WalletAt    time.Time `json:"walletAt,omitempty"`
 }
 
 // RiotRankSnapshot is one queue's standing as it was when captured.

@@ -72,6 +72,15 @@ func MergeRiotAccountSnapshot(platformKey, uniqueID string, captured RiotAccount
 	next.Ranks = captured.Ranks
 	next.CapturedAt = captured.CapturedAt
 
+	// Only the running client can read a balance, so a capture from anywhere else
+	// arrives without one. Overwriting unconditionally would wipe the figures
+	// every time the web API refreshed the level.
+	if !captured.WalletAt.IsZero() {
+		next.BlueEssence = captured.BlueEssence
+		next.RiotPoints = captured.RiotPoints
+		next.WalletAt = captured.WalletAt
+	}
+
 	f.RiotAccounts[uniqueID] = next
 	return writeIdsFile(platformKey, f)
 }
@@ -101,6 +110,7 @@ func WriteRiotAccountLink(platformKey, uniqueID string, link RiotAccountLink) er
 		link.Manual = true
 		if prev, ok := f.RiotAccounts[uniqueID]; ok {
 			link.Level, link.IconID, link.Ranks, link.CapturedAt = prev.Level, prev.IconID, prev.Ranks, prev.CapturedAt
+			link.BlueEssence, link.RiotPoints, link.WalletAt = prev.BlueEssence, prev.RiotPoints, prev.WalletAt
 		}
 		f.RiotAccounts[uniqueID] = link
 	}

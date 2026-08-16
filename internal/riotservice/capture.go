@@ -72,6 +72,17 @@ func CaptureFromClient(uniqueID string) (bool, error) {
 		captured.RiotID = id.String()
 	}
 
+	// The balances, which exist nowhere else. This is the only moment they can be
+	// read for this account, so a failure is logged rather than ignored, but it
+	// must not cost the identity and icon already in hand.
+	if wallet, werr := client.CurrentWallet(ctx); werr == nil {
+		captured.BlueEssence = wallet.BlueEssence
+		captured.RiotPoints = wallet.RiotPoints
+		captured.WalletAt = time.Now().UTC()
+	} else {
+		logRiot().Info("wallet unavailable from the client", "err", werr)
+	}
+
 	// Ranked standings are a second call and a lesser prize: an account with no
 	// ranked history has none, so a failure here must not discard the identity and
 	// icon already in hand.
@@ -94,7 +105,8 @@ func CaptureFromClient(uniqueID string) (bool, error) {
 		return false, err
 	}
 	logRiot().Info("captured Riot profile from the running client",
-		"uniqueID", uniqueID, "riotId", captured.RiotID, "level", captured.Level, "ranks", len(captured.Ranks))
+		"uniqueID", uniqueID, "riotId", captured.RiotID, "level", captured.Level,
+		"ranks", len(captured.Ranks), "wallet", !captured.WalletAt.IsZero())
 	return true, nil
 }
 
@@ -141,6 +153,16 @@ func (s *Service) fillFromRunningClient(card *CardDTO, want riot.ID) bool {
 	card.IconID = summoner.ProfileIconID
 	card.IconURL = s.cachedImage(ctx, riot.ProfileIconURLLatest(summoner.ProfileIconID))
 
+	if wallet, werr := client.CurrentWallet(ctx); werr == nil {
+		card.HasWallet = true
+		card.BlueEssence = wallet.BlueEssence
+		card.RiotPoints = wallet.RiotPoints
+		// Live from the client that is open right now, so there is no age to show.
+		card.WalletAt = ""
+	} else {
+		logRiot().Info("wallet unavailable from the running client", "err", werr)
+	}
+
 	if entries, rerr := client.CurrentRankedStats(ctx); rerr == nil {
 		s.appendRanks(ctx, card, entries, riot.QueueSoloDuo, riot.QueueFlex, riot.QueueTFT, riot.QueueTFTDoubleUp)
 	} else {
@@ -162,6 +184,19 @@ func (s *Service) storeSnapshot(uniqueID string, card CardDTO) {
 		Level:      card.Level,
 		IconID:     card.IconID,
 		CapturedAt: time.Now().UTC(),
+	}
+	if card.HasWallet {
+		captured.BlueEssence = card.BlueEssence
+		captured.RiotPoints = card.RiotPoints
+		// An empty WalletAt means the client just answered, so the balances are as
+		// of now. A filled one came off the stored record and keeps its own time:
+		// stamping it with now would age a month-old balance back to fresh.
+		captured.WalletAt = time.Now().UTC()
+		if card.WalletAt != "" {
+			if prev, err := time.Parse(time.RFC3339, card.WalletAt); err == nil {
+				captured.WalletAt = prev.UTC()
+			}
+		}
 	}
 	for _, r := range card.Ranks {
 		captured.Ranks = append(captured.Ranks, basic.RiotRankSnapshot{

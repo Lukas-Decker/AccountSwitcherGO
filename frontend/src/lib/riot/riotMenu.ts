@@ -24,8 +24,27 @@ export function describeAge(iso: string, tr: Translate): string {
   return tr("Riot_Age_Days", { n: Math.round(hours / 24) });
 }
 
+/**
+ * Formats a currency balance with the reader's own grouping.
+ *
+ * Balances run to five and six figures, where 27220 and 272200 are hard to tell
+ * apart at a glance; the separator is what makes them readable, and which
+ * separator that is depends on the locale.
+ */
+export function formatBalance(amount: number, locale: string): string {
+  if (!Number.isFinite(amount)) return "";
+  try {
+    return new Intl.NumberFormat(locale.replace(/_/g, "-")).format(amount);
+  } catch {
+    // An unusable locale tag is not a reason to show nothing.
+    return String(amount);
+  }
+}
+
 export interface RiotMenuDeps {
   tr: Translate;
+  /** Current interface locale, used to group the digits of a balance. */
+  locale: string;
   openUrl: (url: string) => void;
   editLink: () => void;
   refresh: () => void;
@@ -68,9 +87,35 @@ export function buildRiotMenu(card: Card | null, deps: RiotMenuDeps): MenuItemDe
     children.push({ label: rank.display, disabled: true });
   }
 
+  const walletAge = card.walletAt ? describeAge(card.walletAt, tr) : "";
+  const snapshotAge =
+    card.source === "snapshot" && card.capturedAt ? describeAge(card.capturedAt, tr) : "";
+
+  // Balances, which only the League Client can report. They are shown whenever
+  // any were ever read, since a stored balance is the only one there will be
+  // while the client is closed. hasWallet rather than a truthiness check on the
+  // amounts: an account really can hold zero of either.
+  if (card.hasWallet) {
+    children.push({
+      label: tr("Riot_BlueEssence", { amount: formatBalance(card.blueEssence, deps.locale) }),
+      disabled: true,
+    });
+    children.push({
+      label: tr("Riot_RiotPoints", { amount: formatBalance(card.riotPoints, deps.locale) }),
+      disabled: true,
+    });
+    // Balances have their own age, because they have their own source: the level
+    // beside them can be a minute old from the API while these are a week old
+    // from the last time the client was open. Said only when it differs from the
+    // card's own age below, or the same figure is dated twice.
+    if (walletAge && walletAge !== snapshotAge) {
+      children.push({ label: tr("Riot_Wallet_AsOf", { age: walletAge }), disabled: true });
+    }
+  }
+
   // Where the figures came from, so a snapshot is never mistaken for live data.
-  if (card.source === "snapshot" && card.capturedAt) {
-    children.push({ label: tr("Riot_AsOf", { age: describeAge(card.capturedAt, tr) }), disabled: true });
+  if (snapshotAge) {
+    children.push({ label: tr("Riot_AsOf", { age: snapshotAge }), disabled: true });
   } else if (card.linked && !card.hasKey && (card.ranks?.length ?? 0) === 0 && !card.capturedAt) {
     children.push({ label: tr("Riot_NoKeyHint"), disabled: true });
   }
