@@ -82,7 +82,9 @@
 
 .steam-acclist .steam_meta_err {
   font-size: 0.6em;
-  color: var(--red);
+  // Muted, not red: a transient fetch failure is app-side noise, and red is
+  // reserved for account-state problems (VAC, Limited, broken saved data).
+  color: var(--text-muted-gray);
   line-height: 1.15;
   max-width: 100%;
   overflow: hidden;
@@ -225,15 +227,24 @@
   opacity: 0.8;
 }
 
+// Errors here are sync noise, not account state, so they keep the muted
+// treatment and let the warning glyph carry the signal; red stays reserved
+// for VAC, Limited and broken saved data.
 .acc_status--error {
-  color: var(--red);
-  opacity: 1;
+  opacity: 0.85;
 }
 
 .acc_status__text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// When the glyph is the whole message it has to be findable, not an 8px
+// speck after the timestamp.
+.acc_status--glyph .acc_icon {
+  width: 1.5em;
+  height: 1.5em;
 }
 
 // Where account warnings are drawn is the user's choice. The border is the
@@ -568,7 +579,10 @@ label.acc {
   .acc_broken_badge {
     display: block;
     max-width: 100%;
-    margin: 0 auto 0.35rem;
+    // Pinned to the card's bottom edge; sitting above the avatar it pushed
+    // one card's whole body out of line with the rest of its row.
+    margin: auto auto 0;
+    padding-top: 0.3rem;
     overflow: hidden;
     color: var(--red);
     font-size: 0.72em;

@@ -1,6 +1,7 @@
 <script lang="ts" generics="TAccount">
   import CardIcon from "../CardIcon.svelte";
   import { cardIcons } from "../cardIcons";
+  import { tooltip } from "../../../lib/actions/tooltip";
   import type { CardBlockProps } from "../blockRegistry";
 
   export let block: CardBlockProps<TAccount>;
@@ -11,9 +12,11 @@
 
 {#if status}
   {#if block.display === "icon"}
+    <!-- A bare glyph is the whole message here, so it gets the app's real
+         tooltip rather than only the browser's title delay. -->
     <span
-      class="acc_status acc_status--{status.kind}"
-      title={status.title ?? status.text}
+      class="acc_status acc_status--{status.kind} acc_status--glyph"
+      use:tooltip={status.title ?? status.text}
     >
       <CardIcon {paths} label={status.text} />
     </span>

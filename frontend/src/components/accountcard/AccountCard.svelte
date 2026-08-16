@@ -2,6 +2,7 @@
   import AccountLiveSessionIndicator from "../AccountLiveSessionIndicator.svelte";
   import { t } from "../../stores/i18n";
   import { contextMenu as ctxMenuAction } from "../../lib/actions/contextMenu";
+  import { tooltip } from "../../lib/actions/tooltip";
   import type { MenuItemDef } from "../../stores/contextMenu";
   import type { GameStatMetricDTO, PlatformAccountAdapter } from "../PlatformAccountAdapter";
   import type { CardBlockConfig, CardLayout } from "../../lib/accountCard/types";
@@ -79,10 +80,6 @@
     {boundary}
   />
 
-  {#if isBroken}
-    <span class="acc_broken_badge">{$t("Security_AccountDataBroken")}</span>
-  {/if}
-
   {#if profileDropActive}
     <div class="acc_profile_drop_overlay" class:acc_profile_drop_overlay--hover={dropTarget} aria-hidden="true">
       <div class="acc_profile_drop_overlay__center">
@@ -114,4 +111,12 @@
       </span>
     {/if}
   {/each}
+
+  <!-- Below the identity rather than above the avatar, so a broken card keeps
+       the same avatar and name baselines as its neighbours in the row. -->
+  {#if isBroken}
+    <span class="acc_broken_badge" use:tooltip={$t("Security_AccountDataBroken_Hint")}>
+      {$t("Security_AccountDataBroken")}
+    </span>
+  {/if}
 </label>

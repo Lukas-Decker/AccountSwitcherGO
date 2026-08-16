@@ -154,6 +154,7 @@
   "Security_Progress_RetryQuarantine": "Importing quarantined account data...",
   "Security_Progress_RepairInterruptedRestore": "Repairing interrupted restore state...",
   "Security_AccountDataBroken": "Saved data unavailable",
+  "Security_AccountDataBroken_Hint": "The saved sign-in data for this account could not be read, so switching to it is disabled. Sign into it again on this platform to save it anew.",
   "Settings_PickFolder": "Pick {platform} folder",
   "Settings_OpenFolder": "Open {platform} Folder",
   "Settings_StreamerMode": "Enable streamer mode",
