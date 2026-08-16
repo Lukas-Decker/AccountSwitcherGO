@@ -1,5 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  // The checkbox pair below is drawn by the global form-check rules, which
+  // only pages that import this sheet get; a cold deep-link needs it too.
+  import "../styles/Settings.scss";
   import AccountCardEditor from "../components/accountcard/AccountCardEditor.svelte";
   import { appBarTitle, previousPage, route } from "../stores/nav";
   import { t } from "../stores/i18n";
@@ -115,15 +118,22 @@
 
   {#if isPlatform}
     <div class="cardeditor-page__override">
-      <label class="cardeditor-page__toggle">
-        <input
-          type="checkbox"
-          checked={overrideEnabled}
-          disabled={loading || !platformSettings}
-          on:change={() => void toggleOverride()}
-        />
-        <span>{$t("CardEditor_PlatformOverride")}</span>
-      </label>
+      <!-- The app draws checkboxes as the adjacent label; the input itself
+           is transparent, so the pair has to stay together. -->
+      <span class="cardeditor-page__toggle">
+        <span class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="cardeditor-override"
+            checked={overrideEnabled}
+            disabled={loading || !platformSettings}
+            on:change={() => void toggleOverride()}
+          />
+          <label class="form-check-label" for="cardeditor-override"></label>
+        </span>
+        <label for="cardeditor-override">{$t("CardEditor_PlatformOverride")}</label>
+      </span>
       <p class="cardeditor-page__hint">{$t("CardEditor_PlatformOverride_Hint")}</p>
     </div>
   {/if}
@@ -161,8 +171,11 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    cursor: pointer;
     font-weight: 600;
+
+    label {
+      cursor: pointer;
+    }
   }
 
   .cardeditor-page__hint {
