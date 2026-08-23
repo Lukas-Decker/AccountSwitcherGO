@@ -17,6 +17,8 @@ import (
 	"account-switcher/internal/controllerinput"
 	"account-switcher/internal/crashlog"
 	"account-switcher/internal/discordrpc"
+	"account-switcher/internal/gamelib"
+	"account-switcher/internal/gamelib/launchers"
 	"account-switcher/internal/i18n"
 	"account-switcher/internal/ipc"
 	"account-switcher/internal/paths"
@@ -52,6 +54,7 @@ var (
 	securitySvc   = security.NewService()
 	discordRPC    = discordrpc.NewManager()
 	riotSvc       = riotservice.New()
+	gameLibSvc    = gamelib.NewService()
 )
 
 func init() {
@@ -119,7 +122,54 @@ func init() {
 		}
 		return riotservice.ProfileIconURLFor(uniqueID)
 	})
+	registerGameResolvers()
 	app.RegisterStartupAccountCounts()
+}
+
+// registerGameResolvers wires up game resolution for every platform.
+//
+// The account context lives here because gamelib must not import the services
+// that read account lists, and those services must not import gamelib; main is
+// the only place that already knows about both.
+func registerGameResolvers() {
+	gamelib.Register(steam.GameResolver())
+	launchers.RegisterAll()
+
+	gamelib.OptionsForPlatform = func(platformKey string) gamelib.Options {
+		opts := gamelib.Options{KnownAccounts: map[string]string{}}
+		if platformKey == steam.PlatformKey {
+			accounts, err := steamSvc.GetSteamAccountsList()
+			if err != nil {
+				return opts
+			}
+			for _, a := range accounts {
+				name := strings.TrimSpace(a.DisplayName)
+				if name == "" {
+					name = strings.TrimSpace(a.PersonaName)
+				}
+				if name == "" {
+					name = strings.TrimSpace(a.AccountName)
+				}
+				opts.KnownAccounts[a.SteamID64] = name
+				if a.CurrentSession {
+					opts.ActiveAccountID = a.SteamID64
+				}
+			}
+			return opts
+		}
+
+		accounts, err := basicSvc.GetAccountsList(platformKey)
+		if err != nil {
+			return opts
+		}
+		for _, a := range accounts {
+			opts.KnownAccounts[a.UniqueID] = strings.TrimSpace(a.DisplayName)
+			if a.CurrentSession {
+				opts.ActiveAccountID = a.UniqueID
+			}
+		}
+		return opts
+	}
 }
 
 func main() {
@@ -249,6 +299,7 @@ func serviceList() []application.Service {
 		application.NewService(basicSvc),
 		application.NewService(securitySvc),
 		application.NewService(riotSvc),
+		application.NewService(gameLibSvc),
 		application.NewService(shortcuts.NewService(platformSvc)),
 	}
 }

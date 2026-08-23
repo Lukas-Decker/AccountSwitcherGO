@@ -1,6 +1,8 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
+  import GamesView from "../components/GamesView.svelte";
+  import { platformPageTabs, setPlatformPageTab } from "../stores/platformPageTab";
   import type { PlatformAccountAdapter } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
   import type { MenuItemDef } from "../stores/contextMenu";
@@ -253,6 +255,98 @@
       catch { return ""; }
     },
   } satisfies PlatformAccountAdapter<BasicRow>;
+
+  $: activeTab = $platformPageTabs[name] ?? "accounts";
+
+  /**
+   * Switches to the account and starts the platform.
+   *
+   * Unlike Steam, these launchers take no app id on the command line, so the
+   * best that can be done is to switch and open the launcher on the game's
+   * account. The games view knows this and hides its launch toggle.
+   */
+  async function switchToGameAccount(_game: unknown, uniqueId: string): Promise<void> {
+    await BasicService.SwapToAccount(name, uniqueId, []);
+  }
 </script>
 
-<PlatformAccountsBase {name} {adapter} />
+<div class="main-content platform-accounts-root">
+  <div class="platform-tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="platform-tab"
+      class:active={activeTab === "accounts"}
+      aria-selected={activeTab === "accounts"}
+      on:click={() => setPlatformPageTab(name, "accounts")}
+    >
+      {$t("Steam_Tab_Accounts")}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="platform-tab"
+      class:active={activeTab === "games"}
+      aria-selected={activeTab === "games"}
+      on:click={() => setPlatformPageTab(name, "games")}
+    >
+      {$t("Steam_Tab_Games")}
+    </button>
+  </div>
+
+  <!-- Both stay mounted so switching tabs does not throw away the account
+       list's avatars and enrichment, or the games grid's artwork. -->
+  <div class="platform-tab-panel" class:hidden={activeTab !== "games"}>
+    <GamesView platformKey={name} canLaunchGame={false} onSwitch={switchToGameAccount} />
+  </div>
+
+  <div class="platform-tab-panel" class:hidden={activeTab !== "accounts"}>
+    <PlatformAccountsBase {name} {adapter} />
+  </div>
+</div>
+
+<style lang="scss">
+  /* The page is its own scroll container, as on the Steam page: the tab strip
+     has to stay put while a long games grid scrolls under it, and the gutter is
+     reserved on the scrollbar's side only so the grid keeps equal margins. */
+  .platform-accounts-root {
+    scrollbar-gutter: stable;
+  }
+
+  /* Matches the Steam page's tabs: the two pages sit side by side in the nav
+     and a different tab strip on each would read as a different app. */
+  .platform-tabs {
+    display: flex;
+    gap: 0.1875rem;
+    margin: 0 0 0.1875rem;
+    border-bottom: 1px solid var(--border-bar-bg, #444);
+  }
+
+  .platform-tab {
+    padding: 0.3375rem 0.825rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      opacity: 0.9;
+    }
+
+    &.active {
+      opacity: 1;
+      border-bottom-color: var(--accent, #f90);
+    }
+  }
+
+  .platform-tab-panel.hidden {
+    display: none;
+  }
+</style>

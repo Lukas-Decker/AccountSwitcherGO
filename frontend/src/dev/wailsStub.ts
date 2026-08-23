@@ -167,6 +167,106 @@ const OWNED_GAMES = [
   { appId: "1245620", name: "Elden Ring", iconUrl: "", owners: ["76561198000000002", "76561198000000003"], installed: false },
 ];
 
+/**
+ * Resolved games as the library service returns them, covering each case the
+ * view has to render: an installed game whose installer is known, one shared by
+ * several accounts with no installer named, and one owned but not installed.
+ */
+const RESOLVED_GAMES = [
+  {
+    platformKey: "Steam",
+    gameId: "730",
+    name: "Counter-Strike 2",
+    artUrl: "",
+    installed: true,
+    installPath: "D:\SteamLibrary\steamapps\common\Counter-Strike Global Offensive",
+    sizeOnDisk: 35000000000,
+    owners: [
+      {
+        accountId: "76561198000000001",
+        accountName: "Main",
+        source: "steam:appmanifest",
+        confidence: "exact",
+        installedBy: true,
+        playtimeMinutes: 74070,
+        lastPlayed: "2026-08-20T18:00:00Z",
+      },
+      {
+        accountId: "76561198000000003",
+        accountName: "Smurf",
+        source: "steam:localconfig",
+        confidence: "strong",
+        installedBy: false,
+        playtimeMinutes: 640,
+        lastPlayed: "2026-05-02T12:00:00Z",
+      },
+    ],
+    sources: ["steam:appmanifest", "steam:localconfig"],
+  },
+  {
+    platformKey: "Steam",
+    gameId: "271590",
+    name: "Grand Theft Auto V",
+    artUrl: "",
+    installed: true,
+    installPath: "C:\Program Files (x86)\Steam\steamapps\common\GTAV",
+    sizeOnDisk: 95000000000,
+    owners: [
+      {
+        accountId: "76561198000000002",
+        accountName: "Alt",
+        source: "steam:sharedconfig",
+        confidence: "strong",
+        installedBy: false,
+        playtimeMinutes: 120,
+        lastPlayed: "",
+      },
+      {
+        accountId: "76561198000000003",
+        accountName: "Smurf",
+        source: "steam:userdata",
+        confidence: "weak",
+        installedBy: false,
+        playtimeMinutes: 0,
+        lastPlayed: "",
+      },
+    ],
+    sources: ["steam:appmanifest", "steam:sharedconfig", "steam:userdata"],
+  },
+  {
+    platformKey: "Steam",
+    gameId: "1245620",
+    name: "Elden Ring",
+    artUrl: "",
+    installed: false,
+    installPath: "",
+    sizeOnDisk: 0,
+    owners: [
+      {
+        accountId: "76561198000000002",
+        accountName: "Alt",
+        source: "steam:community-xml",
+        confidence: "exact",
+        installedBy: false,
+        playtimeMinutes: 3300,
+        lastPlayed: "",
+      },
+    ],
+    sources: ["steam:community-xml"],
+  },
+  {
+    platformKey: "Steam",
+    gameId: "570",
+    name: "Dota 2",
+    artUrl: "",
+    installed: false,
+    installPath: "",
+    sizeOnDisk: 0,
+    owners: [],
+    sources: ["steam:userdata"],
+  },
+];
+
 const SHORTCUTS = [
   { fileName: "Counter-Strike 2.url", displayName: "Counter-Strike 2", iconUrl: "", pinned: true, isPlatformExe: false, isUrl: true },
   { fileName: "Dota 2.url", displayName: "Dota 2", iconUrl: "", pinned: false, isPlatformExe: false, isUrl: true },
@@ -367,6 +467,20 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
   // --- Games tab and shortcut bar ---
 
   GetOwnedGames: () => OWNED_GAMES,
+  GetPlatformGames: (args) => ({
+    platformKey: String(args[0] ?? "Steam"),
+    games: RESOLVED_GAMES,
+    warnings: [],
+    unsupported: false,
+    durationMs: 42,
+  }),
+  GetGames: () => ({
+    games: RESOLVED_GAMES,
+    platforms: [{ platformKey: "Steam", games: RESOLVED_GAMES, warnings: [], unsupported: false, durationMs: 42 }],
+    resolvedAt: "2026-08-24T00:00:00Z",
+    usedNetwork: false,
+  }),
+  SupportedPlatforms: () => ["Steam"],
   GetInstalledGames: () => OWNED_GAMES.filter((g) => g.installed).map((g) => ({ appId: g.appId, name: g.name })),
   ListShortcuts: () => SHORTCUTS,
 

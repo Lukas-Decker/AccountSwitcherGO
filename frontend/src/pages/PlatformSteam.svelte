@@ -4,7 +4,7 @@
   import { Events } from "@wailsio/runtime";
   import SteamAccountAvatar from "../components/SteamAccountAvatar.svelte";
   import PlatformAccountsBase from "../components/PlatformAccountsBase.svelte";
-  import SteamGamesView from "../components/SteamGamesView.svelte";
+  import GamesView from "../components/GamesView.svelte";
   import { steamPageTab } from "../stores/steamPageTab";
   import type { AccountBadge, PlatformAccountAdapter, SharedMenuItems } from "../components/PlatformAccountAdapter";
   import type { TagDefRow } from "../lib/accountTagsContext";
@@ -293,6 +293,28 @@
   onDestroy(() => {
     offShortcutsUpdated?.();
   });
+
+  /**
+   * Switches to the account the games view resolved, and starts the game when
+   * asked. Steam can launch a specific app id, so a switch made from a game
+   * ends up in that game rather than only in the client.
+   */
+  async function switchToSteamGame(
+    game: { gameId: string; name: string },
+    steamId64: string,
+    launch: boolean,
+  ): Promise<void> {
+    if (launch) {
+      await SteamService.LoginAndLaunchGame(steamId64, -1, game.gameId);
+      pushToast({
+        type: "success",
+        message: get(t)("Toast_StartedGame", { program: game.name }),
+        duration: 4000,
+      });
+      return;
+    }
+    await SteamService.SwapToSteamAccount(steamId64, -1, []);
+  }
 </script>
 
 <div class="main-content platform-accounts-root">
@@ -322,7 +344,11 @@
   <!-- Both stay mounted: rebuilding the account list on every tab switch throws
        away its avatars and enrichment, and the games grid its artwork. -->
   <div class="steam-tab-panel" class:hidden={$steamPageTab !== "games"}>
-    <SteamGamesView />
+    <GamesView
+      platformKey="Steam"
+      supportsOnline={true}
+      onSwitch={switchToSteamGame}
+    />
   </div>
 
   <div class="steam-tab-panel" class:hidden={$steamPageTab !== "accounts"}>
