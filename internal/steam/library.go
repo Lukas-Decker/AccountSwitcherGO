@@ -33,17 +33,24 @@ func GameResolver() gamelib.Resolver {
 // of them and grading each claim is the only way to get both coverage and a
 // trustworthy owner.
 func resolveSteamLibrary(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
-	res := gamelib.Result{PlatformKey: PlatformKey}
-
 	root, err := steamInstallRoot()
 	if err != nil {
-		return res, err
+		return gamelib.Result{PlatformKey: PlatformKey}, err
 	}
 	root = strings.TrimSpace(root)
 	if root == "" {
-		res.Warnings = append(res.Warnings, "Steam install folder is not set")
-		return res, nil
+		return gamelib.Result{
+			PlatformKey: PlatformKey,
+			Warnings:    []string{"Steam install folder is not set"},
+		}, nil
 	}
+	return resolveSteamLibraryAt(ctx, root, opts)
+}
+
+// resolveSteamLibraryAt does the work against an explicit Steam root, so the
+// sources can be exercised against a fixture tree.
+func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Options) (gamelib.Result, error) {
+	res := gamelib.Result{PlatformKey: PlatformKey}
 
 	accounts := steamLibraryAccounts(root, opts)
 	b := gamelib.NewBuilder()
@@ -123,7 +130,7 @@ func resolveSteamLibrary(ctx context.Context, opts gamelib.Options) (gamelib.Res
 
 	// Names last, so any source that knows the real name has already set one and
 	// the catalogue only fills the gaps.
-	applyCatalogueNames(ctx, b, manifests, librarycache)
+	applyCatalogueNames(ctx, b, manifests, librarycache, opts.AllowNetwork)
 
 	res.Games = dropNamelessSteamGames(b.Games())
 	return res, nil
@@ -220,11 +227,7 @@ func readAllAppManifests(root string) []appManifest {
 }
 
 func parseAppManifest(path, steamappsDir string) (appManifest, bool) {
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return appManifest{}, false
-	}
-	kv, err := steamvdf.ReadBytes(raw)
+	kv, err := readVDFFile(path)
 	if err != nil {
 		return appManifest{}, false
 	}
@@ -275,11 +278,7 @@ func steamUserAppsPath(kv steamvdf.KeyValue, storeKey string) (steamvdf.KeyValue
 // observeLocalConfigApps reads the account's own play records: every app it has
 // launched on this machine, with playtime and a last-played stamp.
 func observeLocalConfigApps(b *gamelib.Builder, userdata, id64, name string) {
-	raw, err := os.ReadFile(filepath.Join(userdata, "config", "localconfig.vdf"))
-	if err != nil {
-		return
-	}
-	kv, err := steamvdf.ReadBytes(raw)
+	kv, err := readVDFFile(filepath.Join(userdata, "config", "localconfig.vdf"))
 	if err != nil {
 		return
 	}
@@ -312,11 +311,7 @@ func observeLocalConfigApps(b *gamelib.Builder, userdata, id64, name string) {
 // appears here once the account has categorised, favourited, or hidden it,
 // which happens for games it owns but has never installed on this machine.
 func observeSharedConfigApps(b *gamelib.Builder, userdata, id64, name string) {
-	raw, err := os.ReadFile(filepath.Join(userdata, "7", "remote", "sharedconfig.vdf"))
-	if err != nil {
-		return
-	}
-	kv, err := steamvdf.ReadBytes(raw)
+	kv, err := readVDFFile(filepath.Join(userdata, "7", "remote", "sharedconfig.vdf"))
 	if err != nil {
 		return
 	}
@@ -366,13 +361,16 @@ func observeUserdataFolders(b *gamelib.Builder, userdata, id64, name string) {
 // applyCatalogueNames fills names and art for everything still unnamed after
 // the per-account pass, using the downloaded app catalogue first and the names
 // Steam itself wrote into the manifests as the offline fallback.
-func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []appManifest, librarycache string) {
+func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []appManifest, librarycache string, allowNetwork bool) {
 	catalogue, err := getSteamAppNameMapCached()
 	if err != nil {
-		// A missing catalogue is normal on a first run and in offline mode, and
-		// ensureAppNameMap already handles both; a failure here is not fatal
-		// because manifests still carry the names of everything installed.
-		if catalogue, err = ensureAppNameMap(ctx); err != nil {
+		// A missing catalogue is normal on a first run. Downloading it is a
+		// blocking fetch, so it only happens on a pass that already accepted
+		// network cost; the manifests still name everything installed either
+		// way, which is what the games view most needs to label.
+		if !allowNetwork {
+			catalogue = map[string]string{}
+		} else if catalogue, err = ensureAppNameMap(ctx); err != nil {
 			catalogue = map[string]string{}
 		}
 	}
@@ -405,21 +403,38 @@ func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []ap
 	}
 }
 
-// dropNamelessSteamGames removes entries that resolved to nothing but a number.
-// userdata and sharedconfig collect folders for tools, demos, and delisted apps
-// that no catalogue can name, and a grid of "App 1826330" tiles helps nobody.
+// dropNamelessSteamGames removes entries that resolved to nothing but a number
+// on nothing but a leftover folder.
+//
+// The userdata folders collect directories for tools, redistributables, and
+// delisted apps that no catalogue can name, and a grid of "App 1826330" tiles
+// helps nobody. But an app the account categorised or actually played is a real
+// library entry, so a strong claim keeps it even while the catalogue is missing
+// its name, which is the normal state on a first run and in offline mode.
 func dropNamelessSteamGames(games []gamelib.Game) []gamelib.Game {
 	out := games[:0]
 	for _, g := range games {
-		if g.Name == g.GameID && !g.Installed {
+		if g.Name == g.GameID && !g.Installed && !hasStrongOwner(g) {
 			continue
 		}
-		if g.Name == "" {
+		if g.Name == "" || g.Name == g.GameID {
 			g.Name = "App " + g.GameID
 		}
 		out = append(out, g)
 	}
 	return out
+}
+
+// hasStrongOwner reports whether any account's claim on the game came from
+// something better than a leftover folder.
+func hasStrongOwner(g gamelib.Game) bool {
+	for _, o := range g.Owners {
+		switch o.Confidence {
+		case gamelib.ConfidenceStrong.String(), gamelib.ConfidenceExact.String():
+			return true
+		}
+	}
+	return false
 }
 
 func childCI(kv steamvdf.KeyValue, key string) (steamvdf.KeyValue, bool) {
