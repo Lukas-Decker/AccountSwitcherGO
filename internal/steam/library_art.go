@@ -15,7 +15,7 @@ import (
 // Done after the sources have been read rather than while reading them: the
 // same app turns up from several sources, and resolving art inline would repeat
 // the work and, once the CDN is in play, the round trip with it.
-func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, accounts map[string]string, allowNetwork bool) {
+func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, accounts map[string]string, allowArtwork bool) {
 	games := b.Games()
 	if len(games) == 0 {
 		return
@@ -27,7 +27,7 @@ func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, account
 		reqs = append(reqs, steamArtRequest(root, g.GameID, g.Name, id32s))
 	}
 
-	online := allowNetwork && !appclient.IsOfflineMode()
+	online := allowArtwork && !appclient.IsOfflineMode()
 	for appID, res := range gameart.ResolveMany(ctx, appclient.Shared, reqs, online) {
 		b.Observe(gamelib.Observation{
 			PlatformKey: PlatformKey,

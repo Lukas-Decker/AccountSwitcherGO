@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"account-switcher/internal/appclient"
 	"account-switcher/internal/security"
 )
 
@@ -28,6 +29,19 @@ type LibraryDTO struct {
 	// UsedNetwork records whether online enrichment actually ran, since a
 	// local-only result is legitimately less complete.
 	UsedNetwork bool `json:"usedNetwork"`
+}
+
+// artworkAllowed reports whether cover art may be fetched over the network.
+//
+// Always, unless the user has asked the whole app to stay offline. Artwork is
+// not account data: it is images for tiles already on screen, cached
+// permanently once fetched, and the platforms that ship none of their own show
+// nothing but executable icons without it. It used to share the opt-in that
+// covers online library listings, which meant the remote half of the art chain
+// never ran for anyone who had not gone looking for that switch, and never ran
+// at all on the platforms that needed it most.
+func artworkAllowed() bool {
+	return !appclient.IsOfflineMode()
 }
 
 // Service exposes game resolution to the frontend.
@@ -74,7 +88,7 @@ func (s *Service) GetPlatformGames(platformKey string, allowNetwork bool) (Resul
 	if err := security.RequireUnlocked(); err != nil {
 		return Result{}, err
 	}
-	res, err := ResolvePlatform(context.Background(), platformKey, allowNetwork)
+	res, err := ResolvePlatform(context.Background(), platformKey, allowNetwork, artworkAllowed())
 	if err != nil {
 		res.Warnings = append(res.Warnings, err.Error())
 	}
@@ -105,7 +119,7 @@ func (s *Service) resolve(ctx context.Context, allowNetwork, force bool) (Librar
 		return *cached, nil
 	}
 
-	results := ResolveAll(ctx, allowNetwork)
+	results := ResolveAll(ctx, allowNetwork, artworkAllowed())
 	sort.SliceStable(results, func(i, j int) bool {
 		return results[i].PlatformKey < results[j].PlatformKey
 	})

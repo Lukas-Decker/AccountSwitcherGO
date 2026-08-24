@@ -70,7 +70,7 @@ func resolveOriginManifests(ctx context.Context, platformKey string, opts gameli
 		}
 	}
 
-	applyLauncherArt(ctx, b, platformKey, art, gamelib.SourceOriginManifest, opts.AllowNetwork)
+	applyLauncherArt(ctx, b, platformKey, art, gamelib.SourceOriginManifest, opts.AllowArtwork)
 	return b.Games()
 }
 

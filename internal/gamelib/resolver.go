@@ -12,10 +12,19 @@ import (
 
 // Options tune a resolve pass.
 type Options struct {
-	// AllowNetwork lets a resolver reach for an online library listing. It is
-	// false in offline mode and on the fast paths that must not block, and a
-	// resolver that ignores it will hang the games view on a dead connection.
+	// AllowNetwork lets a resolver reach for an online library listing: the
+	// games an account owns but has never installed here. That is account data
+	// rather than presentation, so it stays opt-in.
 	AllowNetwork bool
+
+	// AllowArtwork lets a resolver fetch cover art over the network.
+	//
+	// Deliberately separate from AllowNetwork. Artwork is images for tiles the
+	// user is already looking at, it is cached permanently once fetched, and
+	// without it every platform that ships no artwork of its own shows nothing
+	// but executable icons forever. Gating it behind the same opt-in as account
+	// data meant the whole remote half of the art chain never ran.
+	AllowArtwork bool
 	// KnownAccounts maps account id to display name for the platform being
 	// resolved, so a resolver can name owners and can attribute an account-less
 	// install when the platform has exactly one account.
@@ -124,23 +133,24 @@ func RegisteredPlatforms() []string {
 // gamelib itself must not import.
 var OptionsForPlatform func(platformKey string) Options
 
-func optionsFor(platformKey string, allowNetwork bool) Options {
+func optionsFor(platformKey string, allowNetwork, allowArtwork bool) Options {
 	var opts Options
 	if OptionsForPlatform != nil {
 		opts = OptionsForPlatform(platformKey)
 	}
 	opts.AllowNetwork = allowNetwork
+	opts.AllowArtwork = allowArtwork
 	return opts
 }
 
 // ResolvePlatform runs one platform's resolver.
-func ResolvePlatform(ctx context.Context, platformKey string, allowNetwork bool) (Result, error) {
+func ResolvePlatform(ctx context.Context, platformKey string, allowNetwork, allowArtwork bool) (Result, error) {
 	r, ok := ResolverFor(platformKey)
 	if !ok {
 		return Result{PlatformKey: platformKey, Unsupported: true, Games: []Game{}}, nil
 	}
 	started := time.Now()
-	res, err := r.Resolve(ctx, optionsFor(platformKey, allowNetwork))
+	res, err := r.Resolve(ctx, optionsFor(platformKey, allowNetwork, allowArtwork))
 	res.PlatformKey = platformKey
 	res.DurationMS = time.Since(started).Milliseconds()
 	if res.Games == nil {
@@ -154,7 +164,7 @@ func ResolvePlatform(ctx context.Context, platformKey string, allowNetwork bool)
 // One platform's failure is recorded as a warning on that platform's result and
 // never aborts the pass, because the common case is several launchers installed
 // and one of them broken or mid-update.
-func ResolveAll(ctx context.Context, allowNetwork bool) []Result {
+func ResolveAll(ctx context.Context, allowNetwork, allowArtwork bool) []Result {
 	keys := RegisteredPlatforms()
 	results := make([]Result, len(keys))
 
@@ -164,7 +174,7 @@ func ResolveAll(ctx context.Context, allowNetwork bool) []Result {
 		go func(i int, key string) {
 			defer crashlog.Capture()
 			defer wg.Done()
-			res, err := ResolvePlatform(ctx, key, allowNetwork)
+			res, err := ResolvePlatform(ctx, key, allowNetwork, allowArtwork)
 			if err != nil {
 				res.Warnings = append(res.Warnings, err.Error())
 			}

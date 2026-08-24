@@ -79,7 +79,7 @@ func resolveRiot(ctx context.Context, opts gamelib.Options) (gamelib.Result, err
 		art = append(art, riotArt(product, name, filepath.Join(metadata, dir)))
 	}
 
-	applyLauncherArt(ctx, b, RiotPlatformKey, art, gamelib.SourceRiotMetadata, opts.AllowNetwork)
+	applyLauncherArt(ctx, b, RiotPlatformKey, art, gamelib.SourceRiotMetadata, opts.AllowArtwork)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true

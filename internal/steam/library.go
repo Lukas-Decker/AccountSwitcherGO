@@ -130,7 +130,7 @@ func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Option
 	// lookups that say nothing about ownership, and batching them keeps the art
 	// pass from opening a socket per game as the sources are walked.
 	applyCatalogueNames(ctx, b, manifests, opts.AllowNetwork)
-	applySteamArt(ctx, b, root, accounts, opts.AllowNetwork)
+	applySteamArt(ctx, b, root, accounts, opts.AllowArtwork)
 
 	res.Games = dropNamelessSteamGames(b.Games())
 	return res, nil
@@ -469,7 +469,7 @@ func parseUnixSeconds(s string) time.Time {
 
 // ResolveLibrary exposes the resolver for callers that hold a service, so the
 // games view can refresh without reaching into the registry.
-func (s *SteamService) ResolveLibrary(ctx context.Context, allowNetwork bool) (gamelib.Result, error) {
+func (s *SteamService) ResolveLibrary(ctx context.Context, allowNetwork, allowArtwork bool) (gamelib.Result, error) {
 	root, err := s.steamInstallRoot()
 	if err != nil {
 		return gamelib.Result{PlatformKey: PlatformKey}, fmt.Errorf("steam install root: %w", err)
@@ -477,5 +477,5 @@ func (s *SteamService) ResolveLibrary(ctx context.Context, allowNetwork bool) (g
 	if strings.TrimSpace(root) == "" {
 		return gamelib.Result{PlatformKey: PlatformKey, Games: []gamelib.Game{}}, nil
 	}
-	return gamelib.ResolvePlatform(ctx, PlatformKey, allowNetwork)
+	return gamelib.ResolvePlatform(ctx, PlatformKey, allowNetwork, allowArtwork)
 }
