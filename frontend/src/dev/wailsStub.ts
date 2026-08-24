@@ -171,13 +171,18 @@ const OWNED_GAMES = [
  * Resolved games as the library service returns them, covering each case the
  * view has to render: an installed game whose installer is known, one shared by
  * several accounts with no installer named, and one owned but not installed.
+ *
+ * artUrl is a flat-colour 2:3 PNG inlined as a data URI. The real value points
+ * into wwwroot, which no dev server serves, so without this every tile in the
+ * browser preview falls back to its name and the artwork layout cannot be
+ * checked at all.
  */
 const RESOLVED_GAMES = [
   {
     platformKey: "Steam",
     gameId: "730",
     name: "Counter-Strike 2",
-    artUrl: "",
+    artUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAA8CAIAAACb22+3AAAAOElEQVR4nO3NQQkAAAgEsMtmNxsbwBgiDPZfqudExGKxWCwWi8VisVgsFovFYrFYLBaLxWLxp3gBFls6ERbNP9MAAAAASUVORK5CYII=",
     installed: true,
     installPath: "D:\SteamLibrary\steamapps\common\Counter-Strike Global Offensive",
     sizeOnDisk: 35000000000,
@@ -207,7 +212,7 @@ const RESOLVED_GAMES = [
     platformKey: "Steam",
     gameId: "271590",
     name: "Grand Theft Auto V",
-    artUrl: "",
+    artUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAA8CAIAAACb22+3AAAAOUlEQVR4nO3NQQkAAAgEsGtlAfsXsIwxRBjsv0zXiYjFYrFYLBaLxWKxWCwWi8VisVgsFovF4k/xAiY0hvXIzg33AAAAAElFTkSuQmCC",
     installed: true,
     installPath: "C:\Program Files (x86)\Steam\steamapps\common\GTAV",
     sizeOnDisk: 95000000000,
@@ -237,7 +242,7 @@ const RESOLVED_GAMES = [
     platformKey: "Steam",
     gameId: "1245620",
     name: "Elden Ring",
-    artUrl: "",
+    artUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAA8CAIAAACb22+3AAAAOElEQVR4nO3NMQ0AAAgDsPnXgzQE4IFnT5P+zU4qOqtYLBaLxWKxWCwWi8VisVgsFovFYrFYLH46NbqH4tyzr5oAAAAASUVORK5CYII=",
     installed: false,
     installPath: "",
     sizeOnDisk: 0,
@@ -258,7 +263,7 @@ const RESOLVED_GAMES = [
     platformKey: "Steam",
     gameId: "570",
     name: "Dota 2",
-    artUrl: "",
+    artUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAA8CAIAAACb22+3AAAAOElEQVR4nO3NQQkAAAgEsGtgPcvZ1RgiDPZfavpExGKxWCwWi8VisVgsFovFYrFYLBaLxWLxp3gBVnSGCKcFFisAAAAASUVORK5CYII=",
     installed: false,
     installPath: "",
     sizeOnDisk: 0,
