@@ -261,6 +261,21 @@ func (p *PlatformService) SetSteamGridDBAPIKey(key string) error {
 	return nil
 }
 
+// SetIGDBCredentials stores the IGDB credential pair and applies it live.
+func (p *PlatformService) SetIGDBCredentials(clientID, clientSecret string) error {
+	clientID = strings.TrimSpace(clientID)
+	clientSecret = strings.TrimSpace(clientSecret)
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.IGDBClientID = clientID
+		s.IGDBClientSecret = clientSecret
+		return nil
+	}); err != nil {
+		return err
+	}
+	SetGameArtIGDBCredentials(clientID, clientSecret)
+	return nil
+}
+
 func (p *PlatformService) SetOfflineMode(enabled bool) error {
 	err := p.withSettingsWrite(func(s *AppSettings) error {
 		s.OfflineMode = enabled

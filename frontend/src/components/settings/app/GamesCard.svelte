@@ -1,13 +1,20 @@
 <script lang="ts">
   /* The games view: where its cover art comes from. */
   import { t } from "../../../stores/i18n";
-  import { gameArtArchiveKey, saveGameArtArchiveKey } from "../../../lib/appSettingsModel";
+  import {
+    gameArtArchiveKey,
+    igdbClientId,
+    igdbClientSecret,
+    saveGameArtArchiveKey,
+    saveIgdbCredentials,
+  } from "../../../lib/appSettingsModel";
   import { openExternalUrl } from "../../../lib/openExternalUrl";
   import { settingsIcons } from "./settingsIcons";
   import SettingsCard from "./SettingsCard.svelte";
   import SettingsRow from "./SettingsRow.svelte";
 
   const SIGNUP_URL = "https://www.steamgriddb.com/profile/preferences/api";
+  const IGDB_SIGNUP_URL = "https://dev.twitch.tv/console/apps/create";
 </script>
 
 <SettingsCard
@@ -40,6 +47,42 @@
       {$t("Settings_GameArtArchive_GetKey")}
     </button>
   </SettingsRow>
+
+  <SettingsRow
+    label={$t("Settings_IGDBCredentials")}
+    hint={$t("Settings_IGDBCredentials_Note")}
+    controlId="settings-igdb-id"
+    keywords="igdb twitch client id secret artwork cover catalogue"
+    stacked
+  >
+    <input
+      id="settings-igdb-id"
+      class="settings-input"
+      type="text"
+      spellcheck="false"
+      autocomplete="off"
+      placeholder={$t("Settings_IGDBClientId_Placeholder")}
+      value={$igdbClientId}
+      on:change={(e) => void saveIgdbCredentials(e.currentTarget.value, $igdbClientSecret)}
+    />
+    <input
+      id="settings-igdb-secret"
+      class="settings-input settings-input--stacked"
+      type="password"
+      spellcheck="false"
+      autocomplete="off"
+      placeholder={$t("Settings_IGDBClientSecret_Placeholder")}
+      value={$igdbClientSecret}
+      on:change={(e) => void saveIgdbCredentials($igdbClientId, e.currentTarget.value)}
+    />
+    <button
+      type="button"
+      class="settings-link settings-link--inline"
+      on:click={() => void openExternalUrl(IGDB_SIGNUP_URL, { allowAnyHttps: true })}
+    >
+      {$t("Settings_IGDBCredentials_GetKey")}
+    </button>
+  </SettingsRow>
 </SettingsCard>
 
 <style lang="scss">
@@ -48,5 +91,11 @@
   .settings-link--inline {
     margin-top: 0.375rem;
     align-self: flex-start;
+  }
+
+  /* The secret sits under the id it belongs to, so the pair reads as one
+     credential rather than two unrelated fields. */
+  .settings-input--stacked {
+    margin-top: 0.375rem;
   }
 </style>

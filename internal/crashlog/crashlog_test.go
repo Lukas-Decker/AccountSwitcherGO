@@ -88,4 +88,3 @@ func TestCaptureFatal_Exits(t *testing.T) {
 		t.Fatal("expected crash dump to be written")
 	}
 }
-

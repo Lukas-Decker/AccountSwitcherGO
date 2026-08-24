@@ -258,8 +258,29 @@ export const discordAppId = writable("");
  * it is a third-party service, and nothing reaches it until the user opts in by
  * pasting a key of their own. */
 export const gameArtArchiveKey = writable("");
+
+/** IGDB uses Twitch's client credentials flow, so it needs a pair rather than
+ * a single key. Both empty leaves it off, which is the default. */
+export const igdbClientId = writable("");
+export const igdbClientSecret = writable("");
 export const appVersion = writable("");
 export const userDataPath = writable("");
+
+export async function saveIgdbCredentials(clientId: string, clientSecret: string): Promise<void> {
+  const id = clientId.trim();
+  const secret = clientSecret.trim();
+  igdbClientId.set(id);
+  igdbClientSecret.set(secret);
+  try {
+    await PlatformService.SetIGDBCredentials(id, secret);
+  } catch (e) {
+    pushToast({
+      type: "error",
+      message: formatToastWithError(get(t)("Toast_SaveFailed"), e),
+      duration: 8000,
+    });
+  }
+}
 
 export async function saveGameArtArchiveKey(value: string): Promise<void> {
   const next = value.trim();
@@ -316,6 +337,8 @@ async function hydrateFromSnapshot(): Promise<void> {
   offlineModeToggle.value.set(settings.offlineMode);
   discordAppId.set(settings.discordAppId ?? "");
   gameArtArchiveKey.set(settings.steamGridDbApiKey ?? "");
+  igdbClientId.set(settings.igdbClientId ?? "");
+  igdbClientSecret.set(settings.igdbClientSecret ?? "");
   protocolEnabled.value.set(settings.protocolEnabled);
   exitToTray.value.set(settings.exitToTray);
   prereleaseUpdates.value.set(settings.prereleaseUpdates);

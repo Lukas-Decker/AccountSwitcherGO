@@ -41,7 +41,7 @@ func tierOfLocal(t *testing.T, cands []gameart.Candidate, suffix string) gameart
 func TestSteamArtRequest_UserGridIsTheTopTier(t *testing.T) {
 	t.Parallel()
 
-	req := steamArtRequest(`C:\Steam`, "730", []string{"12345"})
+	req := steamArtRequest(`C:\Steam`, "730", "Counter-Strike 2", []string{"12345"})
 	ordered := req.Candidates
 
 	i := indexOfLocal(ordered, "config/grid/730p.png")
@@ -66,7 +66,7 @@ func TestSteamArtRequest_UserGridIsTheTopTier(t *testing.T) {
 func TestSteamArtRequest_ShapesAreGraded(t *testing.T) {
 	t.Parallel()
 
-	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	c := steamArtRequest(`C:\Steam`, "730", "Counter-Strike 2", nil).Candidates
 
 	if got := tierOfLocal(t, c, "730/library_600x900.jpg"); got != gameart.TierPortrait {
 		t.Errorf("library_600x900 tier = %v, want portrait", got)
@@ -87,7 +87,7 @@ func TestSteamArtRequest_ShapesAreGraded(t *testing.T) {
 func TestSteamArtRequest_CoversTheNamesSteamWrites(t *testing.T) {
 	t.Parallel()
 
-	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	c := steamArtRequest(`C:\Steam`, "730", "Counter-Strike 2", nil).Candidates
 	for _, name := range []string{
 		"730/library_600x900.jpg",
 		"730/library_header.jpg",
@@ -106,7 +106,7 @@ func TestSteamArtRequest_CoversTheNamesSteamWrites(t *testing.T) {
 func TestSteamRemoteArt_PortraitBeforeWide(t *testing.T) {
 	t.Parallel()
 
-	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	c := steamArtRequest(`C:\Steam`, "730", "Counter-Strike 2", nil).Candidates
 	portrait := indexOfRemote(c, "library_600x900.jpg")
 	header := indexOfRemote(c, "header.jpg")
 	if portrait < 0 || header < 0 {
@@ -127,7 +127,7 @@ func TestSteamRemoteArt_PortraitBeforeWide(t *testing.T) {
 func TestSteamRemoteArt_HostsAreKeylessAndDirect(t *testing.T) {
 	t.Parallel()
 
-	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	c := steamArtRequest(`C:\Steam`, "730", "Counter-Strike 2", nil).Candidates
 	var remotes int
 	for _, cand := range c {
 		if cand.Local() {

@@ -80,6 +80,14 @@ type AppSettings struct {
 	// from steamgriddb.com.
 	SteamGridDBAPIKey string `json:"steamGridDbApiKey,omitempty"`
 
+	// IGDBClientID and IGDBClientSecret authenticate against IGDB, which uses
+	// Twitch's client credentials flow and so needs a pair rather than a single
+	// key. It complements SteamGridDB: that archive is community uploads and is
+	// rich for popular games, while IGDB is a catalogue with a cover for almost
+	// everything. Both empty leaves it off, which is the default.
+	IGDBClientID     string `json:"igdbClientId,omitempty"`
+	IGDBClientSecret string `json:"igdbClientSecret,omitempty"`
+
 	// PrereleaseUpdates includes GitHub pre-releases in update checks.
 	// Stored without omitempty so an explicit opt-out survives a restart.
 	PrereleaseUpdates bool `json:"prereleaseUpdates"`
@@ -269,6 +277,20 @@ func SetGameArtArchiveKeyHook(fn func(key string)) { gameArtArchiveKeyHook = fn 
 func SetGameArtArchiveKey(key string) {
 	if gameArtArchiveKeyHook != nil {
 		gameArtArchiveKeyHook(key)
+	}
+}
+
+// gameArtIGDBHook receives the IGDB credential pair, wired the same way and
+// for the same reason as the archive key.
+var gameArtIGDBHook func(clientID, clientSecret string)
+
+// SetGameArtIGDBHook installs the receiver for the IGDB credentials.
+func SetGameArtIGDBHook(fn func(clientID, clientSecret string)) { gameArtIGDBHook = fn }
+
+// SetGameArtIGDBCredentials applies the credentials wherever they were wired.
+func SetGameArtIGDBCredentials(clientID, clientSecret string) {
+	if gameArtIGDBHook != nil {
+		gameArtIGDBHook(clientID, clientSecret)
 	}
 }
 

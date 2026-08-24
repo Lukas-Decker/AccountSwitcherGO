@@ -137,4 +137,3 @@ func captureAndWrite(r any) {
 		slog.Warn("writing crash dump", "err", err)
 	}
 }
-

@@ -50,6 +50,8 @@ type PlatformStartup struct {
 	RoundedCorners           bool   `json:"roundedCorners"`
 	DiscordAppID             string `json:"discordAppId"`
 	SteamGridDBAPIKey        string `json:"steamGridDbApiKey"`
+	IGDBClientID             string `json:"igdbClientId"`
+	IGDBClientSecret         string `json:"igdbClientSecret"`
 	AppVersion               string `json:"appVersion"`
 }
 
@@ -156,6 +158,8 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				RoundedCorners:           settings.RoundedCorners,
 				DiscordAppID:             settings.DiscordAppID,
 				SteamGridDBAPIKey:        settings.SteamGridDBAPIKey,
+				IGDBClientID:             settings.IGDBClientID,
+				IGDBClientSecret:         settings.IGDBClientSecret,
 				AppVersion:               appVersionFromBuildConfig(),
 			}, nil
 		}
@@ -213,6 +217,8 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		RoundedCorners:           settings.RoundedCorners,
 		DiscordAppID:             settings.DiscordAppID,
 		SteamGridDBAPIKey:        settings.SteamGridDBAPIKey,
+		IGDBClientID:             settings.IGDBClientID,
+		IGDBClientSecret:         settings.IGDBClientSecret,
 		AppVersion:               appVersionFromBuildConfig(),
 	}, nil
 }

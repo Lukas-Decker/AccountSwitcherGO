@@ -58,7 +58,7 @@ func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey strin
 			Candidates:  candidates,
 			IconExe:     s.exe,
 			Archive: func(ctx context.Context) []gameart.Candidate {
-				return gameart.SteamGridDBCandidatesByName(ctx, appclient.Shared, title)
+				return gameart.ArchiveCandidates(ctx, appclient.Shared, gameart.ArchiveRef{Name: title})
 			},
 		})
 	}

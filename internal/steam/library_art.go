@@ -24,7 +24,7 @@ func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, account
 
 	reqs := make([]gameart.Request, 0, len(games))
 	for _, g := range games {
-		reqs = append(reqs, steamArtRequest(root, g.GameID, id32s))
+		reqs = append(reqs, steamArtRequest(root, g.GameID, g.Name, id32s))
 	}
 
 	online := allowNetwork && !appclient.IsOfflineMode()
@@ -45,7 +45,7 @@ func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, account
 // apps whose portrait capsule it never downloaded, and taking the local file
 // just because it is local puts a transparent wordmark on the tile when the
 // public CDN has the actual cover.
-func steamArtRequest(root, appID string, userID32s []string) gameart.Request {
+func steamArtRequest(root, appID, name string, userID32s []string) gameart.Request {
 	librarycache := filepath.Join(root, "appcache", "librarycache")
 
 	var candidates []gameart.Candidate
@@ -61,7 +61,10 @@ func steamArtRequest(root, appID string, userID32s []string) gameart.Request {
 		// empty, which on a real library is a few hundred apps out of several
 		// thousand rather than every one of them.
 		Archive: func(ctx context.Context) []gameart.Candidate {
-			return gameart.SteamGridDBCandidates(ctx, appclient.Shared, appID)
+			return gameart.ArchiveCandidates(ctx, appclient.Shared, gameart.ArchiveRef{
+				SteamAppID: appID,
+				Name:       name,
+			})
 		},
 	}
 }

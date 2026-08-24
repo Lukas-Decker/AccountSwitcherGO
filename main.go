@@ -332,4 +332,6 @@ func syncOfflineModeFromSettings(s platform.AppSettings) {
 func syncGameArtArchiveFromSettings(s platform.AppSettings) {
 	platform.SetGameArtArchiveKeyHook(gameart.SetSteamGridDBKey)
 	platform.SetGameArtArchiveKey(s.SteamGridDBAPIKey)
+	platform.SetGameArtIGDBHook(gameart.SetIGDBCredentials)
+	platform.SetGameArtIGDBCredentials(s.IGDBClientID, s.IGDBClientSecret)
 }
