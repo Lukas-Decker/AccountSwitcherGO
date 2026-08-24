@@ -63,6 +63,22 @@ const masterDark = "#201e1d"
 // relationship and only the surface they sit on decides which is drawn light.
 const trayDarkModeInk = "#e9e6e4"
 
+// appIconInk replaces masterDark wherever the icon is a single static image
+// that Windows will not swap by theme.
+//
+// The tray gets two files and the shell picks between them, and the in-app logo
+// inherits the theme's own foreground, so both of those can keep the artwork's
+// near-black. The taskbar cannot: it draws the icon compiled into the
+// executable, the same one on a light and a dark taskbar, and #201e1d against a
+// dark taskbar measures 1.02:1, which is not low contrast but no contrast at
+// all.
+//
+// This warm mid grey sits at roughly 3.7:1 against a dark taskbar and 3.9:1
+// against a light one, so the rear figure reads either way instead of being
+// legible on one and absent on the other. The brand blue is untouched: it
+// already clears both.
+const appIconInk = "#7d7873"
+
 // target is one generated file.
 type target struct {
 	path string
@@ -83,17 +99,22 @@ type target struct {
 // "wails3 task common:generate:icons". Writing them here as well would give one
 // file two sources, and -check would report drift every time the build ran.
 var targets = []target{
-	// The input wails3 generates the Windows and macOS icons from.
-	{path: "build/appicon.png", sizes: []int{1024}, fitted: true},
+	// The input wails3 generates the Windows and macOS icons from, which is
+	// what the taskbar and Explorer draw.
+	{path: "build/appicon.png", sizes: []int{1024}, fitted: true,
+		recolour: map[string]string{masterDark: appIconInk}},
 	// Embedded into the binary by main.go for the system tray. Two variants:
 	// Wails picks the second one when the system is in dark mode.
 	{path: "build/trayicon.png", sizes: []int{32}, fitted: true},
 	{path: "build/trayicon-darkmode.png", sizes: []int{32}, fitted: true,
 		recolour: map[string]string{masterDark: trayDarkModeInk}},
 	// The master multi-size icon kept beside the artwork.
-	{path: "build/branding/AccountSwitcher.ico", sizes: []int{256, 128, 64, 48, 40, 32, 24, 20, 16}, ico: true, fitted: true},
-	// The browser tab icon for the webview.
-	{path: "frontend/public/img/favicon.png", sizes: []int{256}, fitted: true},
+	{path: "build/branding/AccountSwitcher.ico", sizes: []int{256, 128, 64, 48, 40, 32, 24, 20, 16}, ico: true, fitted: true,
+		recolour: map[string]string{masterDark: appIconInk}},
+	// The browser tab icon, drawn on a tab strip that is themed the same way a
+	// taskbar is.
+	{path: "frontend/public/img/favicon.png", sizes: []int{256}, fitted: true,
+		recolour: map[string]string{masterDark: appIconInk}},
 }
 
 func main() {

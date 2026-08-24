@@ -40,13 +40,23 @@ The rear figure is `#201e1d`, very nearly black. That is correct on the light
 surfaces an installer and a file listing use, and close to invisible on a dark
 taskbar, where the mark would read as one blue shape with a bite out of it.
 
-Two derived forms exist for that reason, and both keep the brand blue untouched:
+Three derived forms exist for that reason, and all keep the brand blue untouched:
 
 - `build/trayicon-darkmode.png` redraws the rear figure in a light neutral. Wails
   selects it over `trayicon.png` when the system is in dark mode.
 - `frontend/public/img/AccountSwitcherLogo.svg` gives the rear figure no fill at
   all, so it inherits the host element's colour. Every theme already sets that to
   its own foreground, so the logo follows the theme without a second file.
+- `build/appicon.png`, `build/branding/AccountSwitcher.ico` and the favicon
+  redraw the rear figure in a balanced mid grey.
+
+That last one exists because the taskbar has no swap to offer. It draws the icon
+compiled into the executable, the same file whatever the theme, and `#201e1d`
+measures **1.02:1** against a dark taskbar, which is not poor contrast but none.
+The mid grey sits near 3.7:1 against a dark taskbar and 3.9:1 against a light
+one, so it reads either way rather than being perfect on one and invisible on
+the other. The tray and the in-app logo keep the artwork's near-black precisely
+because they *can* switch, and a file chosen per theme beats a compromise.
 
 ## Legacy files
 
