@@ -130,7 +130,7 @@ func TestResolveOriginManifests(t *testing.T) {
 	dir := filepath.Join(pd, "Origin", "LocalContent", "Battlefield V")
 	writeFile(t, filepath.Join(dir, "bfv.mfst"), `?id=1234567&dipinstallpath=C%3A%5CGames%5CBFV&other=x`)
 
-	games := resolveOriginManifests(OriginPlatformKey, gamelib.Options{})
+	games := resolveOriginManifests(context.Background(), OriginPlatformKey, gamelib.Options{})
 	if len(games) != 1 {
 		t.Fatalf("want 1 game, got %d: %+v", len(games), games)
 	}
@@ -253,7 +253,7 @@ func TestResolveRiot_ReadsMetadataFolders(t *testing.T) {
 func TestResolveSingleTitle_EveryAccountOwnsIt(t *testing.T) {
 	opts := gamelib.Options{KnownAccounts: map[string]string{"a": "A", "b": "B"}}
 
-	res, err := resolveSingleTitle("Escape from Tarkov", opts)
+	res, err := resolveSingleTitle(context.Background(), "Escape from Tarkov", opts)
 	// Without a Platforms.json on disk this reports an error rather than a
 	// wrong answer, and that path is the one worth pinning here.
 	if err != nil {

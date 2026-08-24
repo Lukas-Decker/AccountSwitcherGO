@@ -1,6 +1,7 @@
 package launchers
 
 import (
+	"context"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -15,7 +16,7 @@ import (
 // inside it a .mfst holding a query string with the content id and the install
 // path. It predates the EA app, so machines that upgraded still have games
 // only recorded here.
-func resolveOriginManifests(platformKey string, opts gamelib.Options) []gamelib.Game {
+func resolveOriginManifests(ctx context.Context, platformKey string, opts gamelib.Options) []gamelib.Game {
 	pd := programData()
 	if pd == "" {
 		return nil
@@ -26,6 +27,7 @@ func resolveOriginManifests(platformKey string, opts gamelib.Options) []gamelib.
 	}
 
 	b := gamelib.NewBuilder()
+	var art []artSource
 	for _, gameDir := range listSubdirs(root) {
 		dir := filepath.Join(root, gameDir)
 		ents, err := os.ReadDir(dir)
@@ -52,9 +54,22 @@ func resolveOriginManifests(platformKey string, opts gamelib.Options) []gamelib.
 			}
 			attributeInstall(&obs, opts)
 			b.Observe(obs)
+
+			// Origin caches no artwork, so the game's own folder is all there
+			// is. Games with no recorded path contribute nothing and are
+			// skipped rather than probing a relative path.
+			if installPath != "" {
+				art = append(art, artSource{
+					gameID: obs.GameID,
+					local:  installDirIcons(installPath),
+					exe:    exeForIcon(installPath, ""),
+				})
+			}
 			break
 		}
 	}
+
+	applyLauncherArt(ctx, b, platformKey, art, gamelib.SourceOriginManifest, opts.AllowNetwork)
 	return b.Games()
 }
 

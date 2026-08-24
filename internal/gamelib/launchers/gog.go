@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
@@ -39,7 +40,7 @@ func galaxyDBPath() string {
 // disk: owned titles, installs, and playtime all carry the GOG user id, and
 // that id is the same value the switcher stores as the account's unique id. So
 // unlike Epic or Ubisoft, ownership here is read rather than guessed.
-func resolveGOG(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
+func resolveGOG(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: GOGPlatformKey}
 
 	dbPath := galaxyDBPath()
@@ -124,8 +125,91 @@ func resolveGOG(_ context.Context, opts gamelib.Options) (gamelib.Result, error)
 		})
 	}
 
+	applyGOGArt(ctx, b, db, installed, opts.AllowNetwork)
+
 	res.Games = b.Games()
 	return res, nil
+}
+
+// applyGOGArt resolves cover art from Galaxy's own image references.
+//
+// Galaxy stores artwork as URLs rather than files, so unlike Steam there is
+// nothing cached on disk to copy except whatever the publisher dropped in the
+// install folder. The URLs are public and need no session.
+func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed map[string]string, allowNetwork bool) {
+	images := gogImageURLs(db)
+	games := b.Games()
+	if len(games) == 0 {
+		return
+	}
+	sources := make([]artSource, 0, len(games))
+	for _, g := range games {
+		src := artSource{gameID: g.GameID, remote: images["gog_"+g.GameID]}
+		// An owned but uninstalled game has no folder, and joining onto an
+		// empty path would produce a bare filename that resolves against the
+		// working directory rather than resolving to nothing.
+		if installPath := strings.TrimSpace(installed[g.GameID]); installPath != "" {
+			// GOG writes the game's own icon beside the executable as
+			// goggame-<id>.ico, which is exact and needs no network.
+			src.local = append([]string{filepath.Join(installPath, "goggame-"+g.GameID+".ico")}, installDirIcons(installPath)...)
+			src.exe = exeForIcon(installPath, "")
+		}
+		sources = append(sources, src)
+	}
+	applyLauncherArt(ctx, b, GOGPlatformKey, sources, gamelib.SourceGOGGalaxyDB, allowNetwork)
+}
+
+// gogImageURLs maps release key to artwork URLs, best shape first.
+//
+// The images live inside the same JSON blobs as the titles, one row per field
+// per game, so they come out of GamePieces the same way.
+func gogImageURLs(db *sql.DB) map[string][]string {
+	out := map[string][]string{}
+	rows, err := db.Query(`
+		SELECT gp.releaseKey, gp.value
+		FROM GamePieces gp
+		JOIN GamePieceTypes gpt ON gpt.id = gp.gamePieceTypeId
+		WHERE gpt.type IN ('originalImages', 'images', 'meta', 'originalMeta')`)
+	if err != nil {
+		return out
+	}
+	defer func() { _ = rows.Close() }()
+
+	for rows.Next() {
+		var key, value string
+		if err := rows.Scan(&key, &value); err != nil {
+			continue
+		}
+		// verticalCover matches the 2:3 tile the grid draws; the rest are
+		// fallbacks in descending order of how well they survive that crop.
+		for _, field := range []string{"verticalCover", "squareIcon", "logo", "icon", "background"} {
+			url := strings.TrimSpace(gjson.Get(value, field).String())
+			if url == "" {
+				continue
+			}
+			out[key] = appendUniqueURL(out[key], url)
+		}
+	}
+	return out
+}
+
+// appendUniqueURL adds a URL once, along with the extension-suffixed variants
+// GOG needs.
+//
+// Some rows carry a bare image id with no extension, which is a template the
+// client completes; the two common completions are tried rather than guessing
+// one, since a miss simply falls through to the next candidate.
+func appendUniqueURL(list []string, url string) []string {
+	candidates := []string{url}
+	if filepath.Ext(url) == "" {
+		candidates = []string{url + ".png", url + ".jpg", url}
+	}
+	for _, c := range candidates {
+		if !slices.Contains(list, c) {
+			list = append(list, c)
+		}
+	}
+	return list
 }
 
 // snapshotSQLite copies a database and its write-ahead log to a temporary file

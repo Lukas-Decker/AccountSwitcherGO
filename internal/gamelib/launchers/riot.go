@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"account-switcher/internal/gamelib"
@@ -32,7 +33,7 @@ var riotProducts = map[string]string{
 // Riot keeps one folder per installed product under ProgramData, named
 // "<product>.<patchline>". Nothing there records an account, and the client
 // only holds one session at a time, so ownership falls to inference.
-func resolveRiot(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
+func resolveRiot(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: RiotPlatformKey}
 	pd := programData()
 	if pd == "" {
@@ -46,6 +47,7 @@ func resolveRiot(_ context.Context, opts gamelib.Options) (gamelib.Result, error
 	}
 
 	b := gamelib.NewBuilder()
+	var art []artSource
 	for _, dir := range listSubdirs(metadata) {
 		// The folder is "<product>.<patchline>", and the patchline is the
 		// release channel, not a separate game.
@@ -74,8 +76,10 @@ func resolveRiot(_ context.Context, opts gamelib.Options) (gamelib.Result, error
 		}
 		attributeInstall(&obs, opts)
 		b.Observe(obs)
+		art = append(art, riotArt(product, filepath.Join(metadata, dir)))
 	}
 
+	applyLauncherArt(ctx, b, RiotPlatformKey, art, gamelib.SourceRiotMetadata, opts.AllowNetwork)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true
@@ -86,6 +90,45 @@ func resolveRiot(_ context.Context, opts gamelib.Options) (gamelib.Result, error
 	}
 	res.Games = games
 	return res, nil
+}
+
+// reRiotInstallPath pulls the install folder out of a product settings file.
+// The file is YAML, but only this one scalar is needed and pulling in a parser
+// for it would be more moving parts than the value is worth.
+var reRiotInstallPath = regexp.MustCompile(`(?mi)^[ \t]*product_install_full_path[ \t]*:[ \t]*"?([^"\r\n]+)"?`)
+
+// riotArt finds the product's install folder and takes its icon from there.
+//
+// Riot ships no artwork alongside the metadata, so the game executable is the
+// only image on disk. The install path is recorded in the product settings
+// rather than being derivable from the product name, which the user can move.
+func riotArt(product, metadataDir string) artSource {
+	src := artSource{gameID: product}
+	ents, err := os.ReadDir(metadataDir)
+	if err != nil {
+		return src
+	}
+	for _, e := range ents {
+		if e.IsDir() || !strings.Contains(strings.ToLower(e.Name()), "product_settings") {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(metadataDir, e.Name()))
+		if err != nil {
+			continue
+		}
+		m := reRiotInstallPath.FindSubmatch(raw)
+		if len(m) < 2 {
+			continue
+		}
+		install := filepath.Clean(strings.TrimSpace(string(m[1])))
+		if !dirExists(install) {
+			continue
+		}
+		src.local = installDirIcons(install)
+		src.exe = exeForIcon(install, "")
+		return src
+	}
+	return src
 }
 
 // riotProductInstalled reports whether the metadata folder describes a live

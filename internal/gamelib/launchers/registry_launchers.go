@@ -2,6 +2,7 @@ package launchers
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"account-switcher/internal/gamelib"
@@ -30,6 +31,9 @@ type regInstallScan struct {
 	// store one and the folder name has to stand in.
 	nameValues []string
 	source     gamelib.Source
+	// uninstallKeyFmt builds the uninstall entry for a game id, for launchers
+	// whose install key holds no icon of its own. %s takes the game id.
+	uninstallKeyFmt []string
 }
 
 var ubisoftScan = regInstallScan{
@@ -39,6 +43,13 @@ var ubisoftScan = regInstallScan{
 	},
 	installValues: []string{"InstallDir"},
 	source:        gamelib.SourceUbisoftReg,
+	// The Installs key holds only a path, but the installer also writes a
+	// normal uninstall entry keyed by the same product id, and that one carries
+	// the game's icon.
+	uninstallKeyFmt: []string{
+		`HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Uplay Install %s`,
+		`HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Uplay Install %s`,
+	},
 }
 
 var rockstarScan = regInstallScan{
@@ -69,7 +80,7 @@ func Ubisoft() gamelib.Resolver {
 	return gamelib.ResolverFunc{
 		Key: UbisoftPlatformKey,
 		Fn: func(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
-			return resolveRegInstalls(UbisoftPlatformKey, "Ubisoft Connect", ubisoftScan, opts)
+			return resolveRegInstalls(ctx, UbisoftPlatformKey, "Ubisoft Connect", ubisoftScan, opts)
 		},
 	}
 }
@@ -79,7 +90,7 @@ func Rockstar() gamelib.Resolver {
 	return gamelib.ResolverFunc{
 		Key: RockstarPlatformKey,
 		Fn: func(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
-			return resolveRegInstalls(RockstarPlatformKey, "the Rockstar launcher", rockstarScan, opts)
+			return resolveRegInstalls(ctx, RockstarPlatformKey, "the Rockstar launcher", rockstarScan, opts)
 		},
 	}
 }
@@ -91,11 +102,11 @@ func EADesktop() gamelib.Resolver {
 	return gamelib.ResolverFunc{
 		Key: EAPlatformKey,
 		Fn: func(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
-			res, err := resolveRegInstalls(EAPlatformKey, "the EA app", eaScan, opts)
+			res, err := resolveRegInstalls(ctx, EAPlatformKey, "the EA app", eaScan, opts)
 			if err != nil {
 				return res, err
 			}
-			origin := resolveOriginManifests(EAPlatformKey, opts)
+			origin := resolveOriginManifests(ctx, EAPlatformKey, opts)
 			if len(origin) > 0 {
 				res.Unsupported = false
 				res.Games = gamelib.Merge(res.Games, origin)
@@ -112,7 +123,7 @@ func Origin() gamelib.Resolver {
 		Key: OriginPlatformKey,
 		Fn: func(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 			res := gamelib.Result{PlatformKey: OriginPlatformKey}
-			res.Games = resolveOriginManifests(OriginPlatformKey, opts)
+			res.Games = resolveOriginManifests(ctx, OriginPlatformKey, opts)
 			if len(res.Games) == 0 {
 				res.Unsupported = true
 				return res, nil
@@ -126,9 +137,10 @@ func Origin() gamelib.Resolver {
 }
 
 // resolveRegInstalls walks one launcher's install keys.
-func resolveRegInstalls(platformKey, launcherName string, scan regInstallScan, opts gamelib.Options) (gamelib.Result, error) {
+func resolveRegInstalls(ctx context.Context, platformKey, launcherName string, scan regInstallScan, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: platformKey}
 	b := gamelib.NewBuilder()
+	var art []artSource
 
 	found := false
 	for _, parent := range scan.parents {
@@ -176,6 +188,24 @@ func resolveRegInstalls(platformKey, launcherName string, scan regInstallScan, o
 			}
 			attributeInstall(&obs, opts)
 			b.Observe(obs)
+
+			// The launcher's own key first, then the uninstall entry it also
+			// wrote, then whatever the publisher left in the install folder.
+			iconFiles, iconExe := displayIconCandidates(keyPath)
+			for _, format := range scan.uninstallKeyFmt {
+				if iconExe != "" || len(iconFiles) > 0 {
+					break
+				}
+				iconFiles, iconExe = displayIconCandidates(fmt.Sprintf(format, name))
+			}
+			if iconExe == "" {
+				iconExe = exeForIcon(installPath, "")
+			}
+			art = append(art, artSource{
+				gameID: name,
+				local:  append(iconFiles, installDirIcons(installPath)...),
+				exe:    iconExe,
+			})
 		}
 	}
 
@@ -186,6 +216,7 @@ func resolveRegInstalls(platformKey, launcherName string, scan regInstallScan, o
 	if w := ambiguousOwnerWarning(launcherName, opts); w != "" {
 		res.Warnings = append(res.Warnings, w)
 	}
+	applyLauncherArt(ctx, b, platformKey, art, scan.source, opts.AllowNetwork)
 	res.Games = b.Games()
 	return res, nil
 }

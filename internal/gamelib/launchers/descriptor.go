@@ -19,13 +19,13 @@ import (
 func SingleTitle(platformKey string) gamelib.Resolver {
 	return gamelib.ResolverFunc{
 		Key: platformKey,
-		Fn: func(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
-			return resolveSingleTitle(platformKey, opts)
+		Fn: func(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
+			return resolveSingleTitle(ctx, platformKey, opts)
 		},
 	}
 }
 
-func resolveSingleTitle(platformKey string, opts gamelib.Options) (gamelib.Result, error) {
+func resolveSingleTitle(ctx context.Context, platformKey string, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: platformKey}
 
 	exe, err := descriptorExePath(platformKey)
@@ -63,6 +63,16 @@ func resolveSingleTitle(platformKey string, opts gamelib.Options) (gamelib.Resul
 			Confidence:  gamelib.ConfidenceStrong,
 		})
 	}
+
+	// The platform's own executable is the game, so its icon is the art, and it
+	// is the same icon the sidebar already shows for this platform. Loose image
+	// files in the install folder are deliberately not considered here: for an
+	// application folder they are as likely to be a splash screen or an unrelated
+	// asset as the game's own mark.
+	applyLauncherArt(ctx, b, platformKey, []artSource{{
+		gameID: platformKey,
+		exe:    exe,
+	}}, gamelib.SourceDescriptorExe, opts.AllowNetwork)
 
 	res.Games = b.Games()
 	return res, nil

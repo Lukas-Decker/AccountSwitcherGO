@@ -58,7 +58,6 @@ func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Option
 	// Source 1, the firm one: every appmanifest on disk, with LastOwner naming
 	// the account that installed the game.
 	manifests := readAllAppManifests(root)
-	librarycache := filepath.Join(root, "appcache", "librarycache")
 	for _, m := range manifests {
 		if _, skip := steamInfraAppIDs[m.AppID]; skip {
 			continue
@@ -67,7 +66,6 @@ func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Option
 			PlatformKey: PlatformKey,
 			GameID:      m.AppID,
 			Name:        m.Name,
-			ArtURL:      copyGameIcon(librarycache, m.AppID),
 			Installed:   true,
 			InstallPath: m.InstallPath,
 			SizeOnDisk:  m.SizeOnDisk,
@@ -128,9 +126,11 @@ func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Option
 		}
 	}
 
-	// Names last, so any source that knows the real name has already set one and
-	// the catalogue only fills the gaps.
-	applyCatalogueNames(ctx, b, manifests, librarycache, opts.AllowNetwork)
+	// Names and art last, once the full set of games is known. Both are per-game
+	// lookups that say nothing about ownership, and batching them keeps the art
+	// pass from opening a socket per game as the sources are walked.
+	applyCatalogueNames(ctx, b, manifests, opts.AllowNetwork)
+	applySteamArt(ctx, b, root, accounts, opts.AllowNetwork)
 
 	res.Games = dropNamelessSteamGames(b.Games())
 	return res, nil
@@ -361,7 +361,7 @@ func observeUserdataFolders(b *gamelib.Builder, userdata, id64, name string) {
 // applyCatalogueNames fills names and art for everything still unnamed after
 // the per-account pass, using the downloaded app catalogue first and the names
 // Steam itself wrote into the manifests as the offline fallback.
-func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []appManifest, librarycache string, allowNetwork bool) {
+func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []appManifest, allowNetwork bool) {
 	catalogue, err := getSteamAppNameMapCached()
 	if err != nil {
 		// A missing catalogue is normal on a first run. Downloading it is a
@@ -386,18 +386,13 @@ func applyCatalogueNames(ctx context.Context, b *gamelib.Builder, manifests []ap
 		if name == "" {
 			name = strings.TrimSpace(manifestNames[g.GameID])
 		}
-		art := g.ArtURL
-		if art == "" {
-			art = copyGameIcon(librarycache, g.GameID)
-		}
-		if name == "" && art == "" {
+		if name == "" {
 			continue
 		}
 		b.Observe(gamelib.Observation{
 			PlatformKey: PlatformKey,
 			GameID:      g.GameID,
 			Name:        name,
-			ArtURL:      art,
 			Source:      gamelib.SourceSteamAppList,
 		})
 	}

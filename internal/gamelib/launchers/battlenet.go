@@ -69,9 +69,10 @@ func battleNetConfigPath() string {
 //
 // Battle.net records nothing about which account installed a game, so like
 // Epic this resolves installs exactly and leaves the owner to inference.
-func resolveBattleNet(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
+func resolveBattleNet(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: BattleNetPlatformKey}
 	b := gamelib.NewBuilder()
+	var art []artSource
 
 	installs := battleNetRegistryInstalls()
 	seen := map[string]struct{}{}
@@ -102,6 +103,7 @@ func resolveBattleNet(_ context.Context, opts gamelib.Options) (gamelib.Result, 
 				}
 				attributeInstall(&obs, opts)
 				b.Observe(obs)
+				art = append(art, battleNetArt(code, installPath))
 				return true
 			})
 		}
@@ -123,8 +125,10 @@ func resolveBattleNet(_ context.Context, opts gamelib.Options) (gamelib.Result, 
 		}
 		attributeInstall(&obs, opts)
 		b.Observe(obs)
+		art = append(art, battleNetArt(code, path))
 	}
 
+	applyLauncherArt(ctx, b, BattleNetPlatformKey, art, gamelib.SourceBattleNetConfig, opts.AllowNetwork)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true
@@ -135,6 +139,22 @@ func resolveBattleNet(_ context.Context, opts gamelib.Options) (gamelib.Result, 
 	}
 	res.Games = games
 	return res, nil
+}
+
+// battleNetArt collects a product's art candidates.
+//
+// Blizzard installs carry a .ico beside the launcher stub for most titles, and
+// the game executable itself otherwise. Nothing is fetched remotely: Blizzard
+// serves its store art from paths that need a product id this resolver does not
+// have.
+func battleNetArt(code, installPath string) artSource {
+	src := artSource{gameID: code}
+	if strings.TrimSpace(installPath) == "" {
+		return src
+	}
+	src.local = installDirIcons(installPath)
+	src.exe = exeForIcon(installPath, "")
+	return src
 }
 
 func battleNetName(code string) string {

@@ -38,7 +38,7 @@ func Oculus() gamelib.Resolver {
 	return gamelib.ResolverFunc{Key: OculusPlatformKey, Fn: resolveOculus}
 }
 
-func resolveOculus(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
+func resolveOculus(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: OculusPlatformKey}
 	dir := oculusManifestDir()
 	if dir == "" {
@@ -51,6 +51,7 @@ func resolveOculus(_ context.Context, opts gamelib.Options) (gamelib.Result, err
 		return res, err
 	}
 	b := gamelib.NewBuilder()
+	var art []artSource
 	for _, e := range ents {
 		if e.IsDir() || !strings.EqualFold(filepath.Ext(e.Name()), ".json") {
 			continue
@@ -76,8 +77,19 @@ func resolveOculus(_ context.Context, opts gamelib.Options) (gamelib.Result, err
 		}
 		attributeInstall(&obs, opts)
 		b.Observe(obs)
+
+		// The manifest records where the software was installed, which is the
+		// only place its icon exists on this machine.
+		if dir := strings.TrimSpace(gjson.GetBytes(raw, "libraryPath").String()); dir != "" {
+			art = append(art, artSource{
+				gameID: appID,
+				local:  installDirIcons(dir),
+				exe:    exeForIcon(dir, strings.TrimSpace(gjson.GetBytes(raw, "launchFile").String())),
+			})
+		}
 	}
 
+	applyLauncherArt(ctx, b, OculusPlatformKey, art, gamelib.SourceOculusManifest, opts.AllowNetwork)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true

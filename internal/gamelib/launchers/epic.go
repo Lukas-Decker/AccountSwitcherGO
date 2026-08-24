@@ -27,6 +27,9 @@ type epicManifest struct {
 	InstallSize      int64  `json:"InstallSize"`
 	CatalogNamespace string `json:"CatalogNamespace"`
 	CatalogItemID    string `json:"CatalogItemId"`
+	// LaunchExecutable is relative to InstallLocation and is the only pointer
+	// Epic gives to the game's own binary, which is where its icon lives.
+	LaunchExecutable string `json:"LaunchExecutable"`
 	// bIsIncompleteInstall is set while a download is still running, and those
 	// entries point at a folder that cannot be launched yet.
 	IsIncompleteInstall bool `json:"bIsIncompleteInstall"`
@@ -52,9 +55,10 @@ func epicManifestDirs() []string {
 // the owned catalogue only exists behind an authenticated web call. So this
 // resolves every installed game exactly and leaves ownership to the inference
 // rule, which declines to guess once there is more than one Epic account.
-func resolveEpic(_ context.Context, opts gamelib.Options) (gamelib.Result, error) {
+func resolveEpic(ctx context.Context, opts gamelib.Options) (gamelib.Result, error) {
 	res := gamelib.Result{PlatformKey: EpicPlatformKey}
 	b := gamelib.NewBuilder()
+	var art []artSource
 
 	found := false
 	for _, dir := range epicManifestDirs() {
@@ -89,6 +93,14 @@ func resolveEpic(_ context.Context, opts gamelib.Options) (gamelib.Result, error
 			}
 			attributeInstall(&obs, opts)
 			b.Observe(obs)
+
+			// Epic ships no artwork of its own, so the game's executable icon
+			// is the only image on this machine that belongs to it.
+			art = append(art, artSource{
+				gameID: man.AppName,
+				local:  installDirIcons(obs.InstallPath),
+				exe:    exeForIcon(obs.InstallPath, man.LaunchExecutable),
+			})
 		}
 	}
 
@@ -99,6 +111,7 @@ func resolveEpic(_ context.Context, opts gamelib.Options) (gamelib.Result, error
 	if w := ambiguousOwnerWarning("Epic Games", opts); w != "" {
 		res.Warnings = append(res.Warnings, w)
 	}
+	applyLauncherArt(ctx, b, EpicPlatformKey, art, gamelib.SourceEpicManifest, opts.AllowNetwork)
 	res.Games = b.Games()
 	return res, nil
 }
