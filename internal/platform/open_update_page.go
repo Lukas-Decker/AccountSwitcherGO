@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"account-switcher/internal/appconfig"
 	"os/exec"
 	"runtime"
 
@@ -8,7 +9,8 @@ import (
 )
 
 // Latest GitHub releases; may later be replaced or extended by an in-app auto-updater.
-const updateDownloadPageURL = "https://github.com/TCNOco/Account-Switcher/releases/latest"
+// updateDownloadPageURL is the releases page for the configured repository.
+var updateDownloadPageURL = appconfig.ReleasesPageURL()
 
 // OpenUpdateDownloadPage opens the latest GitHub release page in the default browser.
 func (p *PlatformService) OpenUpdateDownloadPage() error {

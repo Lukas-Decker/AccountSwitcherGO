@@ -1,5 +1,6 @@
 <script lang="ts">
   /* Interface language, plus the ways to help with or credit the translations. */
+  import { onMount } from "svelte";
   import { get } from "svelte/store";
   import * as PlatformService from "../../../../bindings/account-switcher/internal/platform/platformservice.js";
   import type { CrowdinTranslatorsList } from "../../../lib/crowdinTranslators";
@@ -13,7 +14,23 @@
   import SettingsRow from "./SettingsRow.svelte";
   import SettingsSelect from "./SettingsSelect.svelte";
 
-  const CROWDIN_URL = "https://crowdin.com/project/tcno-account-switcher";
+  /**
+   * Which translation links this build can offer. The project this app was
+   * forked from ran its own Crowdin; this build points at nothing until one is
+   * configured, so the links are hidden rather than opening a blank page.
+   */
+  let translationLinks: { projectUrl: string; creditsAvailable: boolean } = {
+    projectUrl: "",
+    creditsAvailable: false,
+  };
+
+  onMount(async () => {
+    try {
+      translationLinks = await PlatformService.GetTranslationLinks();
+    } catch {
+      // Leaving both off is the safe reading: no links beats broken links.
+    }
+  });
 
   function nameFor(code: string): string {
     const names = new Intl.DisplayNames([$locale.replace(/_/g, "-")], { type: "language" });
@@ -63,12 +80,22 @@
     />
   </SettingsRow>
 
-  <SettingsRow label={$t("Settings_Translations")} keywords="crowdin translate contribute credits">
-    <button type="button" class="settings-link" on:click={() => void openExternalUrl(CROWDIN_URL)}>
-      {$t("Settings_HelpTranslate")}
-    </button>
-    <button type="button" class="settings-link" on:click={() => void openCredits()}>
-      {$t("Settings_ViewTranslators")}
-    </button>
-  </SettingsRow>
+  {#if translationLinks.projectUrl || translationLinks.creditsAvailable}
+    <SettingsRow label={$t("Settings_Translations")} keywords="crowdin translate contribute credits">
+      {#if translationLinks.projectUrl}
+        <button
+          type="button"
+          class="settings-link"
+          on:click={() => void openExternalUrl(translationLinks.projectUrl)}
+        >
+          {$t("Settings_HelpTranslate")}
+        </button>
+      {/if}
+      {#if translationLinks.creditsAvailable}
+        <button type="button" class="settings-link" on:click={() => void openCredits()}>
+          {$t("Settings_ViewTranslators")}
+        </button>
+      {/if}
+    </SettingsRow>
+  {/if}
 </SettingsCard>

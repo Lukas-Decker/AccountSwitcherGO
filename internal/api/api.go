@@ -3,34 +3,32 @@ package api
 import (
 	"net/url"
 	"strings"
-)
 
-const baseURL = "https://api.tcno.co/sw"
+	"account-switcher/internal/appconfig"
+)
 
 func UserAgent(version string) string {
 	return "account-switcher/" + strings.TrimSpace(version)
 }
 
-func AnonymousStatsUploadURL() string {
-	return baseURL + "/stats/"
-}
-
-func CrashURL() string {
-	return baseURL + "/crashes/"
-}
-
-func StabilityRateURL() string {
-	return baseURL + "/stability/rate/"
-}
-
-func FeedbackURL() string {
-	return baseURL + "/feedback/"
-}
-
+// VersionCheckURL builds the launch API check for a version, or returns "" when
+// no launch API is configured for this build.
+//
+// The debug flag is kept in the signature because the dev and production
+// endpoint files still choose between them; a build with no launch API simply
+// gets nothing either way.
 func VersionCheckURL(version string, debug bool) string {
-	v := url.QueryEscape(strings.TrimSpace(version))
-	if debug {
-		return "https://tcno.co/Projects/AccSwitcher/api?debug&v=" + v
+	if !appconfig.Configured(appconfig.LaunchAPIURLTemplate) {
+		return ""
 	}
-	return "https://tcno.co/Projects/AccSwitcher/api?v=" + v
+	v := url.QueryEscape(strings.TrimSpace(version))
+	sep := "?"
+	if strings.Contains(appconfig.LaunchAPIURLTemplate, "?") {
+		sep = "&"
+	}
+	out := appconfig.LaunchAPIURLTemplate + sep
+	if debug {
+		out += "debug&"
+	}
+	return out + "v=" + v
 }

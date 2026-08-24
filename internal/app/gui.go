@@ -1,6 +1,7 @@
 package app
 
 import (
+	"account-switcher/internal/appconfig"
 	"io/fs"
 	"log"
 	"log/slog"
@@ -118,7 +119,7 @@ func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) appl
 
 func githubUpdaterConfig(guiSettings platform.AppSettings) github.Config {
 	return github.Config{
-		Repository:    "TCNOco/Account-Switcher",
+		Repository:    appconfig.GitHubRepository,
 		Prerelease:    guiSettings.PrereleaseUpdates,
 		ChecksumAsset: "SHA256SUMS",
 		AssetMatcher:  updatecheck.GitHubAssetMatcher,

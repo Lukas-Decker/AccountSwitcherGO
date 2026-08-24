@@ -3,6 +3,7 @@ package updatecheck
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,17 +11,28 @@ import (
 
 	"account-switcher/internal/api"
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/appconfig"
 )
 
 // PlatformsJSONRawURL is the canonical remote Platforms.json used for background updates.
 // TODO: switch refs/heads/go to refs/heads/main when the go branch is merged to main.
-const PlatformsJSONRawURL = "https://raw.githubusercontent.com/TCNOco/Account-Switcher/refs/heads/go/Platforms.json"
+// PlatformsJSONRawURL points at this project's own copy of Platforms.json.
+//
+// A build with no repository configured returns "", and the caller skips the
+// check rather than fetching platform definitions from somebody else's fork.
+func PlatformsJSONRawURL() string {
+	return appconfig.RawFileURL("Platforms.json")
+}
 
 const maxPlatformsJSONBytes = 4 << 20
 
 type platformsVersion struct {
 	Version string `json:"Version"`
 }
+
+// ErrNoPlatformsSource means this build has no repository configured to read
+// platform definitions from.
+var ErrNoPlatformsSource = errors.New("updatecheck: no Platforms.json source configured")
 
 // FetchRemotePlatformsJSON downloads Platforms.json from GitHub.
 func FetchRemotePlatformsJSON(ctx context.Context, appVersion string) ([]byte, error) {
@@ -30,7 +42,11 @@ func FetchRemotePlatformsJSON(ctx context.Context, appVersion string) ([]byte, e
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, PlatformsJSONRawURL, nil)
+	url := PlatformsJSONRawURL()
+	if strings.TrimSpace(url) == "" {
+		return nil, ErrNoPlatformsSource
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

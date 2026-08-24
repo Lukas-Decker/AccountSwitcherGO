@@ -11,9 +11,29 @@ import (
 	"time"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/appconfig"
 )
 
-const crowdinAPIURL = "https://tcno.co/Projects/AccSwitcher/api/crowdin/"
+// TranslationLinksDTO tells the settings page which translation features this
+// build can actually offer, so it can hide the ones pointing nowhere rather
+// than showing a link that opens a blank page.
+type TranslationLinksDTO struct {
+	// ProjectURL is where "help translate" goes. Empty hides the link.
+	ProjectURL string `json:"projectUrl"`
+	// CreditsAvailable reports whether translator credits can be fetched.
+	CreditsAvailable bool `json:"creditsAvailable"`
+}
+
+// GetTranslationLinks reports the translation features available in this build.
+func (*PlatformService) GetTranslationLinks() TranslationLinksDTO {
+	return TranslationLinksDTO{
+		ProjectURL:       appconfig.CrowdinProjectURL,
+		CreditsAvailable: appconfig.Configured(appconfig.CrowdinTranslatorsURL),
+	}
+}
+
+// ErrCreditsNotConfigured means this build has no translator credits service.
+var ErrCreditsNotConfigured = errors.New("translator credits are not configured for this build")
 
 // CrowdinProofReader is a project member with proofreader languages.
 type CrowdinProofReader struct {
@@ -32,8 +52,15 @@ type crowdinAPIResponse struct {
 	Translators  []string          `json:"Translators"`
 }
 
-// GetCrowdinTranslators fetches Crowdin project members from tcno.co.
+// GetCrowdinTranslators fetches the translator credits.
+//
+// The credits come from a service the project has to host; a build with none
+// configured reports that rather than failing, so the settings page can hide
+// the button instead of offering one that always errors.
 func (*PlatformService) GetCrowdinTranslators() (CrowdinTranslatorsList, error) {
+	if !appconfig.Configured(appconfig.CrowdinTranslatorsURL) {
+		return CrowdinTranslatorsList{}, ErrCreditsNotConfigured
+	}
 	if appclient.IsOfflineMode() {
 		return CrowdinTranslatorsList{}, errors.New("offline mode")
 	}
@@ -41,7 +68,7 @@ func (*PlatformService) GetCrowdinTranslators() (CrowdinTranslatorsList, error) 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, crowdinAPIURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, appconfig.CrowdinTranslatorsURL, nil)
 	if err != nil {
 		return CrowdinTranslatorsList{}, err
 	}

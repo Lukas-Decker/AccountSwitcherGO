@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/appconfig"
 	"account-switcher/internal/crashlog"
 	"account-switcher/internal/fsutil"
 	"account-switcher/internal/paths"
@@ -136,8 +137,6 @@ func saveAppNameMapToDisk(m map[string]string) error {
 }
 
 const (
-	steamAppArrayMirrorXZURL    = "https://api.tcno.co/sw/SteamAppArrayXZ"
-	steamAppArrayMirrorURL      = "https://api.tcno.co/sw/SteamAppArray"
 	steamAppNameMapCacheTTL     = 24 * time.Hour
 	steamAppNameMapFetchTimeout = 10 * time.Minute
 	steamAppNameMapMaxJSONBytes = 32 << 20
@@ -149,10 +148,23 @@ type steamAppNameMapSource struct {
 	xzCompressed bool
 }
 
-var steamAppNameMapSources = []steamAppNameMapSource{
-	{url: steamAppArrayMirrorXZURL, xzCompressed: true},
-	{url: steamAppArrayMirrorURL, xzCompressed: false},
+// steamAppNameMapSources are the catalogue mirrors this build was configured
+// with, best first. A build with none configured simply has no catalogue: names
+// then come from the appmanifests of installed games and, for the rest, from
+// the public community profile.
+func steamAppNameMapSources() []steamAppNameMapSource {
+	var out []steamAppNameMapSource
+	if appconfig.Configured(appconfig.SteamAppListXZURL) {
+		out = append(out, steamAppNameMapSource{url: appconfig.SteamAppListXZURL, xzCompressed: true})
+	}
+	if appconfig.Configured(appconfig.SteamAppListURL) {
+		out = append(out, steamAppNameMapSource{url: appconfig.SteamAppListURL, xzCompressed: false})
+	}
+	return out
 }
+
+// errNoAppListSource means no catalogue mirror is configured for this build.
+var errNoAppListSource = fmt.Errorf("steam app name map: no catalogue source configured")
 
 var (
 	steamAppNameMapMu         sync.RWMutex
@@ -260,8 +272,13 @@ func downloadAndStoreAppNameMap(ctx context.Context, reason string) error {
 		slog.String("cachePath", cachePath),
 	)
 
+	sources := steamAppNameMapSources()
+	if len(sources) == 0 {
+		return errNoAppListSource
+	}
+
 	var lastErr error
-	for _, source := range steamAppNameMapSources {
+	for _, source := range sources {
 		steamLog.Info("steam app name map fetching",
 			slog.String("url", source.url),
 			slog.String("reason", reason),

@@ -8,7 +8,7 @@
         AllowPromptForPassword="false">
     </Settings>
     <Installer
-        Path="tcno-acc-switcher.exe"
+        Path="Account Switcher.exe"
         Arguments=""
         InstallLocation="C:\Program Files\My Company\My Product">
     </Installer>
@@ -25,10 +25,10 @@
         </Capabilities>
         <Applications>
             <Application
-                Id="com.example.tcnoaccswitcher"
+                Id="com.accountswitcher.app"
                 Description="A Account-Switcher application"
                 DisplayName="My Product"
-                ExecutableName="tcno-acc-switcher.exe"
+                ExecutableName="Account Switcher.exe"
                 EntryPoint="Windows.FullTrustApplication">
                 
             </Application>
@@ -47,7 +47,7 @@
             <Logo>Assets\AppIcon.png</Logo>
         </Properties>
     </PackageInformation>
-    <SaveLocation PackagePath="tcno-acc-switcher.msix" />
+    <SaveLocation PackagePath="account-switcher.msix" />
     <PackageIntegrity>
         <CertificatePath></CertificatePath>
     </PackageIntegrity>

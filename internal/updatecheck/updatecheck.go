@@ -2,6 +2,7 @@ package updatecheck
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -21,6 +22,10 @@ const (
 type failStateJSON struct {
 	At string `json:"at"`
 }
+
+// ErrNoLaunchAPI means this build has no launch API configured, so there is
+// nothing to check and nothing has gone wrong.
+var ErrNoLaunchAPI = errors.New("updatecheck: no launch API configured")
 
 type LaunchAPICheckResult struct {
 	Latest  string
@@ -57,7 +62,11 @@ func FetchLatestVersion(ctx context.Context, client *http.Client, currentVersion
 	if client == nil {
 		client = appclient.Shared
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, updateAPIURL(currentVersion), nil)
+	endpoint := updateAPIURL(currentVersion)
+	if strings.TrimSpace(endpoint) == "" {
+		return "", "", ErrNoLaunchAPI
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return "", "", err
 	}
@@ -82,7 +91,7 @@ func FetchLatestVersion(ctx context.Context, client *http.Client, currentVersion
 	return version, message, nil
 }
 
-// FetchLaunchAPICheck hits the tcno.co API endpoint used for launch telemetry
+// FetchLaunchAPICheck hits the launch API endpoint used for launch telemetry
 // and update fallback data.
 func FetchLaunchAPICheck(ctx context.Context, currentVersion string) LaunchAPICheckResult {
 	if appclient.IsOfflineMode() {
@@ -107,6 +116,12 @@ func FetchLaunchAPICheck(ctx context.Context, currentVersion string) LaunchAPICh
 // Fail toasts are throttled to once per day.
 func HandleLaunchAPICheckResult(result LaunchAPICheckResult, exeDir string, currentVersion string, onUpdateAvailable func(message string), onCheckFailed func()) {
 	err := result.Err
+	// A build with no launch API configured has not failed to reach anything,
+	// so it must not raise the "could not check for updates" toast. The signed
+	// GitHub updater is the update path in that case.
+	if errors.Is(err, ErrNoLaunchAPI) {
+		return
+	}
 	if err != nil {
 		if shouldEmitFailToast(exeDir) {
 			_ = writeFailTimestamp(exeDir)
@@ -124,17 +139,21 @@ func HandleLaunchAPICheckResult(result LaunchAPICheckResult, exeDir string, curr
 	}
 }
 
-// RunLaunchAPICheck runs the tcno.co API check used as an updater fallback on launch.
+// RunLaunchAPICheck runs the launch API check used as an updater fallback on launch.
 func RunLaunchAPICheck(ctx context.Context, exeDir string, currentVersion string, onUpdateAvailable func(message string), onCheckFailed func()) {
 	HandleLaunchAPICheckResult(FetchLaunchAPICheck(ctx, currentVersion), exeDir, currentVersion, onUpdateAvailable, onCheckFailed)
 }
 
-// RunManualCheck checks for updates on user request. Returns "available", "up-to-date", or "failed".
+// RunManualCheck checks for updates on user request. Returns "available",
+// "up-to-date", "failed", or "unavailable" when this build has no launch API.
 func RunManualCheck(ctx context.Context, currentVersion string, onUpdateAvailable func(message string)) string {
 	if appclient.IsOfflineMode() {
 		return "failed"
 	}
 	latest, message, err := FetchLatestVersion(ctx, appclient.Shared, currentVersion)
+	if errors.Is(err, ErrNoLaunchAPI) {
+		return "unavailable"
+	}
 	if err != nil {
 		return "failed"
 	}

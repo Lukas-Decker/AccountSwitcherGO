@@ -1,6 +1,6 @@
 ;Account Switcher
 ;Account Switcher
-;https://github.com/TcNoco/Account-Switcher
+;https://github.com/KeinNameVorhanden/AccountSwitcherGO
 
 ;--------------------------------
 ;Defaults (override via -D on makensis command line)
@@ -253,8 +253,8 @@ Section "Main files" InstSec
   WriteRegDWORD HKLM "${UNINST_PATH}" "EstimatedSize" "$0"
 
   ;Create protocol
-  WriteRegStr HKCR "tcno" "URL Protocol" ""
-  WriteRegStr HKCR "tcno\Shell\Open\Command\" "" `"$INSTDIR\${PRODUCT_EXECUTABLE}" "%1"`
+  WriteRegStr HKCR "accountswitcher" "URL Protocol" ""
+  WriteRegStr HKCR "accountswitcher\Shell\Open\Command\" "" `"$INSTDIR\${PRODUCT_EXECUTABLE}" "%1"`
 
   CreateDirectory "$AppData\${SM_Folder}"
   Delete "$AppData\${SM_Folder}\SendAnonymousStats.yes"
@@ -308,5 +308,8 @@ Section "Uninstall"
   DeleteRegKey /ifempty "${REG_ROOT}" "${REG_APP_PATH}"
   DeleteRegKey HKLM "${UNINST_PATH}"
   ;Remove Protocol entry
+  DeleteRegKey HKCR "accountswitcher"
+  ; Also drop the protocol this app registered before it was renamed, so an
+  ; uninstall does not leave a dead tcno:// handler pointing at a missing exe.
   DeleteRegKey HKCR "tcno"
 SectionEnd

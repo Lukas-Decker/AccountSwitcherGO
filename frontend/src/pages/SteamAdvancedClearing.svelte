@@ -12,7 +12,7 @@
   import "../styles/Settings.scss";
 
   const WIKI_URL =
-    "https://github.com/TCNOCo/Account-Switcher/wiki/Platform:-Steam#steam-cleaning";
+    "https://github.com/KeinNameVorhanden/AccountSwitcherGO/wiki/Platform:-Steam#steam-cleaning";
 
   /** Action IDs match Go `RunAdvancedClearingAction`. */
   const generalActions = [

@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"account-switcher/internal/appconfig"
 	"context"
 	"errors"
 	"strings"
@@ -44,12 +45,12 @@ func emitAppUpdateAvailable(message string) {
 	if app == nil {
 		return
 	}
-	const downloadURL = "https://github.com/TCNOco/Account-Switcher/releases/latest"
+	downloadURL := appconfig.ReleasesPageURL()
 	_ = app.Event.Emit(AppUpdateAvailableEvent, UpdateAvailablePayload{
 		Message:     message,
 		DownloadURL: downloadURL,
 	})
-	NotifyNative("tcno-update-available", "Account Switcher", message, map[string]interface{}{
+	NotifyNative("accsw-update-available", "Account Switcher", message, map[string]interface{}{
 		"type": "update-available",
 		"url":  downloadURL,
 	})
@@ -133,12 +134,12 @@ func EnableAutoRestartAfterUpdate(app *application.App) {
 		return
 	}
 	app.Event.On(updater.EventUpdateAvailable, func(*application.CustomEvent) {
-		NotifyNative("tcno-update-downloading", "Account Switcher", "An update is available. Downloading it now.", map[string]interface{}{
+		NotifyNative("accsw-update-downloading", "Account Switcher", "An update is available. Downloading it now.", map[string]interface{}{
 			"type": "update-available",
 		})
 	})
 	app.Event.On(updater.EventUpdateReady, func(*application.CustomEvent) {
-		NotifyNative("tcno-update-ready", "Account Switcher", "Update installed. Restarting Account Switcher.", map[string]interface{}{
+		NotifyNative("accsw-update-ready", "Account Switcher", "Update installed. Restarting Account Switcher.", map[string]interface{}{
 			"type": "update-ready",
 		})
 		go func() {
@@ -309,7 +310,7 @@ func runAPIUpdateCheck(ctx context.Context) string {
 }
 
 // CheckForUpdatesManually checks for updates when triggered from the UI.
-// Uses the Wails signed GitHub updater first; falls back to the tcno.co API.
+// Uses the Wails signed GitHub updater first; falls back to the launch API.
 // Returns "available", "up-to-date", "offline", or "failed".
 func (*PlatformService) CheckForUpdatesManually() string {
 	if !UpdateChecksEnabled {
