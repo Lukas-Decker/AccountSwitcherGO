@@ -148,7 +148,7 @@ func resolveBattleNet(ctx context.Context, opts gamelib.Options) (gamelib.Result
 // serves its store art from paths that need a product id this resolver does not
 // have.
 func battleNetArt(code, installPath string) artSource {
-	src := artSource{gameID: code}
+	src := artSource{gameID: code, name: battleNetName(code)}
 	if strings.TrimSpace(installPath) == "" {
 		return src
 	}

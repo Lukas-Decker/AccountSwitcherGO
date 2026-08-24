@@ -76,7 +76,7 @@ func resolveRiot(ctx context.Context, opts gamelib.Options) (gamelib.Result, err
 		}
 		attributeInstall(&obs, opts)
 		b.Observe(obs)
-		art = append(art, riotArt(product, filepath.Join(metadata, dir)))
+		art = append(art, riotArt(product, name, filepath.Join(metadata, dir)))
 	}
 
 	applyLauncherArt(ctx, b, RiotPlatformKey, art, gamelib.SourceRiotMetadata, opts.AllowNetwork)
@@ -102,8 +102,8 @@ var reRiotInstallPath = regexp.MustCompile(`(?mi)^[ \t]*product_install_full_pat
 // Riot ships no artwork alongside the metadata, so the game executable is the
 // only image on disk. The install path is recorded in the product settings
 // rather than being derivable from the product name, which the user can move.
-func riotArt(product, metadataDir string) artSource {
-	src := artSource{gameID: product}
+func riotArt(product, title, metadataDir string) artSource {
+	src := artSource{gameID: product, name: title}
 	ents, err := os.ReadDir(metadataDir)
 	if err != nil {
 		return src

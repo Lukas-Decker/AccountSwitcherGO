@@ -57,6 +57,12 @@ func steamArtRequest(root, appID string, userID32s []string) gameart.Request {
 		PlatformKey: PlatformKey,
 		GameID:      appID,
 		Candidates:  candidates,
+		// Reached only when Steam's own cache and its store CDN both come up
+		// empty, which on a real library is a few hundred apps out of several
+		// thousand rather than every one of them.
+		Archive: func(ctx context.Context) []gameart.Candidate {
+			return gameart.SteamGridDBCandidates(ctx, appclient.Shared, appID)
+		},
 	}
 }
 

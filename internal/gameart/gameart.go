@@ -139,6 +139,16 @@ type Request struct {
 	// resolves. It is kept separate because extracting is a shell call rather
 	// than a file read, and it is never the answer when real art exists.
 	IconExe string
+
+	// Archive supplies further candidates, and is called only once nothing
+	// above has resolved.
+	//
+	// It exists for sources that cost a lookup before they can even offer a
+	// URL. Asking one of those for every game in a library would be several
+	// thousand requests to answer a question the local cache already answers
+	// for most of them, so it is reached for only when the cheap sources have
+	// all missed.
+	Archive func(ctx context.Context) []Candidate
 }
 
 // Result is the outcome for one game.
@@ -273,6 +283,17 @@ func Resolve(ctx context.Context, client *http.Client, req Request, allowNetwork
 		}
 	}
 
+	// The archive is real artwork, so it is worth asking before falling back to
+	// an executable's icon. Only when the network is allowed, and only when
+	// what is already published is poor enough to be worth improving on.
+	if allowNetwork && req.Archive != nil && (!hasCached || cachedTier < TierWide) {
+		for _, c := range archiveCandidates(ctx, req, cachedTier, hasCached) {
+			if res, ok := publishRemote(ctx, client, req, c); ok {
+				return res
+			}
+		}
+	}
+
 	if fileHasContent(req.IconExe) && (!hasCached || cachedTier < TierIcon) {
 		if res, ok := publishExeIcon(req); ok {
 			return res
@@ -284,6 +305,25 @@ func Resolve(ctx context.Context, client *http.Client, req Request, allowNetwork
 		return Result{PublicURL: publicURL(req.PlatformKey, cachedName), Tier: cachedTier}
 	}
 	return Result{}
+}
+
+// archiveCandidates asks the archive and returns what is worth trying, best
+// shape first and nothing that would only match what is already published.
+func archiveCandidates(ctx context.Context, req Request, cachedTier Tier, hasCached bool) []Candidate {
+	found := req.Archive(ctx)
+	if len(found) == 0 {
+		return nil
+	}
+	probe := Request{Candidates: found}
+	ordered := probe.ordered(true)
+	out := ordered[:0]
+	for _, c := range ordered {
+		if hasCached && c.Tier <= cachedTier {
+			break
+		}
+		out = append(out, c)
+	}
+	return out
 }
 
 // publishLocal copies a local image into wwwroot.
@@ -381,6 +421,10 @@ func writeArt(req Request, raw []byte, tier Tier, ext string) (Result, bool) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return Result{}, false
 	}
+	// Done once, here, so every later read is of the smaller file rather than
+	// the format the source happened to serve.
+	raw, ext = transcode(raw, ext)
+
 	name := cacheFileName(req.GameID, tier, ext)
 	// Written directly rather than atomically: this is a rebuildable cache, and
 	// a torn write is caught by the decode check on the next read.

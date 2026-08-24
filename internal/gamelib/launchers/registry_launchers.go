@@ -203,6 +203,7 @@ func resolveRegInstalls(ctx context.Context, platformKey, launcherName string, s
 			}
 			art = append(art, artSource{
 				gameID: name,
+				name:   display,
 				local:  append(iconFiles, installDirIcons(installPath)...),
 				exe:    iconExe,
 			})

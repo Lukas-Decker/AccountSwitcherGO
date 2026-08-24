@@ -83,6 +83,7 @@ func resolveOculus(ctx context.Context, opts gamelib.Options) (gamelib.Result, e
 		if dir := strings.TrimSpace(gjson.GetBytes(raw, "libraryPath").String()); dir != "" {
 			art = append(art, artSource{
 				gameID: appID,
+				name:   name,
 				local:  installDirIcons(dir),
 				exe:    exeForIcon(dir, strings.TrimSpace(gjson.GetBytes(raw, "launchFile").String())),
 			})

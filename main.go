@@ -17,6 +17,7 @@ import (
 	"account-switcher/internal/controllerinput"
 	"account-switcher/internal/crashlog"
 	"account-switcher/internal/discordrpc"
+	"account-switcher/internal/gameart"
 	"account-switcher/internal/gamelib"
 	"account-switcher/internal/gamelib/launchers"
 	"account-switcher/internal/i18n"
@@ -235,6 +236,7 @@ func main() {
 
 	startupSettings, _ := loadStartupSettings()
 	syncOfflineModeFromSettings(startupSettings)
+	syncGameArtArchiveFromSettings(startupSettings)
 	platform.ApplyDebugLogging(startupSettings.DebugLogging)
 
 	defer crashlog.CaptureFatal()
@@ -322,4 +324,12 @@ func loadStartupSettings() (platform.AppSettings, error) {
 
 func syncOfflineModeFromSettings(s platform.AppSettings) {
 	appclient.SetOfflineMode(s.OfflineMode)
+}
+
+// syncGameArtArchiveFromSettings wires the artwork archive to its key and seeds
+// it with whatever is already stored, so the first games view of a session can
+// use it without waiting for the settings page to be opened.
+func syncGameArtArchiveFromSettings(s platform.AppSettings) {
+	platform.SetGameArtArchiveKeyHook(gameart.SetSteamGridDBKey)
+	platform.SetGameArtArchiveKey(s.SteamGridDBAPIKey)
 }

@@ -98,6 +98,7 @@ func resolveEpic(ctx context.Context, opts gamelib.Options) (gamelib.Result, err
 			// is the only image on this machine that belongs to it.
 			art = append(art, artSource{
 				gameID: man.AppName,
+				name:   obs.Name,
 				local:  installDirIcons(obs.InstallPath),
 				exe:    exeForIcon(obs.InstallPath, man.LaunchExecutable),
 			})

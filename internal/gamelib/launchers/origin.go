@@ -61,6 +61,7 @@ func resolveOriginManifests(ctx context.Context, platformKey string, opts gameli
 			if installPath != "" {
 				art = append(art, artSource{
 					gameID: obs.GameID,
+					name:   obs.Name,
 					local:  installDirIcons(installPath),
 					exe:    exeForIcon(installPath, ""),
 				})

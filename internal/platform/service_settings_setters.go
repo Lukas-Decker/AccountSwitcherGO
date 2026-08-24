@@ -247,6 +247,20 @@ func (p *PlatformService) SetPrereleaseUpdates(enabled bool) error {
 	})
 }
 
+// SetSteamGridDBAPIKey stores the artwork archive key and applies it live, so
+// a tile can be refreshed without restarting.
+func (p *PlatformService) SetSteamGridDBAPIKey(key string) error {
+	key = strings.TrimSpace(key)
+	if err := p.withSettingsWrite(func(s *AppSettings) error {
+		s.SteamGridDBAPIKey = key
+		return nil
+	}); err != nil {
+		return err
+	}
+	SetGameArtArchiveKey(key)
+	return nil
+}
+
 func (p *PlatformService) SetOfflineMode(enabled bool) error {
 	err := p.withSettingsWrite(func(s *AppSettings) error {
 		s.OfflineMode = enabled

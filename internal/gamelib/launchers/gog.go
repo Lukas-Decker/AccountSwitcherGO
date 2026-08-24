@@ -147,6 +147,7 @@ func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed 
 		key := "gog_" + g.GameID
 		src := artSource{
 			gameID:   g.GameID,
+			name:     g.Name,
 			portrait: portrait[key],
 			remote:   other[key],
 		}

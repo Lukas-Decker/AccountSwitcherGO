@@ -3,6 +3,7 @@ module account-switcher
 go 1.26.4
 
 require (
+	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/Jleagle/steam-go v0.0.0-20260527194636-a5837ecc04c4
 	github.com/Microsoft/go-winio v0.6.2
 	github.com/antchfx/htmlquery v1.3.6

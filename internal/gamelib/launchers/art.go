@@ -22,7 +22,11 @@ import (
 // pulled out of an executable.
 type artSource struct {
 	gameID string
-	local  []string
+	// name is the game's title, used to look it up in the artwork archive.
+	// These launchers ship no store art of their own, so for most of them the
+	// archive is the only thing standing between the tile and an exe icon.
+	name  string
+	local []string
 	// portrait holds remote URLs known to be cover-shaped, which outrank
 	// anything local. GOG is the only launcher here that supplies them.
 	portrait []string
@@ -47,11 +51,15 @@ func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey strin
 		candidates = append(candidates, gameart.RemoteURLs(gameart.TierPortrait, s.portrait...)...)
 		candidates = append(candidates, gameart.LocalFiles(gameart.TierLogo, s.local...)...)
 		candidates = append(candidates, gameart.RemoteURLs(gameart.TierWide, s.remote...)...)
+		title := s.name
 		reqs = append(reqs, gameart.Request{
 			PlatformKey: platformKey,
 			GameID:      s.gameID,
 			Candidates:  candidates,
 			IconExe:     s.exe,
+			Archive: func(ctx context.Context) []gameart.Candidate {
+				return gameart.SteamGridDBCandidatesByName(ctx, appclient.Shared, title)
+			},
 		})
 	}
 

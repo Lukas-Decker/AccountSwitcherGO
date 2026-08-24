@@ -71,6 +71,7 @@ func resolveSingleTitle(ctx context.Context, platformKey string, opts gamelib.Op
 	// asset as the game's own mark.
 	applyLauncherArt(ctx, b, platformKey, []artSource{{
 		gameID: platformKey,
+		name:   platformKey,
 		exe:    exe,
 	}}, gamelib.SourceDescriptorExe, opts.AllowNetwork)
 

@@ -49,6 +49,7 @@ type PlatformStartup struct {
 	ThemeHueRotate           int    `json:"themeHueRotate"`
 	RoundedCorners           bool   `json:"roundedCorners"`
 	DiscordAppID             string `json:"discordAppId"`
+	SteamGridDBAPIKey        string `json:"steamGridDbApiKey"`
 	AppVersion               string `json:"appVersion"`
 }
 
@@ -154,6 +155,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				ThemeHueRotate:           settings.ThemeHueRotate,
 				RoundedCorners:           settings.RoundedCorners,
 				DiscordAppID:             settings.DiscordAppID,
+				SteamGridDBAPIKey:        settings.SteamGridDBAPIKey,
 				AppVersion:               appVersionFromBuildConfig(),
 			}, nil
 		}
@@ -210,6 +212,7 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		ThemeHueRotate:           settings.ThemeHueRotate,
 		RoundedCorners:           settings.RoundedCorners,
 		DiscordAppID:             settings.DiscordAppID,
+		SteamGridDBAPIKey:        settings.SteamGridDBAPIKey,
 		AppVersion:               appVersionFromBuildConfig(),
 	}, nil
 }

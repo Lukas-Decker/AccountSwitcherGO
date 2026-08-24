@@ -71,6 +71,15 @@ type AppSettings struct {
 	// OfflineMode blocks outbound HTTP (avatars, Steam APIs, etc.) when true.
 	OfflineMode bool `json:"offlineMode,omitempty"`
 
+	// SteamGridDBAPIKey unlocks the community artwork archive.
+	//
+	// It is the only art source that covers every platform rather than one, and
+	// the only thing that gives Epic, Ubisoft, Rockstar and Battle.net tiles a
+	// real cover instead of an executable's icon. The archive has no anonymous
+	// access, so it stays switched off until the user pastes a key of their own
+	// from steamgriddb.com.
+	SteamGridDBAPIKey string `json:"steamGridDbApiKey,omitempty"`
+
 	// PrereleaseUpdates includes GitHub pre-releases in update checks.
 	// Stored without omitempty so an explicit opt-out survives a restart.
 	PrereleaseUpdates bool `json:"prereleaseUpdates"`
@@ -247,6 +256,22 @@ func resolveSettingsSavePath(exeDir string, s AppSettings) (string, error) {
 }
 
 // LoadAppSettings reads Account-Switcher.settings.json from the resolved location.
+// gameArtArchiveKeyHook receives the artwork archive key.
+//
+// Set by main rather than called directly: gameart already imports this package
+// for the wwwroot path, so importing it back would be a cycle.
+var gameArtArchiveKeyHook func(key string)
+
+// SetGameArtArchiveKeyHook installs the receiver for the archive key.
+func SetGameArtArchiveKeyHook(fn func(key string)) { gameArtArchiveKeyHook = fn }
+
+// SetGameArtArchiveKey applies the key wherever it was wired to.
+func SetGameArtArchiveKey(key string) {
+	if gameArtArchiveKeyHook != nil {
+		gameArtArchiveKeyHook(key)
+	}
+}
+
 func LoadAppSettings(exeDir string) (AppSettings, error) {
 	return loadSettings(exeDir)
 }

@@ -595,6 +595,8 @@
   "Games_ConfidenceStrong": "From this account's own launcher data",
   "Games_ConfidenceExact": "The launcher names this account as the owner",
   "Games_ResolvedAt": "Updated {time}",
+  "Settings_GameArtArchive": "Game artwork archive key",
+  "Settings_GameArtArchive_Note": "Optional. A free SteamGridDB key adds cover art for games no launcher provides artwork for, which is most of Epic, Ubisoft, Rockstar and Battle.net. Get one at steamgriddb.com/profile/preferences/api.",
   "Toast_GamesLoadFailed": "Could not load the games list",
   "Settings_ThemeHue": "Colour rotation",
   "Settings_ThemeHueReset": "Reset",

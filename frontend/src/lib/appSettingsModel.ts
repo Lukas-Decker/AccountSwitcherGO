@@ -253,8 +253,27 @@ export const skipElevatePrompt = createToggle({
 
 /** Discord names the presence after the app the id belongs to. */
 export const discordAppId = writable("");
+
+/** The artwork archive key. Empty leaves the archive off, which is the default:
+ * it is a third-party service, and nothing reaches it until the user opts in by
+ * pasting a key of their own. */
+export const gameArtArchiveKey = writable("");
 export const appVersion = writable("");
 export const userDataPath = writable("");
+
+export async function saveGameArtArchiveKey(value: string): Promise<void> {
+  const next = value.trim();
+  gameArtArchiveKey.set(next);
+  try {
+    await PlatformService.SetSteamGridDBAPIKey(next);
+  } catch (e) {
+    pushToast({
+      type: "error",
+      message: formatToastWithError(get(t)("Toast_SaveFailed"), e),
+      duration: 8000,
+    });
+  }
+}
 
 export async function saveDiscordAppId(value: string): Promise<void> {
   const next = value.trim();
@@ -296,6 +315,7 @@ async function hydrateFromSnapshot(): Promise<void> {
   offlineMode.set(settings.offlineMode);
   offlineModeToggle.value.set(settings.offlineMode);
   discordAppId.set(settings.discordAppId ?? "");
+  gameArtArchiveKey.set(settings.steamGridDbApiKey ?? "");
   protocolEnabled.value.set(settings.protocolEnabled);
   exitToTray.value.set(settings.exitToTray);
   prereleaseUpdates.value.set(settings.prereleaseUpdates);
