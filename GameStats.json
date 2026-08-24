@@ -1,5 +1,41 @@
 {
   "StatsDefinitions": {
+    "Apex Legends": {
+      "UniqueId": "AL",
+      "Indicator": "APEX",
+      "ProcessName": "r5apex_dx12.exe",
+      "Url": "",
+      "Attribution": {
+        "Image": "img/gs/providers/apexlegendsstatus.webp",
+        "Dimensions": "253x90",
+        "Link": "https://apexlegendsstatus.com"
+      },
+      "Vars": {
+        "Username": {
+          "Display": "EA Username"
+        }
+      },
+      "Collect": {
+        "BR": {
+          "Source": "json",
+          "Path": "rankScore",
+          "ImageFromPath": "rankImg",
+          "ImageCacheDir": "gs/apex",
+          "Indicator": "",
+          "DisplayAs": "<div class='apex-rank'><img src=\"%img%\" alt=\"\"/><span>%x_fmt% BR</span></div>",
+          "DisplayFormat": "commaNumber",
+          "NoDisplayIf": "0",
+          "ToggleText": "Ranked Points"
+        },
+        "LVL": {
+          "Source": "json",
+          "Path": "level",
+          "DisplayAs": "LVL %x%",
+          "NoDisplayIf": "0",
+          "ToggleText": "Account Level"
+        }
+      }
+    },
     "Counter-Strike 2": {
       "UniqueId": "CSGO",
       "Indicator": "",
@@ -153,11 +189,15 @@
     }
   },
   "PlatformCompatibilities": {
-    "Steam": [
-      "Counter-Strike 2"
-    ],
     "BattleNet": [
       "Overwatch"
+    ],
+    "EA Desktop": [
+      "Apex Legends"
+    ],
+    "Steam": [
+      "Apex Legends",
+      "Counter-Strike 2"
     ]
   }
 }

@@ -5,9 +5,7 @@
   import {
     autoStreamerMode,
     hideFromScreenshots,
-    gameArtArchiveKey,
     offlineModeToggle,
-    saveGameArtArchiveKey,
     streamerMode,
   } from "../../../lib/appSettingsModel";
   import { settingsIcons } from "./settingsIcons";
@@ -21,24 +19,6 @@
   icon={settingsIcons.privacy}
   keywords="privacy streaming offline capture"
 >
-  <SettingsRow
-    label={$t("Settings_GameArtArchive")}
-    hint={$t("Settings_GameArtArchive_Note")}
-    controlId="settings-art-archive"
-    keywords="artwork art cover grid steamgriddb api key games"
-    stacked
-  >
-    <input
-      id="settings-art-archive"
-      class="settings-input"
-      type="text"
-      spellcheck="false"
-      autocomplete="off"
-      value={$gameArtArchiveKey}
-      on:change={(e) => void saveGameArtArchiveKey(e.currentTarget.value)}
-    />
-  </SettingsRow>
-
   <SettingsRow
     label={$t("Settings_OfflineMode")}
     controlId="settings-offline"

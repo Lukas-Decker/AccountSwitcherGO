@@ -18,6 +18,13 @@ export const settingsIcons = {
   appearance: [circle(12, 12, 9), "M12 3v18", "M12 7h5", "M12 12h8", "M12 17h5"],
   /** Globe. */
   language: [circle(12, 12, 9), "M3 12h18", "M12 3a14 14 0 010 18a14 14 0 010-18"],
+  /** Gamepad. */
+  games: [
+    "M7 12h4M9 10v4",
+    "M6 8h12a4 4 0 014 4v0a4 4 0 01-4 4h-1l-2-2H9l-2 2H6a4 4 0 01-4-4v0a4 4 0 014-4z",
+    "M16 11h.01",
+    "M18 13h.01",
+  ],
   /** Application window with a title bar. */
   window: ["M3 5h18v14H3z", "M3 9h18", "M6 7h.01", "M9 7h.01"],
   /** Eye: what other people can see of the app. */

@@ -17,6 +17,7 @@
   import AppearanceCard from "./AppearanceCard.svelte";
   import LanguageCard from "./LanguageCard.svelte";
   import WindowCard from "./WindowCard.svelte";
+  import GamesCard from "./GamesCard.svelte";
   import PrivacyCard from "./PrivacyCard.svelte";
   import SecurityCard from "./SecurityCard.svelte";
   import InputCard from "./InputCard.svelte";
@@ -93,6 +94,7 @@
 
   <div class="settings-grid" use:masonryGrid>
     <AppearanceCard />
+    <GamesCard />
     <LanguageCard />
     <WindowCard />
     <PrivacyCard />

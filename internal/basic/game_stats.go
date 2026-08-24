@@ -196,6 +196,18 @@ var gameStatsState = &gameStatsManager{
 
 var gameStatsLog = slog.Default().With("component", "game-stats")
 
+// seedEmbeddedGameStats puts the shipped definitions in the data directory
+// without destroying what is already there.
+//
+// It used to write the embedded copy over the user's file on every load, which
+// made GameStats.json unusable as a place to configure anything: an edit
+// survived until the next launch, and a definition dropped from the shipped
+// copy took the user's configuration for that game with it.
+//
+// So the file is only created when it is missing, and otherwise only gains
+// definitions it does not have yet. Nothing already in it is rewritten or
+// removed, which means a shipped update can add a game but can never take one
+// away from someone who is using it.
 func seedEmbeddedGameStats() {
 	if len(embeddedGameStatsJSON) == 0 {
 		return
@@ -206,9 +218,73 @@ func seedEmbeddedGameStats() {
 	}
 	dest := filepath.Join(root, "GameStats.json")
 	_ = os.MkdirAll(filepath.Dir(dest), 0o755)
-	payload := append([]byte(nil), embeddedGameStatsJSON...)
-	_ = fsutil.WriteFileAtomic(dest, payload, 0o644)
-	gameStatsLog.Debug("seeded embedded GameStats.json", "dest", dest, "bytes", len(payload))
+
+	existing, err := os.ReadFile(dest)
+	if err != nil || len(existing) == 0 {
+		payload := append([]byte(nil), embeddedGameStatsJSON...)
+		_ = fsutil.WriteFileAtomic(dest, payload, 0o644)
+		gameStatsLog.Debug("created GameStats.json from the embedded copy", "dest", dest)
+		return
+	}
+
+	merged, added, ok := mergeGameStatsDefinitions(existing, embeddedGameStatsJSON)
+	if !ok || added == 0 {
+		return
+	}
+	_ = fsutil.WriteFileAtomic(dest, merged, 0o644)
+	gameStatsLog.Info("added new game stats definitions", "dest", dest, "added", added)
+}
+
+// mergeGameStatsDefinitions folds definitions the shipped copy has and the
+// user's does not into the user's file, touching nothing else.
+//
+// Returns ok=false when either side is not the shape this understands, so a
+// hand-edited file that no longer parses is left exactly as the user left it
+// rather than being replaced.
+func mergeGameStatsDefinitions(userRaw, embeddedRaw []byte) (out []byte, added int, ok bool) {
+	var user, shipped map[string]json.RawMessage
+	if json.Unmarshal(userRaw, &user) != nil || json.Unmarshal(embeddedRaw, &shipped) != nil {
+		return nil, 0, false
+	}
+
+	for _, section := range []string{"StatsDefinitions", "PlatformCompatibilities"} {
+		var userSection, shippedSection map[string]json.RawMessage
+		if len(user[section]) > 0 && json.Unmarshal(user[section], &userSection) != nil {
+			return nil, 0, false
+		}
+		if len(shipped[section]) == 0 {
+			continue
+		}
+		if json.Unmarshal(shipped[section], &shippedSection) != nil {
+			return nil, 0, false
+		}
+		if userSection == nil {
+			userSection = map[string]json.RawMessage{}
+		}
+		for name, def := range shippedSection {
+			if _, present := userSection[name]; present {
+				continue
+			}
+			userSection[name] = def
+			if section == "StatsDefinitions" {
+				added++
+			}
+		}
+		encoded, err := json.Marshal(userSection)
+		if err != nil {
+			return nil, 0, false
+		}
+		user[section] = encoded
+	}
+
+	if added == 0 {
+		return nil, 0, true
+	}
+	encoded, err := json.MarshalIndent(user, "", "  ")
+	if err != nil {
+		return nil, 0, false
+	}
+	return append(encoded, '\n'), added, true
 }
 
 func (m *gameStatsManager) ensureLoadedLocked() error {
@@ -852,6 +928,13 @@ func (m *gameStatsManager) refreshPrepareLocked(platformName, game, accountID st
 	ctx := GameStatVarContext{AccountID: accountID, AccountUsername: display, Username: username}
 	resolved := ResolveGameStatsVarTemplates(gameStatVarDefsToAutofillMap(def.Vars), row.Vars, ctx)
 	urlStr = substituteGameStatsURL(def.URL, resolved)
+	if strings.TrimSpace(urlStr) == "" {
+		// A definition with no endpoint is one whose data source this build has
+		// no address for. It stays in the file so the game keeps its settings
+		// and its per-account setup, and refreshing it simply reports that
+		// rather than fetching an empty URL.
+		return gameDefinition{}, "", fmt.Errorf("no stats source is configured for %s", game)
+	}
 	return def, urlStr, nil
 }
 
