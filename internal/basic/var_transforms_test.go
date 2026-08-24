@@ -6,10 +6,10 @@ import (
 )
 
 func TestApplyVariableTransformPipeline_ReplaceLast_BattleTagStyle(t *testing.T) {
-	s := "YTTechNobo_1234|ReplaceLast('_','-')"
+	s := "SamplePlayer_1234|ReplaceLast('_','-')"
 	got := applyVariableTransformPipeline(s)
-	if got != "YTTechNobo-1234" {
-		t.Fatalf("got %q want YTTechNobo-1234", got)
+	if got != "SamplePlayer-1234" {
+		t.Fatalf("got %q want SamplePlayer-1234", got)
 	}
 }
 
@@ -54,9 +54,9 @@ func TestResolveGameStatsVarTemplates_BattleTagFromAccountUsername(t *testing.T)
 	def := map[string]string{
 		"BattleTag": "%ACCOUNTUSERNAME%|ReplaceLast('_','-')",
 	}
-	ctx := GameStatVarContext{AccountID: "1", AccountUsername: "YTTechNobo_1234"}
+	ctx := GameStatVarContext{AccountID: "1", AccountUsername: "SamplePlayer_1234"}
 	got := ResolveGameStatsVarTemplates(def, map[string]string{}, ctx)
-	if got["BattleTag"] != "YTTechNobo-1234" {
+	if got["BattleTag"] != "SamplePlayer-1234" {
 		t.Fatalf("got %q", got["BattleTag"])
 	}
 }

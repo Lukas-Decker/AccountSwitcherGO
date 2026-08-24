@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json oppdatert til v{version}.",
   "Toast_FailedStatsLoad": "Kunne ikke laste inn GameStats.json! Vennligst bekreft at denne filen eksisterer.",
   "Toast_GameStatsLoadFail": "Kunne ikke hente spillstatistikk fra nettet for {Game}",
-  "Toast_UpdateCheckFail": "Kunne ikke nå https://tcno.co/ for å se etter oppdateringer. Denne meldingen vises en gang om dagen.",
+  "Toast_UpdateCheckFail": "Kunne ikke nå GitHub for å se etter oppdateringer. Denne meldingen vises en gang om dagen.",
   "Toast_SameAccount": "Kan ikke kopiere filer til/fra samme konto. Prøv en annen konto, eller se Wiki for mer informasjon.",
   "Toast_FoundExeViaShortcut": "Vi fant den installerte banen fra en snarvei på Start-menyen. Bekreft plasseringen ved å klikke på Innstillinger nå. Klikk for å avvise.",
   "Modal_Crowdin_Header": "Crowdin-oversettere",

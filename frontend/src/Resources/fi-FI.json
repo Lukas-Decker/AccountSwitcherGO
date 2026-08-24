@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json päivitetty v{version}.",
   "Toast_FailedStatsLoad": "GameStats.jsonin lataaminen epäonnistui! Vahvista, että tämä tiedosto on olemassa.",
   "Toast_GameStatsLoadFail": "Pelitilastojen noutaminen verkosta epäonnistui kohteelle {Game}",
-  "Toast_UpdateCheckFail": "Ei saatu yhteyttä osoitteeseen https://tcno.co/ päivitysten tarkistamiseksi. Tämä viesti näytetään kerran päivässä.",
+  "Toast_UpdateCheckFail": "Ei saatu yhteyttä osoitteeseen GitHub päivitysten tarkistamiseksi. Tämä viesti näytetään kerran päivässä.",
   "Toast_SameAccount": "Tiedostoja ei voi kopioida samalle tilille/samalta tililtä. Kokeile toista tiliä tai katso lisätietoja Wikistä.",
   "Toast_FoundExeViaShortcut": "Löysimme asennuspolun Käynnistä-valikon pikakuvakkeesta. Vahvista sen sijainti napsauttamalla Asetukset nyt.",
   "Modal_Crowdin_Header": "Crowdinin kääntäjät",

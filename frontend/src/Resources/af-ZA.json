@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json opgedateer na v{version}.",
   "Toast_FailedStatsLoad": "Kon nie GameStats.json laai nie! Verifieer asseblief dat hierdie lêer bestaan.",
   "Toast_GameStatsLoadFail": "Kon nie speletjiestatistieke van die web af kry vir {Game}nie",
-  "Toast_UpdateCheckFail": "Kon nie https://tcno.co/ bereik om vir opdaterings te kyk nie. Hierdie boodskap sal een keer per dag wys.",
+  "Toast_UpdateCheckFail": "Kon nie GitHub bereik om vir opdaterings te kyk nie. Hierdie boodskap sal een keer per dag wys.",
   "Toast_SameAccount": "Kan nie lêers na/van dieselfde rekening kopieer nie. Probeer 'n ander rekening, of sien Wiki vir meer inligting.",
   "Toast_FoundExeViaShortcut": "Ons het die geïnstalleerde pad vanaf ’n Start Menu-kortpad gevind. Verifieer asseblief die ligging daarvan deur nou op Instellings te klik.",
   "Modal_Crowdin_Header": "Crowdin-vertalers",

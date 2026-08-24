@@ -21,7 +21,7 @@ const KEYBOARD_FOCUS_KEYS = new Set([
   " ",
   "Escape",
 ]);
-const SYNTHETIC_CONTROLLER_KEY_EVENT = "__tcnoControllerKeyEvent";
+const SYNTHETIC_CONTROLLER_KEY_EVENT = "__accswControllerKeyEvent";
 
 let currentModality: InputModality = "pointer";
 let currentControllerGlyphScheme: ControllerGlyphScheme = "xbox";

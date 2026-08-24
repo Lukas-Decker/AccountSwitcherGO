@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "อัปเดต Platforms.json เป็น v{version} แล้ว",
   "Toast_FailedStatsLoad": "ไม่สามารถโหลด GameStats.json! โปรดตรวจสอบว่าไฟล์นี้มีอยู่แล้ว",
   "Toast_GameStatsLoadFail": "ไม่สามารถรับสถิติเกมจากเว็บเป็นเวลา {Game}",
-  "Toast_UpdateCheckFail": "ไม่สามารถติดต่อ https://tcno.co/ เพื่อตรวจสอบการอัปเดตข้อความนี้จะแสดงวันละครั้ง",
+  "Toast_UpdateCheckFail": "ไม่สามารถติดต่อ GitHub เพื่อตรวจสอบการอัปเดตข้อความนี้จะแสดงวันละครั้ง",
   "Toast_SameAccount": "ไม่สามารถคัดลอกไฟล์ไปยัง/จากบัญชีเดียวกันได้ลองใช้บัญชีอื่นหรือดูข้อมูลเพิ่มเติมที่ Wiki",
   "Toast_FoundExeViaShortcut": "เราพบเส้นทางการติดตั้งจากทางลัดของเมนูเริ่ม โปรดตรวจสอบตำแหน่งโดยคลิกการตั้งค่าทันที คลิกเพื่อยกเลิก",
   "Modal_Crowdin_Header": "Crowdin Translators",

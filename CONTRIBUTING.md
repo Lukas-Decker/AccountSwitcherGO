@@ -2,7 +2,7 @@
 
 Thank you for contributing to the Account Switcher! If you have any questions or doubts, don't be afraid to send them my way. I appreciate all contributions, and I am looking forward to fostering an open, transparent, and collaborative environment.
 
-Before contributing, I encourage you to also read or [LICENSE](https://github.com/TCNOCo/Account-Switcher/blob/master/LICENSE), also found in this repository. If you have any inquiries or questions not answered by the content of this repository, feel free to [join the Discord](https://s.tcno.co/AccSwitcherDiscord) and ask in `#general-acc-switcher` under `TCNO ACCOUNT SWITCHER`.
+Before contributing, I encourage you to also read or [LICENSE](https://github.com/KeinNameVorhanden/AccountSwitcherGO/blob/main/LICENSE), also found in this repository. If you have any inquiries or questions not answered by the content of this repository, feel free to open an issue.
 
 ## Creating issues
 
@@ -31,4 +31,4 @@ Guidelines:
 
 ## Building the project locally
 
-See: [Building from source code](https://github.com/TCNOCo/Account-Switcher/wiki/Building-from-source-code) in the project's Wiki.
+See: [Building from source code](https://github.com/KeinNameVorhanden/AccountSwitcherGO/wiki/Building-from-source-code) in the project's Wiki.

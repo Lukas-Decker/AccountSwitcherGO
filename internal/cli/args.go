@@ -35,7 +35,7 @@ type Parsed struct {
 	LogoutPlatform        string   // optional filter for logout
 	LogoutAccount         string   // optional id for logout (reserved)
 	OpenPage              string   // platform name for GUI route
-	PassthroughLaunchArgs []string // forwarded to the target platform exe (not TcNo flags)
+	PassthroughLaunchArgs []string // forwarded to the target platform exe (not switcher flags)
 	RunShortcutFile       string   // basename of .lnk/.url; used with swap to launch from cache / fallback
 	RunAppID              string   // numeric Steam app id; Steam + +s only, launches steam://rungameid/
 	StartInTray           bool     // -tray: start GUI with main window hidden
@@ -43,9 +43,9 @@ type Parsed struct {
 	ListAccountsPlatform  string   // KindListAccounts: empty = all platforms; else canonical name
 	LogLevelSet           bool     // true if --log-level was passed
 	LogLevel              slog.Level
-	UserDataMoveFrom      string   // --userdata-move-from= old path after relocation restart
-	UserDataMoveTo        string   // --userdata-move-to= new path after relocation restart
-	StartupToast          string   // --toast= i18n key emitted when GUI window is ready
+	UserDataMoveFrom      string // --userdata-move-from= old path after relocation restart
+	UserDataMoveTo        string // --userdata-move-to= new path after relocation restart
+	StartupToast          string // --toast= i18n key emitted when GUI window is ready
 }
 
 const steamPlatformName = "Steam"

@@ -530,7 +530,7 @@ function getGrainTile(): HTMLCanvasElement | null {
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
   const image = ctx.createImageData(size, size);
-  const rng = makeRng("tcno-grain");
+  const rng = makeRng("accsw-grain");
   for (let i = 0; i < image.data.length; i += 4) {
     const value = 110 + rng.next() * 76;
     image.data[i] = value;

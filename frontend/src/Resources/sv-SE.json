@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json uppdaterad till v{version}.",
   "Toast_FailedStatsLoad": "Det gick inte att ladda GameStats.json! Kontrollera att denna fil finns.",
   "Toast_GameStatsLoadFail": "Det gick inte att hämta spelstatistik från webben för {Game}",
-  "Toast_UpdateCheckFail": "Det gick inte att nå https://tcno.co/ för att söka efter uppdateringar. Detta meddelande kommer att visas en gång om dagen.",
+  "Toast_UpdateCheckFail": "Det gick inte att nå GitHub för att söka efter uppdateringar. Detta meddelande kommer att visas en gång om dagen.",
   "Toast_SameAccount": "Kan inte kopiera filer till/från samma konto. Prova ett annat konto eller se Wiki för mer information.",
   "Toast_FoundExeViaShortcut": "Vi hittade den installerade sökvägen från en genväg på startmenyn. Vänligen verifiera dess plats genom att klicka på Inställningar nu. Klicka för att avvisa.",
   "Modal_Crowdin_Header": "Crowdin-översättare",

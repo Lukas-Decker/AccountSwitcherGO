@@ -25,7 +25,7 @@ const inputModalityMock = vi.hoisted(() => {
       mock.currentModality = "controller";
     }),
     markSyntheticControllerKeyEvent: vi.fn((event: KeyboardEvent) => {
-      Object.defineProperty(event, "__tcnoControllerKeyEvent", { value: true, configurable: true });
+      Object.defineProperty(event, "__accswControllerKeyEvent", { value: true, configurable: true });
     }),
     inferControllerGlyphScheme: vi.fn((id: string) => {
       const normalized = id.toLowerCase();

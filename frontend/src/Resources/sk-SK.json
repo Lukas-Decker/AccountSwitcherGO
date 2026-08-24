@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json bol aktualizovaný na v{version}.",
   "Toast_FailedStatsLoad": "Nepodarilo sa načítať súbor GameStats.json! Skontrolujte, či tento súbor existuje.",
   "Toast_GameStatsLoadFail": "Nepodarilo sa získať herné štatistiky z webu pre {Game}",
-  "Toast_UpdateCheckFail": "Nepodarilo sa dostať na stránku https://tcno.co/ a skontrolovať aktualizácie. Táto správa sa zobrazí raz denne.",
+  "Toast_UpdateCheckFail": "Nepodarilo sa dostať na stránku GitHub a skontrolovať aktualizácie. Táto správa sa zobrazí raz denne.",
   "Toast_SameAccount": "Nie je možné kopírovať súbory do/z rovnakého účtu. Skúste iný účet alebo si pozrite Wiki, kde nájdete ďalšie informácie.",
   "Toast_FoundExeViaShortcut": "Nainštalovanú cestu sme našli zo skratky ponuky Štart. Overte jej umiestnenie kliknutím na Nastavenia.",
   "Modal_Crowdin_Header": "Crowdinoví prekladatelia",

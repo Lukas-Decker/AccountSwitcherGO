@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json frissítve v{version}.",
   "Toast_FailedStatsLoad": "Nem sikerült betölteni a GameStats.json fájlt! Ellenőrizze, hogy létezik-e ez a fájl.",
   "Toast_GameStatsLoadFail": "Nem sikerült lekérni a játékstatisztikát az internetről a {Game}-hoz",
-  "Toast_UpdateCheckFail": "Nem sikerült elérni a https://tcno.co/ címet a frissítések kereséséhez. Ez az üzenet naponta egyszer jelenik meg.",
+  "Toast_UpdateCheckFail": "Nem sikerült elérni a GitHub címet a frissítések kereséséhez. Ez az üzenet naponta egyszer jelenik meg.",
   "Toast_SameAccount": "Ugyanabba a fiókba/fiókból nem lehet fájlokat másolni. Próbálkozz másik fiókkal, vagy látogass el a Wiki oldalára további információkért.",
   "Toast_FoundExeViaShortcut": "A telepített elérési utat a Start menü parancsikonjából találtuk meg. Kérjük, ellenőrizze a helyét a Beállítások most lehetőségre kattintva. Kattintson az elvetéshez.",
   "Modal_Crowdin_Header": "Crowdin fordítók",

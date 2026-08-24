@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json 已更新到 v{version}。",
   "Toast_FailedStatsLoad": "載入 GameStats.json 失敗！請確認此檔案存在。",
   "Toast_GameStatsLoadFail": "無法從 web 取得 {Game} 的遊戲統計",
-  "Toast_UpdateCheckFail": "無法連線到 https://tcno.co/ 以檢查更新。此訊息每天只會顯示一次。",
+  "Toast_UpdateCheckFail": "無法連線到 GitHub 以檢查更新。此訊息每天只會顯示一次。",
   "Toast_SameAccount": "無法向同一個帳戶複製檔案或從同一個帳戶複製檔案。請嘗試其他帳戶，或查看 Wiki 取得更多資訊。",
   "Toast_FoundExeViaShortcut": "我們從開始功能表捷徑找到了安裝路徑。請立即點擊設定以確認其位置。",
   "Modal_Crowdin_Header": "Crowdin 翻譯者",

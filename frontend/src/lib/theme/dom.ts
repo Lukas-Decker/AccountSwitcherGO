@@ -14,13 +14,13 @@ import {
   currentThemeCustomAccentColor,
 } from "./stores";
 
-const OVERLAY_STYLE_ID = "tcno-theme-overlay";
-const OVERLAY_STYLE_ATTR = "data-tcno-theme-overlay";
-const ACCENT_OVERLAY_STYLE_ID = "tcno-theme-accent-overlay";
-const ACCENT_OVERLAY_STYLE_ATTR = "data-tcno-theme-accent-overlay";
-const MODAL_PRIMARY_STYLE_ID = "tcno-modal-primary-overlay";
-const MODAL_PRIMARY_STYLE_ATTR = "data-tcno-modal-primary-overlay";
-const THEME_FONT_LINK_ATTR = "data-tcno-google-fonts-theme";
+const OVERLAY_STYLE_ID = "accsw-theme-overlay";
+const OVERLAY_STYLE_ATTR = "data-accsw-theme-overlay";
+const ACCENT_OVERLAY_STYLE_ID = "accsw-theme-accent-overlay";
+const ACCENT_OVERLAY_STYLE_ATTR = "data-accsw-theme-accent-overlay";
+const MODAL_PRIMARY_STYLE_ID = "accsw-modal-primary-overlay";
+const MODAL_PRIMARY_STYLE_ATTR = "data-accsw-modal-primary-overlay";
+const THEME_FONT_LINK_ATTR = "data-accsw-google-fonts-theme";
 
 const WINDOWS_ACCENT_CHANGED_EVENT = "windows-accent-changed";
 

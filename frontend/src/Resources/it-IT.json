@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json aggiornato a v{version}.",
   "Toast_FailedStatsLoad": "Impossibile caricare GameStats.json! Verificare che il file esista.",
   "Toast_GameStatsLoadFail": "Impossibile ottenere statistiche di gioco dal Web per {Game}",
-  "Toast_UpdateCheckFail": "Impossibile raggiungere https://tcno.co/ per verificare la disponibilità di aggiornamenti. Questo messaggio verrà visualizzato una volta al giorno.",
+  "Toast_UpdateCheckFail": "Impossibile raggiungere GitHub per verificare la disponibilità di aggiornamenti. Questo messaggio verrà visualizzato una volta al giorno.",
   "Toast_SameAccount": "Impossibile copiare file nello/dallo stesso account. Prova un altro account o visita il Wiki per maggiori informazioni.",
   "Toast_FoundExeViaShortcut": "Abbiamo trovato il percorso installato da un collegamento al menu Start. Verificane la posizione cliccando su Impostazioni ora. Clicca per chiudere.",
   "Modal_Crowdin_Header": "Crowdin traduttori",

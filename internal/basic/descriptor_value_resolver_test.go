@@ -36,9 +36,9 @@ func TestResolveDescriptorValue_LatestModifiedFile(t *testing.T) {
 }
 
 func TestParseBattleNetAccountIDFromLogData_LastMatch(t *testing.T) {
-	data := []byte(`I 2026-05-07 16:47:10.188794 [Main] {Main} Opened database at: C:\Users\tcno\AppData\Local\Battle.net\CachedData.db
-I 2026-05-07 16:47:14.311645 [Main] {Main} Opened database at: C:\Users\tcno\AppData\Local\Battle.net\Account\1111185922\account.db
-I 2026-05-07 16:50:14.311645 [Main] {Main} Opened database at: C:\Users\tcno\AppData\Local\Battle.net\Account\9999999999\account.db`)
+	data := []byte(`I 2026-05-07 16:47:10.188794 [Main] {Main} Opened database at: C:\Users\sample\AppData\Local\Battle.net\CachedData.db
+I 2026-05-07 16:47:14.311645 [Main] {Main} Opened database at: C:\Users\sample\AppData\Local\Battle.net\Account\1111185922\account.db
+I 2026-05-07 16:50:14.311645 [Main] {Main} Opened database at: C:\Users\sample\AppData\Local\Battle.net\Account\9999999999\account.db`)
 	got := parseBattleNetAccountIDFromLogData(data)
 	want := "9999999999"
 	if got != want {
@@ -75,8 +75,8 @@ func TestResolveDescriptorValue_SQLiteInterpolatesBuiltInUserID(t *testing.T) {
 func TestResolveBuiltInRuntimeVariables_BattleNetReadsAccountIDFromLatestLog(t *testing.T) {
 	dir := t.TempDir()
 	logPath := filepath.Join(dir, "battle.net-1.log")
-	logData := []byte(`I 2026-05-07 16:47:10.188794 [Main] {Main} Opened database at: C:\Users\tcno\AppData\Local\Battle.net\CachedData.db
-I 2026-05-07 16:47:14.311645 [Main] {Main} Opened database at: C:\Users\tcno\AppData\Local\Battle.net\Account\1111185922\account.db`)
+	logData := []byte(`I 2026-05-07 16:47:10.188794 [Main] {Main} Opened database at: C:\Users\sample\AppData\Local\Battle.net\CachedData.db
+I 2026-05-07 16:47:14.311645 [Main] {Main} Opened database at: C:\Users\sample\AppData\Local\Battle.net\Account\1111185922\account.db`)
 	if err := os.WriteFile(logPath, logData, 0o644); err != nil {
 		t.Fatalf("write battlenet log: %v", err)
 	}

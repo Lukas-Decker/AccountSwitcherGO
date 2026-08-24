@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json v{version} sürümüne güncellendi.",
   "Toast_FailedStatsLoad": "GameStats.json yüklenemedi! Lütfen bu dosyanın mevcut olduğunu doğrulayın.",
   "Toast_GameStatsLoadFail": "{Game}için web'den oyun istatistikleri alınamadı",
-  "Toast_UpdateCheckFail": "Güncellemeleri kontrol etmek için https://tcno.co/ adresine ulaşılamadı. Bu mesaj günde bir kez gösterilecektir.",
+  "Toast_UpdateCheckFail": "Güncellemeleri kontrol etmek için GitHub adresine ulaşılamadı. Bu mesaj günde bir kez gösterilecektir.",
   "Toast_SameAccount": "Dosyalar aynı hesaba/aynı hesaptan kopyalanamıyor. Farklı bir hesap deneyin veya daha fazla bilgi için Wiki'ye bakın.",
   "Toast_FoundExeViaShortcut": "Yüklenen yolu bir Başlat Menüsü kısayolundan bulduk. Lütfen şimdi Ayarlar'a tıklayarak konumunu doğrulayın. Kapatmak için tıklayın.",
   "Modal_Crowdin_Header": "Crowdin çevirmenleri",

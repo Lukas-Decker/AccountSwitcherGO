@@ -21,6 +21,6 @@
 
 ## Information
 
-A popular VS Code theme, ported to TCNO Account Switcher.
+A popular VS Code theme, ported to Account Switcher.
     
     ~ Created by Avo

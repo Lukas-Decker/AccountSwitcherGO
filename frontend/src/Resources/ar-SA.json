@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "تم تحديث Platforms.json إلى v{version}.",
   "Toast_FailedStatsLoad": "فشل تحميل GameStats.json! الرجاء التحقق من وجود هذا الملف.",
   "Toast_GameStatsLoadFail": "فشل الحصول على إحصائيات اللعبة من الويب لـ {Game}",
-  "Toast_UpdateCheckFail": "تعذر الوصول إلى https://tcno.co/ للتحقق من وجود تحديثات. ستظهر هذه الرسالة مرة واحدة في اليوم.",
+  "Toast_UpdateCheckFail": "تعذر الوصول إلى GitHub للتحقق من وجود تحديثات. ستظهر هذه الرسالة مرة واحدة في اليوم.",
   "Toast_SameAccount": "لا يمكن نسخ الملفات إلى/من نفس الحساب. جرب حسابًا آخر، أو راجع Wiki لمزيد من المعلومات.",
   "Toast_FoundExeViaShortcut": "وجدنا مسار التثبيت من اختصار قائمة Start. يرجى التحقق من موقعه بالنقر على الإعدادات الآن.",
   "Modal_Crowdin_Header": "مترجمو Crowdin",

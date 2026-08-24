@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json עודכן לגרסה v{version}.",
   "Toast_FailedStatsLoad": "טעינת GameStats.json נכשלה! אנא ודא שקובץ זה קיים.",
   "Toast_GameStatsLoadFail": "קבלת סטטיסטיקות משחק מהאינטרנט עבור {Game} נכשלה",
-  "Toast_UpdateCheckFail": "לא ניתן ליצור קשר עם https://tcno.co/ כדי לבדוק אם יש עדכונים. הודעה זו תוצג פעם ביום.",
+  "Toast_UpdateCheckFail": "לא ניתן ליצור קשר עם GitHub כדי לבדוק אם יש עדכונים. הודעה זו תוצג פעם ביום.",
   "Toast_SameAccount": "לא ניתן להעתיק קבצים אל/מאותו חשבון. נסה חשבון אחר או עיין ב-Wiki למידע נוסף.",
   "Toast_FoundExeViaShortcut": "מצאנו את נתיב ההתקנה מקיצור דרך בתפריט התחל. אמת את המיקום שלו על ידי לחיצה על הגדרות כעת.",
   "Modal_Crowdin_Header": "מתרגמי Crowdin",

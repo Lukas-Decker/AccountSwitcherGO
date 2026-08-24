@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Đã cập nhật Platforms.json lên v{version}.",
   "Toast_FailedStatsLoad": "Không tải được GameStats.json! Vui lòng xác minh tệp này tồn tại.",
   "Toast_GameStatsLoadFail": "Không lấy được thống kê trò chơi từ web cho {Game}",
-  "Toast_UpdateCheckFail": "Không thể kết nối https://tcno.co/ để kiểm tra cập nhật. Thông báo này sẽ hiển thị mỗi ngày một lần.",
+  "Toast_UpdateCheckFail": "Không thể kết nối GitHub để kiểm tra cập nhật. Thông báo này sẽ hiển thị mỗi ngày một lần.",
   "Toast_SameAccount": "Không thể sao chép tệp đến/từ cùng một tài khoản. Hãy thử tài khoản khác, hoặc xem Wiki để biết thêm thông tin.",
   "Toast_FoundExeViaShortcut": "Chúng tôi tìm thấy đường dẫn đã cài đặt từ lối tắt Start Menu. Vui lòng xác minh vị trí của nó bằng cách nhấp Cài đặt ngay.",
   "Modal_Crowdin_Header": "Dịch giả Crowdin",

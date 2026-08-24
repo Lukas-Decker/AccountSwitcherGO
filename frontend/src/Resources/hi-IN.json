@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json को v{version} में अपडेट कर दिया गया।",
   "Toast_FailedStatsLoad": "GameStats.json लोड करने में विफल! कृपया सत्यापित करें कि यह फ़ाइल मौजूद है.",
   "Toast_GameStatsLoadFail": "{Game} के लिए वेब से गेम आँकड़े प्राप्त करने में विफल",
-  "Toast_UpdateCheckFail": "अपडेट की जांच करने के लिए https://tcno.co/ तक नहीं पहुंच सका। यह संदेश दिन में एक बार दिखाई देगा।",
+  "Toast_UpdateCheckFail": "अपडेट की जांच करने के लिए GitHub तक नहीं पहुंच सका। यह संदेश दिन में एक बार दिखाई देगा।",
   "Toast_SameAccount": "एक ही खाते से फाइल की नक़ल नहीं कर सकता. एक अलग खाता आज़माएँ, या अधिक जानकारी के लिए Wiki देखें।",
   "Toast_FoundExeViaShortcut": "हमें स्टार्ट मेन्यू शॉर्टकट से इंस्टॉल किया गया पथ मिला है। कृपया अभी सेटिंग्स पर क्लिक करके इसकी लोकेशन सत्यापित करें। खारिज करने के लिए क्लिक करें।",
   "Modal_Crowdin_Header": "Crowdin अनुवादक",

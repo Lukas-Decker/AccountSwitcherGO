@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json be updated t' v{version}.",
   "Toast_FailedStatsLoad": "Failed t' load GameStats.json! Please verify this file exists.",
   "Toast_GameStatsLoadFail": "Failed t' get game stats from web fer {Game}",
-  "Toast_UpdateCheckFail": "Could nah reach https://tcno.co/ t' check fer updates. This message will show once a day.",
+  "Toast_UpdateCheckFail": "Could nah reach GitHub t' check fer updates. This message will show once a day.",
   "Toast_SameAccount": "Can nah copy files t'/from the same Cap'n. Try a different Cap'n, or see Wiki fer more info.",
   "Toast_FoundExeViaShortcut": "Avast! We found the installed path from a Start Menu shortcut. Please verify it's location by skewerin' Settings now. Skewer t' dismiss.",
   "Modal_Crowdin_Header": "Crowdin shipmates",

@@ -19,7 +19,7 @@ import (
 // in-use data files can often still be read.
 func leveldbLockedDirROSnapshot(src string) (_ string, err error) {
 	src = filepath.Clean(src)
-	tmp, err := os.MkdirTemp("", "tcno-leveldb-*")
+	tmp, err := os.MkdirTemp("", "accsw-leveldb-*")
 	if err != nil {
 		return "", err
 	}

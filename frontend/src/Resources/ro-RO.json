@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json a fost actualizat la v{version}.",
   "Toast_FailedStatsLoad": "Încărcarea GameStats.json a eșuat! Te rugăm să verifici dacă acest fișier există.",
   "Toast_GameStatsLoadFail": "Statisticile jocului nu au putut fi obținute de pe web pentru {Game}",
-  "Toast_UpdateCheckFail": "Nu s-a putut contacta https://tcno.co/ pentru a verifica dacă există actualizări. Acest mesaj va fi afișat o dată pe zi.",
+  "Toast_UpdateCheckFail": "Nu s-a putut contacta GitHub pentru a verifica dacă există actualizări. Acest mesaj va fi afișat o dată pe zi.",
   "Toast_SameAccount": "Nu se pot copia fișiere în/din același cont. Încearcă alt cont sau accesează Wiki pentru mai multe informații.",
   "Toast_FoundExeViaShortcut": "Am găsit calea instalării dintr-o scurtătură din meniul Start. Verificați locația făcând clic acum pe Setări.",
   "Modal_Crowdin_Header": "Crowdin traducători",

@@ -12,7 +12,7 @@ func TestGitHubAssetMatcher_explicitWindowsExe(t *testing.T) {
 		{Name: "Account-Switcher.7z"},
 		{Name: "Account-Switcher.exe.sig"},
 		{Name: "Account-Switcher.exe"},
-		{Name: "TcNo.Account.Switcher.-.Installer.exe"},
+		{Name: "Account.Switcher.-.Installer.exe"},
 	}
 	req := updater.CheckRequest{Platform: "windows", Arch: "amd64"}
 	if got := GitHubAssetMatcher(req, assets); got != 2 {

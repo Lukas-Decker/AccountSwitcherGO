@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json が v{version} に更新されました。",
   "Toast_FailedStatsLoad": "GameStats.jsonの読み込みに失敗しました！このファイルが存在することを確認してください。",
   "Toast_GameStatsLoadFail": "ウェブから {Game}のゲーム統計情報を取得できませんでした",
-  "Toast_UpdateCheckFail": "更新の確認のために https://tcno.co/ に接続できませんでした。このメッセージは1日1回表示されます。",
+  "Toast_UpdateCheckFail": "更新の確認のために GitHub に接続できませんでした。このメッセージは1日1回表示されます。",
   "Toast_SameAccount": "同じアカウントにファイルをコピーすることはできません。別のアカウントをお試しいただくか、Wikiで詳細をご覧ください。",
   "Toast_FoundExeViaShortcut": "スタート メニューのショートカットからインストールされたパスが見つかりました。今すぐ [設定] をクリックして、その場所を確認してください。クリックすると閉じます。",
   "Modal_Crowdin_Header": "Crowdinの翻訳者",

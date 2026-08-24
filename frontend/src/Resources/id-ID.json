@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json diperbarui ke v{version}.",
   "Toast_FailedStatsLoad": "Gagal memuat GameStats.json! Harap verifikasi file ini sudah ada.",
   "Toast_GameStatsLoadFail": "Gagal mendapatkan statistik permainan dari web untuk {Game}",
-  "Toast_UpdateCheckFail": "Tidak dapat mencapai https://tcno.co/ untuk memeriksa pembaruan. Pesan ini akan ditampilkan sekali sehari.",
+  "Toast_UpdateCheckFail": "Tidak dapat mencapai GitHub untuk memeriksa pembaruan. Pesan ini akan ditampilkan sekali sehari.",
   "Toast_SameAccount": "Tidak dapat menyalin file ke/dari akun yang sama. Coba akun lain, atau lihat Wiki untuk info lebih lanjut.",
   "Toast_FoundExeViaShortcut": "Kami menemukan jalur yang terinstal dari pintasan Menu Start. Harap verifikasi lokasinya dengan mengeklik Setelan sekarang. Klik untuk menutup.",
   "Modal_Crowdin_Header": "Penerjemah Crowdin",

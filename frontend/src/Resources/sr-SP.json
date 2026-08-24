@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json ажуриран на в{version}.",
   "Toast_FailedStatsLoad": "Неуспешно учитавање GameStats.json! Молимо проверите да ли овај фајл постоји.",
   "Toast_GameStatsLoadFail": "Неуспешно добијање статистике игара са Веба за {Game}",
-  "Toast_UpdateCheckFail": "Није могуће приступити https://tcno.co/ ради провере ажурирања. Ова порука ће се приказивати једном дневно.",
+  "Toast_UpdateCheckFail": "Није могуће приступити GitHub ради провере ажурирања. Ова порука ће се приказивати једном дневно.",
   "Toast_SameAccount": "Није могуће копирати фајлове на/са истог налога. Покушајте са другим налогом, или погледајте Wiki за више информација.",
   "Toast_FoundExeViaShortcut": "Пронашли смо инсталирану путању из пречице Start Menu. Проверите њену локацију кликом на Подешавања сада.",
   "Modal_Crowdin_Header": "Crowdin преводиоци",

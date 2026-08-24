@@ -130,7 +130,7 @@
   let pinnedShortcutIds = ["pv-pin-1", "pv-pin-2"];
   let dropdownShortcutIds = ["pv-dd-a", "pv-dd-b", "pv-dd-c"];
   const pvShortcutMeta: Record<string, PvShortcut> = {
-    "pv-pin-1": { label: "TcNo.lnk" },
+    "pv-pin-1": { label: "Account Switcher.lnk" },
     "pv-pin-2": { label: "Pinned shortcut" },
     "pv-dd-a": { label: "Shortcut A" },
     "pv-dd-b": { label: "Shortcut B" },

@@ -133,7 +133,7 @@ function cssVar(css: string, name: string): string {
 
 function getAccentOverlayCss(): string {
   const style = (document as unknown as { getElementById: (id: string) => FakeElement | null }).getElementById(
-    "tcno-theme-accent-overlay",
+    "accsw-theme-accent-overlay",
   );
   expect(style).not.toBeNull();
   return style?.textContent ?? "";

@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json이 v{version}(으)로 업데이트되었습니다.",
   "Toast_FailedStatsLoad": "GameStats.json을 로드하지 못했습니다! 이 파일이 존재하는지 확인하십시오.",
   "Toast_GameStatsLoadFail": "{Game}에 대한 웹에서 게임 통계를 가져오지 못했습니다.",
-  "Toast_UpdateCheckFail": "업데이트를 확인하기 위해 https://tcno.co/ 에 연결할 수 없습니다. 이 메시지는 하루에 한 번 표시됩니다.",
+  "Toast_UpdateCheckFail": "업데이트를 확인하기 위해 GitHub 에 연결할 수 없습니다. 이 메시지는 하루에 한 번 표시됩니다.",
   "Toast_SameAccount": "동일한 계정 간에는 파일을 복사할 수 없습니다. 다른 계정을 시도하거나 Wiki에서 추가 정보를 확인하세요.",
   "Toast_FoundExeViaShortcut": "시작 메뉴 바로가기에서 설치된 경로를 찾았습니다. 지금 설정을 클릭하여 위치를 확인하세요. 클릭하여 해제합니다.",
   "Modal_Crowdin_Header": "Crowdin 번역가",

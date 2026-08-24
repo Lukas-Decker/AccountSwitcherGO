@@ -334,7 +334,7 @@
   "Toast_PlatformsJsonUpdated": "Platforms.json actualitzat a v{version}.",
   "Toast_FailedStatsLoad": "No s'ha pogut carregar GameStats.json! Comproveu que aquest fitxer existeix.",
   "Toast_GameStatsLoadFail": "No s'han pogut obtenir les estadístiques del joc des del web durant {Game}",
-  "Toast_UpdateCheckFail": "No s'ha pogut contactar amb https://tcno.co/ per comprovar si hi ha actualitzacions. Aquest missatge es mostrarà una vegada al dia.",
+  "Toast_UpdateCheckFail": "No s'ha pogut contactar amb GitHub per comprovar si hi ha actualitzacions. Aquest missatge es mostrarà una vegada al dia.",
   "Toast_SameAccount": "No es poden copiar fitxers al/des del mateix compte. Prova amb un altre compte o consulta Wiki per obtenir més informació.",
   "Toast_FoundExeViaShortcut": "Hem trobat el camí instal·lat des d’una drecera del menú Start. Verifica’n la ubicació fent clic a Configuració ara.",
   "Modal_Crowdin_Header": "Traductors de Crowdin",

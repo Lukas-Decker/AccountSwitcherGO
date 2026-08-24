@@ -11,7 +11,7 @@ Swap (other):        +<platformShort>:<uniqueId>
 
 Extra argv for the platform exe (e.g. Steam) after swap/launch from CLI or shortcuts:
                      +s:<id> -dev -x
-                     (any token that is not a TcNo flag, +swap, logout, or a GUI page name)
+                     (any token that is not a switcher flag, +swap, logout, or a GUI page name)
 
 Swap & launch (desktop shortcuts / game tiles):
                      +s:<steamId64> --run-appid=<appId>
