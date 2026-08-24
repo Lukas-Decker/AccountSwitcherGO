@@ -137,14 +137,19 @@ func resolveGOG(ctx context.Context, opts gamelib.Options) (gamelib.Result, erro
 // nothing cached on disk to copy except whatever the publisher dropped in the
 // install folder. The URLs are public and need no session.
 func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed map[string]string, allowNetwork bool) {
-	images := gogImageURLs(db)
+	portrait, other := gogImageURLs(db)
 	games := b.Games()
 	if len(games) == 0 {
 		return
 	}
 	sources := make([]artSource, 0, len(games))
 	for _, g := range games {
-		src := artSource{gameID: g.GameID, remote: images["gog_"+g.GameID]}
+		key := "gog_" + g.GameID
+		src := artSource{
+			gameID:   g.GameID,
+			portrait: portrait[key],
+			remote:   other[key],
+		}
 		// An owned but uninstalled game has no folder, and joining onto an
 		// empty path would produce a bare filename that resolves against the
 		// working directory rather than resolving to nothing.
@@ -159,19 +164,23 @@ func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed 
 	applyLauncherArt(ctx, b, GOGPlatformKey, sources, gamelib.SourceGOGGalaxyDB, allowNetwork)
 }
 
-// gogImageURLs maps release key to artwork URLs, best shape first.
+// gogImageURLs maps release key to artwork URLs, split by shape.
 //
 // The images live inside the same JSON blobs as the titles, one row per field
-// per game, so they come out of GamePieces the same way.
-func gogImageURLs(db *sql.DB) map[string][]string {
-	out := map[string][]string{}
+// per game, so they come out of GamePieces the same way. verticalCover is the
+// only one drawn for a 2:3 tile, so it is kept apart from the rest: it is worth
+// a round trip even when the game's install folder has an icon sitting in it,
+// and the others are not.
+func gogImageURLs(db *sql.DB) (portrait, other map[string][]string) {
+	portrait = map[string][]string{}
+	other = map[string][]string{}
 	rows, err := db.Query(`
 		SELECT gp.releaseKey, gp.value
 		FROM GamePieces gp
 		JOIN GamePieceTypes gpt ON gpt.id = gp.gamePieceTypeId
 		WHERE gpt.type IN ('originalImages', 'images', 'meta', 'originalMeta')`)
 	if err != nil {
-		return out
+		return portrait, other
 	}
 	defer func() { _ = rows.Close() }()
 
@@ -180,17 +189,20 @@ func gogImageURLs(db *sql.DB) map[string][]string {
 		if err := rows.Scan(&key, &value); err != nil {
 			continue
 		}
-		// verticalCover matches the 2:3 tile the grid draws; the rest are
-		// fallbacks in descending order of how well they survive that crop.
-		for _, field := range []string{"verticalCover", "squareIcon", "logo", "icon", "background"} {
+		if url := strings.TrimSpace(gjson.Get(value, "verticalCover").String()); url != "" {
+			portrait[key] = appendUniqueURL(portrait[key], url)
+		}
+		// The rest are square or wide, in descending order of how well they
+		// survive being cropped to a portrait tile.
+		for _, field := range []string{"squareIcon", "logo", "icon", "background"} {
 			url := strings.TrimSpace(gjson.Get(value, field).String())
 			if url == "" {
 				continue
 			}
-			out[key] = appendUniqueURL(out[key], url)
+			other[key] = appendUniqueURL(other[key], url)
 		}
 	}
-	return out
+	return portrait, other
 }
 
 // appendUniqueURL adds a URL once, along with the extension-suffixed variants

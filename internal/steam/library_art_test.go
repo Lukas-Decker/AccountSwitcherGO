@@ -4,91 +4,153 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"account-switcher/internal/gameart"
 )
 
-func indexOfSuffix(list []string, suffix string) int {
-	for i, v := range list {
-		if strings.HasSuffix(filepath.ToSlash(v), suffix) {
+// indexOfLocal finds a local candidate whose path ends with suffix.
+func indexOfLocal(cands []gameart.Candidate, suffix string) int {
+	for i, c := range cands {
+		if c.Local() && strings.HasSuffix(filepath.ToSlash(c.Path), suffix) {
 			return i
 		}
 	}
 	return -1
 }
 
+func indexOfRemote(cands []gameart.Candidate, needle string) int {
+	for i, c := range cands {
+		if !c.Local() && strings.Contains(c.URL, needle) {
+			return i
+		}
+	}
+	return -1
+}
+
+func tierOfLocal(t *testing.T, cands []gameart.Candidate, suffix string) gameart.Tier {
+	t.Helper()
+	i := indexOfLocal(cands, suffix)
+	if i < 0 {
+		t.Fatalf("no local candidate ending %q", suffix)
+	}
+	return cands[i].Tier
+}
+
 // The user's own grid image is the one they expect to see, so it has to outrank
-// everything Steam cached on its own.
-func TestSteamArtRequest_UserGridBeatsLauncherCache(t *testing.T) {
+// everything Steam cached on its own and everything the CDN serves.
+func TestSteamArtRequest_UserGridIsTheTopTier(t *testing.T) {
 	t.Parallel()
 
 	req := steamArtRequest(`C:\Steam`, "730", []string{"12345"})
+	ordered := req.Candidates
 
-	if len(req.UserFiles) == 0 {
-		t.Fatal("no grid overrides offered")
+	i := indexOfLocal(ordered, "config/grid/730p.png")
+	if i < 0 {
+		t.Fatal("no portrait grid override offered")
 	}
-	if idx := indexOfSuffix(req.UserFiles, "config/grid/730p.png"); idx != 0 {
-		t.Errorf("portrait grid override at %d, want first: %v", idx, req.UserFiles)
+	if ordered[i].Tier != gameart.TierUserPicked {
+		t.Errorf("grid override tier = %v, want user", ordered[i].Tier)
 	}
-	for _, p := range req.UserFiles {
-		if !strings.Contains(filepath.ToSlash(p), "/userdata/12345/config/grid/") {
-			t.Errorf("grid candidate outside the account's grid folder: %q", p)
+	for _, c := range ordered {
+		if c.Tier != gameart.TierUserPicked {
+			continue
+		}
+		if !strings.Contains(filepath.ToSlash(c.Path), "/userdata/12345/config/grid/") {
+			t.Errorf("user-tier candidate outside the account's grid folder: %q", c.Path)
 		}
 	}
 }
 
-// The grid tiles are 2:3, so a portrait capsule has to be tried before a wide
-// header that would have to be cropped.
-func TestSteamArtRequest_PortraitBeforeWide(t *testing.T) {
+// The shapes have to be graded, because that grading is what lets a CDN capsule
+// beat a local wordmark.
+func TestSteamArtRequest_ShapesAreGraded(t *testing.T) {
 	t.Parallel()
 
-	req := steamArtRequest(`C:\Steam`, "730", nil)
+	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
 
-	portrait := indexOfSuffix(req.LocalFiles, "730/library_600x900.jpg")
-	header := indexOfSuffix(req.LocalFiles, "730/header.jpg")
+	if got := tierOfLocal(t, c, "730/library_600x900.jpg"); got != gameart.TierPortrait {
+		t.Errorf("library_600x900 tier = %v, want portrait", got)
+	}
+	if got := tierOfLocal(t, c, "730/header.jpg"); got != gameart.TierWide {
+		t.Errorf("header tier = %v, want wide", got)
+	}
+	if got := tierOfLocal(t, c, "730/library_hero.jpg"); got != gameart.TierWide {
+		t.Errorf("library_hero tier = %v, want wide", got)
+	}
+	if got := tierOfLocal(t, c, "730/logo.png"); got != gameart.TierLogo {
+		t.Errorf("logo tier = %v, want logo", got)
+	}
+}
+
+// These are the names a current client actually writes, measured against a real
+// cache. library_header.jpg in particular was missing before.
+func TestSteamArtRequest_CoversTheNamesSteamWrites(t *testing.T) {
+	t.Parallel()
+
+	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	for _, name := range []string{
+		"730/library_600x900.jpg",
+		"730/library_header.jpg",
+		"730/header.jpg",
+		"730/library_hero.jpg",
+		"730/logo.png",
+	} {
+		if indexOfLocal(c, name) < 0 {
+			t.Errorf("missing candidate %q", name)
+		}
+	}
+}
+
+// A game whose capsule Steam never cached still has to reach the store CDN, and
+// the portrait URL has to be tried before the wide one.
+func TestSteamRemoteArt_PortraitBeforeWide(t *testing.T) {
+	t.Parallel()
+
+	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	portrait := indexOfRemote(c, "library_600x900.jpg")
+	header := indexOfRemote(c, "header.jpg")
 	if portrait < 0 || header < 0 {
-		t.Fatalf("missing candidates: portrait=%d header=%d", portrait, header)
+		t.Fatalf("missing remote candidates: portrait=%d header=%d", portrait, header)
 	}
-	if portrait > header {
-		t.Errorf("header (%d) is tried before the portrait capsule (%d)", header, portrait)
+	for _, c := range c {
+		if c.Local() || !strings.Contains(c.URL, "library_600x900") {
+			continue
+		}
+		if c.Tier != gameart.TierPortrait {
+			t.Errorf("remote capsule tier = %v, want portrait", c.Tier)
+		}
 	}
 }
 
-// Steam changed its cache layout and left the old files in place, so an install
-// that predates the change is only found by the flat naming.
-func TestSteamArtRequest_CoversBothCacheLayouts(t *testing.T) {
+// The CDN hosts are not interchangeable, and neither needs a key: a build that
+// required one would be useless on the fresh install this tier exists for.
+func TestSteamRemoteArt_HostsAreKeylessAndDirect(t *testing.T) {
 	t.Parallel()
 
-	req := steamArtRequest(`C:\Steam`, "730", nil)
-
-	if indexOfSuffix(req.LocalFiles, "librarycache/730/library_600x900.jpg") < 0 {
-		t.Error("per-app folder layout missing")
-	}
-	if indexOfSuffix(req.LocalFiles, "librarycache/730_library_600x900.jpg") < 0 {
-		t.Error("flat legacy layout missing")
-	}
-}
-
-func TestSteamRemoteArtURLs(t *testing.T) {
-	t.Parallel()
-
-	urls := steamRemoteArtURLs("730")
-	if len(urls) == 0 {
-		t.Fatal("no remote URLs")
-	}
-	for _, u := range urls {
-		if !strings.HasPrefix(u, "https://") {
-			t.Errorf("non-https CDN URL: %q", u)
+	c := steamArtRequest(`C:\Steam`, "730", nil).Candidates
+	var remotes int
+	for _, cand := range c {
+		if cand.Local() {
+			continue
 		}
-		if !strings.Contains(u, "/730/") {
-			t.Errorf("URL is not for app 730: %q", u)
+		remotes++
+		if !strings.HasPrefix(cand.URL, "https://") {
+			t.Errorf("non-https CDN URL: %q", cand.URL)
 		}
-		// A key or a session would make this useless on a fresh install, which
-		// is exactly the case remote art exists to cover.
-		if strings.Contains(u, "key=") || strings.Contains(u, "token") {
-			t.Errorf("CDN URL wants credentials: %q", u)
+		if !strings.Contains(cand.URL, "/730/") {
+			t.Errorf("URL is not for app 730: %q", cand.URL)
+		}
+		if strings.Contains(cand.URL, "key=") || strings.Contains(cand.URL, "token") {
+			t.Errorf("CDN URL wants credentials: %q", cand.URL)
+		}
+		// shared.cloudflare.steamstatic.com only ever answers a redirect to
+		// shared.steamstatic.com, so using it costs a round trip per request.
+		if strings.Contains(cand.URL, "shared.cloudflare.steamstatic.com") {
+			t.Errorf("URL uses the redirecting alias: %q", cand.URL)
 		}
 	}
-	if !strings.Contains(urls[0], "library_600x900") {
-		t.Errorf("first URL = %q, want a portrait capsule", urls[0])
+	if remotes == 0 {
+		t.Fatal("no remote candidates offered")
 	}
 }
 

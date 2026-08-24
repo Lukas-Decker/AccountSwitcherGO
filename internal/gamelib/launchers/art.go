@@ -15,9 +15,18 @@ import (
 
 // artSource is one game's art candidates, collected by a resolver as it walks
 // its launcher's records.
+//
+// local holds files the launcher or publisher left on disk. These are icons and
+// loose images rather than store capsules, so they rank as logo art: real cover
+// art from a launcher that has any beats them, and they in turn beat an icon
+// pulled out of an executable.
 type artSource struct {
 	gameID string
 	local  []string
+	// portrait holds remote URLs known to be cover-shaped, which outrank
+	// anything local. GOG is the only launcher here that supplies them.
+	portrait []string
+	// remote holds other remote images of unknown or wide shape.
 	remote []string
 	exe    string
 }
@@ -34,11 +43,14 @@ func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey strin
 	}
 	reqs := make([]gameart.Request, 0, len(sources))
 	for _, s := range sources {
+		var candidates []gameart.Candidate
+		candidates = append(candidates, gameart.RemoteURLs(gameart.TierPortrait, s.portrait...)...)
+		candidates = append(candidates, gameart.LocalFiles(gameart.TierLogo, s.local...)...)
+		candidates = append(candidates, gameart.RemoteURLs(gameart.TierWide, s.remote...)...)
 		reqs = append(reqs, gameart.Request{
 			PlatformKey: platformKey,
 			GameID:      s.gameID,
-			LocalFiles:  s.local,
-			RemoteURLs:  s.remote,
+			Candidates:  candidates,
 			IconExe:     s.exe,
 		})
 	}
