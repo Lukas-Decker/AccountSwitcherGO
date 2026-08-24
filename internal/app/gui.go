@@ -38,15 +38,17 @@ import (
 )
 
 type RunGUIParams struct {
-	Parsed           cli.Parsed
-	GuiSettings      platform.AppSettings
-	Services         []application.Service
-	Dispatch         *Dispatch
-	DiscordRPC       *discordrpc.Manager
-	StartupToast     string
-	EmbeddedAssets   fs.FS
-	TrayIconPNG      []byte
-	Done             chan struct{}
+	Parsed         cli.Parsed
+	GuiSettings    platform.AppSettings
+	Services       []application.Service
+	Dispatch       *Dispatch
+	DiscordRPC     *discordrpc.Manager
+	StartupToast   string
+	EmbeddedAssets fs.FS
+	TrayIconPNG    []byte
+	// TrayIconDarkPNG is used when the system is in dark mode.
+	TrayIconDarkPNG []byte
+	Done            chan struct{}
 }
 
 func ResolvedLogLevel(p cli.Parsed) slog.Level {
@@ -272,7 +274,7 @@ func RunGUI(params RunGUIParams) {
 		basic.SyncAllTrayKnownAccounts()
 		steam.SyncTrayKnownAccounts()
 	}
-	trayMgr.Start(params.TrayIconPNG)
+	trayMgr.Start(params.TrayIconPNG, params.TrayIconDarkPNG)
 
 	basic.SetLiveAccountIDResolver(func(platformKey string) (string, error) {
 		if strings.EqualFold(strings.TrimSpace(platformKey), "Steam") {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- The in-app mark, referenced as <use href="img/AccountSwitcherLogo.svg#logo">.
+       Coordinates match the fitted icon crop (build/branding/AccountSwitcher.svg
+       shifted by -5,-9 onto a 100x100 canvas), so the title bar and the taskbar
+       show the same framing.
+
+       The rear figure carries no fill on purpose. In the artwork it is a near
+       black that disappears on the dark surfaces this app uses, so it inherits
+       the host element's fill instead, which every theme already sets to its own
+       foreground colour. The front figure keeps the brand blue in every theme. -->
+  <g id="logo">
+    <circle cx="65" cy="33" r="18" fill="#3358d8"/>
+    <path d="M35 91 v-4 a30 30 0 0 1 60 0 v4" fill="#3358d8"/>
+    <circle cx="41" cy="29" r="20"/>
+    <path d="M5 91 v-4 a36 36 0 0 1 72 0 v4"/>
+  </g>
+</svg>

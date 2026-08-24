@@ -39,6 +39,13 @@ var assets embed.FS
 //go:embed build/trayicon.png
 var trayIconPNG []byte
 
+// The rear figure of the mark is very nearly black, which vanishes against a
+// dark taskbar. This variant draws it in a light neutral instead, and the tray
+// picks between the two from the system's own light or dark setting.
+//
+//go:embed build/trayicon-darkmode.png
+var trayIconDarkModePNG []byte
+
 // The tray menu and other native surfaces translate in Go, reading these JSON
 // files. An installed copy has no source tree beside the exe, so without them
 // compiled in the tray falls back to raw keys like "Tray_Exit".
@@ -279,14 +286,15 @@ func main() {
 	}
 
 	app.RunGUI(app.RunGUIParams{
-		Parsed:         parsed,
-		GuiSettings:    startupSettings,
-		Services:       serviceList(),
-		Dispatch:       disp,
-		DiscordRPC:     discordRPC,
-		StartupToast:   parsed.StartupToast,
-		EmbeddedAssets: assets,
-		TrayIconPNG:    trayIconPNG,
+		Parsed:          parsed,
+		GuiSettings:     startupSettings,
+		Services:        serviceList(),
+		Dispatch:        disp,
+		DiscordRPC:      discordRPC,
+		StartupToast:    parsed.StartupToast,
+		EmbeddedAssets:  assets,
+		TrayIconPNG:     trayIconPNG,
+		TrayIconDarkPNG: trayIconDarkModePNG,
 	})
 }
 

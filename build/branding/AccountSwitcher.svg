@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Two overlapping account silhouettes: the blue one behind is the account
+       being switched to, the dark one in front is the one signed in now. -->
+  <circle cx="70" cy="42" r="18" fill="#3358d8"/>
+  <path d="M40 100 v-4 a30 30 0 0 1 60 0 v4" fill="#3358d8"/>
+  <circle cx="46" cy="38" r="20" fill="#201e1d"/>
+  <path d="M10 100 v-4 a36 36 0 0 1 72 0 v4" fill="#201e1d"/>
+</svg>

@@ -117,13 +117,20 @@ func MaybeHideMainWindow() {
 }
 
 // Start creates the systray, wires menu actions, and calls Run().
-func (m *Manager) Start(iconPNG []byte) {
+//
+// darkModePNG is the same mark drawn for a dark taskbar; the tray falls back to
+// the default icon when it is absent, which is what every non-Windows build
+// gets today.
+func (m *Manager) Start(iconPNG, darkModePNG []byte) {
 	if m.app == nil {
 		return
 	}
 	m.systray = m.app.SystemTray.New()
 	if len(iconPNG) > 0 {
 		m.systray.SetIcon(iconPNG)
+	}
+	if len(darkModePNG) > 0 {
+		m.systray.SetDarkModeIcon(darkModePNG)
 	}
 	m.systray.SetLabel("Account Switcher")
 	// SetLabel is a no-op on Windows; the hover text comes from the tooltip.

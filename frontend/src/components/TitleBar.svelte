@@ -117,8 +117,8 @@
             style:transform-origin="center"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free v5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z"/></svg>
         </button>
-        <svg class="header_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 264" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2">
-            <use href="img/TcNo_Logo_Flat.svg#logo"></use>
+        <svg class="header_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2">
+            <use href="img/AccountSwitcherLogo.svg#logo"></use>
         </svg>
     </span>
     <span id="title-label" class="title-drag">

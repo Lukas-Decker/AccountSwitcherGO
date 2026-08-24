@@ -50,13 +50,13 @@
             <svg
               class="header_icon"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 768 264"
+              viewBox="0 0 100 100"
               fill-rule="evenodd"
               stroke-linejoin="round"
               stroke-miterlimit="2"
               aria-hidden="true"
             >
-              <use href="img/TcNo_Logo_Flat.svg#logo"></use>
+              <use href="img/AccountSwitcherLogo.svg#logo"></use>
             </svg>
           </span>
           <span id={titleId} class="app-lock-title-drag">
