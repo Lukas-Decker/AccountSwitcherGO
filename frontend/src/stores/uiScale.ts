@@ -6,8 +6,9 @@ import {
   effectiveUiScale,
   UI_SCALE_AUTO,
 } from "../lib/uiScale";
+import { UI_SCALE_STORAGE_KEY } from "../lib/storageKeys";
 
-const STORAGE_KEY = "tcno:ui-scale";
+const STORAGE_KEY = UI_SCALE_STORAGE_KEY;
 
 /** The stored preference: 0 means automatic. */
 export const uiScaleSetting = writable<number>(UI_SCALE_AUTO);

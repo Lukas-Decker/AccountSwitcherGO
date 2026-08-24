@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
@@ -25,8 +26,16 @@ const (
 	securityDirName  = "Security"
 	securityFileName = "security.json"
 
-	securityVerifierAAD = "tcno-security-verifier-v1"
-	wrappedKeyAAD       = "tcno-security-vault-key-v1"
+	// AEAD associated data. These are bound into every ciphertext, so the
+	// pre-rename values are still what existing files were sealed with and
+	// have to stay readable. Anything written from now on uses the current
+	// values, and unlockMasterKey re-seals a legacy file in passing.
+	securityVerifierAAD  = "accsw-security-verifier-v1"
+	wrappedKeyAAD        = "accsw-security-vault-key-v1"
+	securityVerifierText = "accsw-security-ok"
+
+	legacySecurityVerifierAAD = "tcno-security-verifier-v1"
+	legacyWrappedKeyAAD       = "tcno-security-vault-key-v1"
 
 	kdfTargetMillis = 300
 	kdfMaxTime      = 8
@@ -188,7 +197,7 @@ func (m *manager) setAppPassword(password string) error {
 	if err != nil {
 		return err
 	}
-	verifierNonce, verifierCipher, err := sealWithKey(derived, []byte("tcno-security-ok"), []byte(securityVerifierAAD))
+	verifierNonce, verifierCipher, err := sealWithKey(derived, []byte(securityVerifierText), []byte(securityVerifierAAD))
 	if err != nil {
 		return err
 	}
@@ -321,8 +330,15 @@ func unlockWithPassword(password string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	// The current associated data first, then the pre-rename values. A wrong
+	// password and a legacy file are indistinguishable at this point, so both
+	// have to be tried before the password can be called wrong.
+	legacy := false
 	if _, err := openWithKey(derived, verifierNonce, verifierCipher, []byte(securityVerifierAAD)); err != nil {
-		return nil, ErrInvalidPassword
+		if _, err := openWithKey(derived, verifierNonce, verifierCipher, []byte(legacySecurityVerifierAAD)); err != nil {
+			return nil, ErrInvalidPassword
+		}
+		legacy = true
 	}
 	wrapNonce, err := decode(sf.WrappedVaultKeyNonce)
 	if err != nil {
@@ -332,14 +348,45 @@ func unlockWithPassword(password string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	master, err := openWithKey(derived, wrapNonce, wrapped, []byte(wrappedKeyAAD))
+	keyAAD := wrappedKeyAAD
+	if legacy {
+		keyAAD = legacyWrappedKeyAAD
+	}
+	master, err := openWithKey(derived, wrapNonce, wrapped, []byte(keyAAD))
 	if err != nil {
 		return nil, ErrInvalidPassword
 	}
 	if len(master) != vaultKeyBytes {
 		return nil, fmt.Errorf("invalid vault key length")
 	}
+	if legacy {
+		// Re-seal under the current associated data now that the master key is
+		// in hand. A failure here is not fatal: the file still opens with the
+		// legacy path, and the next unlock will try again.
+		if err := reseal(sf, derived, master); err != nil {
+			slog.Warn("security file re-seal after rename failed", "err", err)
+		}
+	}
 	return master, nil
+}
+
+// reseal rewrites the security file's verifier and wrapped key under the
+// current associated data, leaving the salt and KDF parameters alone so the
+// user's password still derives the same key.
+func reseal(sf securityFile, derived, master []byte) error {
+	verifierNonce, verifierCipher, err := sealWithKey(derived, []byte(securityVerifierText), []byte(securityVerifierAAD))
+	if err != nil {
+		return err
+	}
+	wrapNonce, wrapped, err := sealWithKey(derived, master, []byte(wrappedKeyAAD))
+	if err != nil {
+		return err
+	}
+	sf.VerifierNonce = encode(verifierNonce)
+	sf.VerifierCiphertext = encode(verifierCipher)
+	sf.WrappedVaultKeyNonce = encode(wrapNonce)
+	sf.WrappedVaultKeyCiphertext = encode(wrapped)
+	return saveSecurityFile(sf)
 }
 
 func deriveKey(password string, salt []byte, p KDFParams) []byte {

@@ -28,10 +28,12 @@ import { applyHueRotation, normalizeHueDegrees } from "./hue";
 import { buildAccentOverlayCss } from "./color";
 import { currentThemeId, currentThemeBgUrl, currentThemeAccentKey, currentThemeCustomAccentColor, currentWindowsThemeAccentColor, currentThemeHueRotate } from "./stores";
 
-const THEME_STORAGE_KEY = "tcno:theme";
-const THEME_ACCENT_STORAGE_KEY = "tcno:theme-accent";
-const THEME_ACCENT_CUSTOM_STORAGE_KEY = "tcno:theme-accent-custom";
-const THEME_HUE_STORAGE_KEY = "tcno:theme-hue";
+import {
+  THEME_STORAGE_KEY,
+  THEME_ACCENT_STORAGE_KEY,
+  THEME_ACCENT_CUSTOM_STORAGE_KEY,
+  THEME_HUE_STORAGE_KEY,
+} from "../storageKeys";
 
 /**
  * Reads the stored rotation. Kept in localStorage as well as in settings so the
@@ -201,8 +203,8 @@ async function applyTheme(id: string): Promise<void> {
 
   removeThemeOverlay();
   const style = document.createElement("style");
-  style.id = "tcno-theme-overlay";
-  style.setAttribute("data-tcno-theme-overlay", "");
+  style.id = "accsw-theme-overlay";
+  style.setAttribute("data-accsw-theme-overlay", "");
   style.textContent = css;
   document.head.appendChild(style);
   currentThemeId.set(id);

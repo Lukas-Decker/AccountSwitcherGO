@@ -1,7 +1,8 @@
 import { writable } from "svelte/store";
 import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
+import { OFFLINE_MODE_STORAGE_KEY } from "../lib/storageKeys";
 
-const STORAGE_KEY = "tcno:offlineMode";
+const STORAGE_KEY = OFFLINE_MODE_STORAGE_KEY;
 
 export const offlineMode = writable(false);
 

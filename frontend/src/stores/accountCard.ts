@@ -3,8 +3,9 @@ import * as PlatformService from "../../bindings/account-switcher/internal/platf
 import { DEFAULT_CARD_CONFIG, presetLayout } from "../lib/accountCard/presets";
 import { CARD_COLOR_VAR_NAMES, colorCssVars, layoutCssVars } from "../lib/accountCard/resolve";
 import { validateConfig, type AccountCardConfig, type CardLayout } from "../lib/accountCard/types";
+import { ACCOUNT_CARD_STORAGE_KEY } from "../lib/storageKeys";
 
-const STORAGE_KEY = "tcno:account-card";
+const STORAGE_KEY = ACCOUNT_CARD_STORAGE_KEY;
 
 /** The global card configuration. Platform overrides are layered on at the page. */
 export const accountCardConfig = writable<AccountCardConfig>(DEFAULT_CARD_CONFIG);

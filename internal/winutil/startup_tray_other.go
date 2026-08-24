@@ -2,7 +2,7 @@
 
 package winutil
 
-const RunValueNameStartupTray = "TcNoAccSwitcher"
+const RunValueNameStartupTray = "AccountSwitcher"
 
 func RunAtStartupTrayCommand(exePath string) string { return "" }
 

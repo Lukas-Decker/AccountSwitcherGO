@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sort"
@@ -27,7 +28,11 @@ const (
 	vaultQuarantineDir = "quarantine"
 
 	accountBlobVersion = 1
-	accountBlobExt     = ".tcvault"
+	// accountBlobExt is the current extension. legacyAccountBlobExt is what
+	// blobs were written with before the rename, and existing vaults are full
+	// of them, so reads have to find those too.
+	accountBlobExt       = ".accvault"
+	legacyAccountBlobExt = ".tcvault"
 )
 
 type encryptedAccountBlob struct {
@@ -183,12 +188,17 @@ func RemoveAccountCache(platformKey, uniqueID, accountName, normalDir string) er
 			return err
 		}
 		defer os.Remove(journal)
-		p, err := accountBlobPath(platformKey, uniqueID)
-		if err != nil {
-			return err
-		}
-		if err := os.Remove(p); err != nil && !os.IsNotExist(err) {
-			return err
+		// Remove both names: a vault part-way through the rename can have
+		// either, and leaving one behind means the account looks deleted but
+		// its encrypted data is still on disk.
+		for _, path := range []func(string, string) (string, error){accountBlobPath, legacyAccountBlobPath} {
+			p, err := path(platformKey, uniqueID)
+			if err != nil {
+				return err
+			}
+			if err := os.Remove(p); err != nil && !os.IsNotExist(err) {
+				return err
+			}
 		}
 	}
 	if strings.TrimSpace(normalDir) != "" {
@@ -205,7 +215,7 @@ func AccountBlobValid(platformKey, uniqueID string) bool {
 	if err != nil {
 		return false
 	}
-	p, err := accountBlobPath(platformKey, uniqueID)
+	p, err := existingAccountBlobPath(platformKey, uniqueID)
 	if err != nil {
 		return false
 	}
@@ -338,7 +348,7 @@ func collectPlainSavedSessions() ([]savedSession, error) {
 		for uid, accountName := range ids {
 			dir := filepath.Join(root, platformKey, paths.SanitizePathSegment(accountName))
 			if st, err := os.Stat(dir); err == nil && st.IsDir() {
-				blob, err := accountBlobPath(platformKey, uid)
+				blob, err := existingAccountBlobPath(platformKey, uid)
 				if err != nil {
 					return nil, err
 				}
@@ -378,7 +388,7 @@ func collectEncryptedSessions() ([]savedSession, error) {
 			return nil, err
 		}
 		for uid, accountName := range ids {
-			blob, err := accountBlobPath(platformKey, uid)
+			blob, err := existingAccountBlobPath(platformKey, uid)
 			if err != nil {
 				return nil, err
 			}
@@ -444,7 +454,7 @@ func extractAccountBlob(masterKey []byte, platformKey, uniqueID, dest string) er
 	if strings.TrimSpace(dest) == "" {
 		return fmt.Errorf("empty account blob extract destination")
 	}
-	p, err := accountBlobPath(platformKey, uniqueID)
+	p, err := existingAccountBlobPath(platformKey, uniqueID)
 	if err != nil {
 		return err
 	}
@@ -485,7 +495,53 @@ func decryptAccountBlobFile(masterKey []byte, path, platformKey, uniqueID string
 	if err != nil {
 		return nil, err
 	}
-	return openWithKey(masterKey, nonce, ciphertext, accountBlobAAD(platformKey, uniqueID))
+	plain, err := openWithKey(masterKey, nonce, ciphertext, accountBlobAAD(platformKey, uniqueID))
+	if err == nil {
+		return plain, nil
+	}
+	// Fall back to the pre-rename associated data. Only a blob written by an
+	// older build opens this way, and it is re-sealed so the fallback is not
+	// needed again for it.
+	plain, legacyErr := openWithKey(masterKey, nonce, ciphertext, legacyAccountBlobAAD(platformKey, uniqueID))
+	if legacyErr != nil {
+		return nil, err
+	}
+	if resealErr := resealAccountBlob(path, blob, masterKey, plain, platformKey, uniqueID); resealErr != nil {
+		slog.Warn("account blob re-seal after rename failed",
+			"platform", platformKey, "err", resealErr)
+	}
+	return plain, nil
+}
+
+// resealAccountBlob rewrites a blob under the current associated data.
+//
+// The ciphertext is replaced in place and everything else about the file is
+// kept, so a failure part-way leaves the original readable through the legacy
+// path rather than leaving an account that cannot be restored.
+func resealAccountBlob(path string, blob encryptedAccountBlob, masterKey, plain []byte, platformKey, uniqueID string) error {
+	nonce, ciphertext, err := sealWithKey(masterKey, plain, accountBlobAAD(platformKey, uniqueID))
+	if err != nil {
+		return err
+	}
+	blob.Nonce = encode(nonce)
+	blob.Ciphertext = encode(ciphertext)
+	data, err := json.MarshalIndent(blob, "", "  ")
+	if err != nil {
+		return err
+	}
+	current, err := accountBlobPath(platformKey, uniqueID)
+	if err != nil {
+		return err
+	}
+	if err := fsutil.WriteFileAtomic(current, append(data, '\n'), 0o600); err != nil {
+		return err
+	}
+	// Only now that the re-sealed copy is safely on disk is the old one
+	// removed, so an interruption leaves a readable blob either way.
+	if path != current {
+		_ = os.Remove(path)
+	}
+	return nil
 }
 
 func packDir(dir string) ([]byte, error) {
@@ -592,11 +648,56 @@ func unpackDir(data []byte, dest string) error {
 	}
 }
 
+// accountBlobAAD binds a blob to the account it belongs to, so a blob moved
+// between accounts fails to open rather than decrypting into the wrong one.
 func accountBlobAAD(platformKey, uniqueID string) []byte {
-	return []byte("tcno-account-blob-v1\x00" + strings.TrimSpace(platformKey) + "\x00" + strings.TrimSpace(uniqueID))
+	return accountBlobAADPrefixed("accsw-account-blob-v1", platformKey, uniqueID)
 }
 
+// legacyAccountBlobAAD is what blobs written before the rename were sealed
+// with. It cannot be dropped without making those blobs undecryptable.
+func legacyAccountBlobAAD(platformKey, uniqueID string) []byte {
+	return accountBlobAADPrefixed("tcno-account-blob-v1", platformKey, uniqueID)
+}
+
+func accountBlobAADPrefixed(prefix, platformKey, uniqueID string) []byte {
+	return []byte(prefix + "\x00" + strings.TrimSpace(platformKey) + "\x00" + strings.TrimSpace(uniqueID))
+}
+
+// accountBlobPath is where a blob is written.
 func accountBlobPath(platformKey, uniqueID string) (string, error) {
+	return accountBlobPathExt(platformKey, uniqueID, accountBlobExt)
+}
+
+// legacyAccountBlobPath is the pre-rename filename for the same account.
+func legacyAccountBlobPath(platformKey, uniqueID string) (string, error) {
+	return accountBlobPathExt(platformKey, uniqueID, legacyAccountBlobExt)
+}
+
+// existingAccountBlobPath is where a blob can actually be read from: the
+// current name when it exists, otherwise the pre-rename one when that does.
+//
+// It falls back to the current name when neither exists so callers still get a
+// usable path to report in a not-found error.
+func existingAccountBlobPath(platformKey, uniqueID string) (string, error) {
+	current, err := accountBlobPath(platformKey, uniqueID)
+	if err != nil {
+		return "", err
+	}
+	if _, err := os.Stat(current); err == nil {
+		return current, nil
+	}
+	legacy, err := legacyAccountBlobPath(platformKey, uniqueID)
+	if err != nil {
+		return current, nil
+	}
+	if _, err := os.Stat(legacy); err == nil {
+		return legacy, nil
+	}
+	return current, nil
+}
+
+func accountBlobPathExt(platformKey, uniqueID, ext string) (string, error) {
 	root, err := vaultRoot()
 	if err != nil {
 		return "", err
@@ -606,7 +707,7 @@ func accountBlobPath(platformKey, uniqueID string) (string, error) {
 	if p == "" || u == "" {
 		return "", fmt.Errorf("invalid account blob identity")
 	}
-	return filepath.Join(root, vaultAccountsDir, p, u+accountBlobExt), nil
+	return filepath.Join(root, vaultAccountsDir, p, u+ext), nil
 }
 
 func vaultRoot() (string, error) {

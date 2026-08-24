@@ -1,7 +1,8 @@
 import { writable } from "svelte/store";
 import * as PlatformService from "../../bindings/account-switcher/internal/platform/platformservice.js";
+import { ROUNDED_CORNERS_STORAGE_KEY } from "../lib/storageKeys";
 
-const STORAGE_KEY = "tcno:rounded-corners";
+const STORAGE_KEY = ROUNDED_CORNERS_STORAGE_KEY;
 const ROOT_CLASS = "rounded-corners";
 
 export const roundedCorners = writable<boolean>(false);

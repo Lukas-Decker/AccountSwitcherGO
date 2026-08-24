@@ -94,7 +94,7 @@ func shortcutFilenameFallback(platformKey, uniqueID, accountLogin string) string
 	if s := shellShortcutStem(uniqueID); s != "" && !isDegenerateShortcutBasename(s) {
 		return sanitizeShortcutFileName(s)
 	}
-	return "TcNoShortcut"
+	return "AccountShortcut"
 }
 
 func shellShortcutStem(s string) string {
@@ -175,7 +175,7 @@ func steamPersonaStateFileLabel(numeric string) string {
 func sanitizeShortcutFileName(name string) string {
 	out := paths.ShellShortcutBaseName(name, 180)
 	if out == "" {
-		return "TcNoShortcut"
+		return "AccountShortcut"
 	}
 	return out
 }
