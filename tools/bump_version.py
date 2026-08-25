@@ -129,8 +129,11 @@ def write_config_version(lines: list[str], index: int, version: str) -> None:
 def windows_info_versions(data: dict) -> list[str]:
     found = [str(data.get("fixed", {}).get("file_version", ""))]
     for block in data.get("info", {}).values():
-        if isinstance(block, dict) and "ProductVersion" in block:
-            found.append(str(block["ProductVersion"]))
+        if not isinstance(block, dict):
+            continue
+        for key in ("ProductVersion", "FileVersion"):
+            if key in block:
+                found.append(str(block[key]))
     return [v for v in found if v]
 
 
@@ -140,8 +143,11 @@ def write_windows_info(version: str) -> bool:
     data = json.loads(original)
     data.setdefault("fixed", {})["file_version"] = version
     for block in data.get("info", {}).values():
-        if isinstance(block, dict) and "ProductVersion" in block:
-            block["ProductVersion"] = version
+        if not isinstance(block, dict):
+            continue
+        for key in ("ProductVersion", "FileVersion"):
+            if key in block:
+                block[key] = version
     # Tabs, escaped non-ASCII and a trailing newline, matching how wails3 writes
     # this file. Without ensure_ascii the copyright sign would be rewritten and
     # the diff would show more than the version.
