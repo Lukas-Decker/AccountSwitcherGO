@@ -6,6 +6,15 @@
 }
 
 .contextmenu {
+    /* Fallbacks keep the menu drawable if the root ever renders before the
+       style store has published its custom properties. */
+    --ctx-row-padding: 0.3rem 0.6375rem;
+    --ctx-font-size: 13px;
+    --ctx-font-weight: 400;
+    --ctx-font-family: inherit;
+    --ctx-font-style: normal;
+    --ctx-icon-display: inline-flex;
+
     background: var(--surface-context-submenu);
     border: 0;
     box-shadow: 10px 10px 5px -3px var(--shadow-color-30);
@@ -66,7 +75,11 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 0.3rem 0.6375rem;
+            padding: var(--ctx-row-padding);
+            font-size: var(--ctx-font-size);
+            font-weight: var(--ctx-font-weight);
+            font-family: var(--ctx-font-family);
+            font-style: var(--ctx-font-style);
             margin: 0;
             border: none;
             background: transparent;
@@ -152,7 +165,11 @@
 
                 a,
                 button.paginationButton {
-                    padding: 0.3rem 0.6375rem;
+                    padding: var(--ctx-row-padding);
+            font-size: var(--ctx-font-size);
+            font-weight: var(--ctx-font-weight);
+            font-family: var(--ctx-font-family);
+            font-style: var(--ctx-font-style);
                     width: 38px;
                     text-align: center;
                     border: none;
@@ -330,4 +347,24 @@ hr {
 
 .filteredItem, .pagedOutItem {
     display: none !important;
+}
+
+/* An optional leading icon. Items opt in by supplying one, and the whole
+   column disappears when icons are switched off, so a menu of plain rows keeps
+   its original alignment rather than reserving space for nothing. */
+.ctx-menu__icon {
+    display: var(--ctx-icon-display);
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    flex: none;
+    opacity: 0.85;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
+    }
 }

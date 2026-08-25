@@ -437,8 +437,8 @@ func writeArt(req Request, raw []byte, tier Tier, ext string) (Result, bool) {
 		return Result{}, false
 	}
 	// Done once, here, so every later read is of the smaller file rather than
-	// the format the source happened to serve.
-	raw, ext = transcode(raw, ext)
+	// the size and format the source happened to serve.
+	raw, ext = normalize(raw, ext)
 
 	name := cacheFileName(req.GameID, tier, ext)
 	// Written directly rather than atomically: this is a rebuildable cache, and

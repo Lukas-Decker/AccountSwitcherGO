@@ -193,6 +193,11 @@ func main() {
 		os.Exit(1)
 	}
 	security.CleanupTransientState()
+	// Reclaims the published art cache: files from layouts the app no longer
+	// reads, and images still stored at the size the source shipped rather than
+	// the size a tile draws. Disk only, and idempotent, so it costs nothing on
+	// a cache that has already been swept.
+	gameart.CompactCacheInBackground()
 
 	idx, idxErr := cli.LoadPlatformIndex()
 	idxPtr := idx

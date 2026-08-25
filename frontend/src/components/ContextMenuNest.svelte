@@ -460,7 +460,7 @@
           aria-disabled={item.disabled ? "true" : undefined}
           on:pointermove={() => expandBranch(idx, "pointermove")}
           on:mousemove={() => expandBranch(idx, "mousemove")}
-          on:click={() => run(item)}>{item.label}</button
+          on:click={() => run(item)}>{#if item.icon}<span class="ctx-menu__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{#each (Array.isArray(item.icon) ? item.icon : [item.icon]) as d}<path {d} />{/each}</svg></span>{/if}{item.label}</button
         >
       {:else}
         <button
@@ -476,7 +476,7 @@
           on:mousemove={() => expandBranch(idx, "mousemove")}
           on:click={() => expandBranch(idx, "click")}
         >
-          {item.label}
+          {#if item.icon}<span class="ctx-menu__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{#each (Array.isArray(item.icon) ? item.icon : [item.icon]) as d}<path {d} />{/each}</svg></span>{/if}{item.label}
         </button>
       {/if}
       <ul

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { scale } from "svelte/transition";
+  import { contextMenuCssVars } from "../lib/contextMenuStyle";
   import { cubicOut } from "svelte/easing";
   import { DUR, motionEnabled } from "../lib/animation";
   import { get } from "svelte/store";
@@ -453,6 +454,7 @@
     bind:this={menuEl}
     class="ctx-menu-root contextmenu"
     class:ctx-menu-root--ready={menuReady}
+    style={$contextMenuCssVars}
     role="menu"
     aria-label="Context menu"
     tabindex="-1"

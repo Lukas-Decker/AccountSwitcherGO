@@ -11,6 +11,12 @@ export type MenuItemDef = {
   /** Leaf click, or with `children` a parent row click (see ContextMenuNest). */
   action?: () => void;
   children?: MenuItemDef[];
+  /**
+   * SVG path data for a leading icon, or several paths for a multi-stroke
+   * glyph. Optional per item: a menu of plain rows stays plain, and the whole
+   * column is hidden when the user turns icons off.
+   */
+  icon?: string | string[];
   /** When true, the row is visible but not clickable (no action, menu stays open on click). */
   disabled?: boolean;
   /**
