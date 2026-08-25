@@ -217,7 +217,7 @@ func resolveRegInstalls(ctx context.Context, platformKey, launcherName string, s
 	if w := ambiguousOwnerWarning(launcherName, opts); w != "" {
 		res.Warnings = append(res.Warnings, w)
 	}
-	applyLauncherArt(ctx, b, platformKey, art, scan.source, opts.AllowArtwork)
+	applyLauncherArt(ctx, b, platformKey, art, scan.source, opts)
 	res.Games = b.Games()
 	return res, nil
 }

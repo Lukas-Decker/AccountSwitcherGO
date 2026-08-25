@@ -128,7 +128,7 @@ func resolveBattleNet(ctx context.Context, opts gamelib.Options) (gamelib.Result
 		art = append(art, battleNetArt(code, path))
 	}
 
-	applyLauncherArt(ctx, b, BattleNetPlatformKey, art, gamelib.SourceBattleNetConfig, opts.AllowArtwork)
+	applyLauncherArt(ctx, b, BattleNetPlatformKey, art, gamelib.SourceBattleNetConfig, opts)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true

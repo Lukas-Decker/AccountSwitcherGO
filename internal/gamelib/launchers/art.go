@@ -41,8 +41,21 @@ type artSource struct {
 // Kept separate from the resolve loop for the same reason as Steam's: art is a
 // per-game lookup that says nothing about ownership, and batching it bounds how
 // many downloads run at once.
-func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey string, sources []artSource, src gamelib.Source, allowArtwork bool) {
+func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey string, sources []artSource, src gamelib.Source, opts gamelib.Options) {
 	if len(sources) == 0 {
+		return
+	}
+	if opts.ArtFromCacheOnly {
+		for _, s := range sources {
+			if res := gameart.Cached(platformKey, s.gameID); res.PublicURL != "" {
+				b.Observe(gamelib.Observation{
+					PlatformKey: platformKey,
+					GameID:      s.gameID,
+					ArtURL:      res.PublicURL,
+					Source:      src,
+				})
+			}
+		}
 		return
 	}
 	reqs := make([]gameart.Request, 0, len(sources))
@@ -63,7 +76,7 @@ func applyLauncherArt(ctx context.Context, b *gamelib.Builder, platformKey strin
 		})
 	}
 
-	online := allowArtwork && !appclient.IsOfflineMode()
+	online := opts.AllowArtwork && !appclient.IsOfflineMode()
 	for gameID, res := range gameart.ResolveMany(ctx, appclient.Shared, reqs, online) {
 		b.Observe(gamelib.Observation{
 			PlatformKey: platformKey,

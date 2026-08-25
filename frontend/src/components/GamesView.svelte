@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { get } from "svelte/store";
+  import { Events } from "@wailsio/runtime";
+  import { openContextMenu, type MenuItemDef } from "../stores/contextMenu";
   import * as GameLibraryService from "../../bindings/account-switcher/internal/gamelib/service.js";
   import { t } from "../stores/i18n";
   import { censoredName } from "../stores/streamerMode";
@@ -43,7 +45,16 @@
   /** Whether online enrichment is offered. Only Steam has a keyless source. */
   export let supportsOnline = false;
 
+  type AccountRef = { accountId: string; accountName: string };
+
   let games: Game[] = [];
+  /** The account signed in to this platform right now, from the last resolve. */
+  let activeAccountId = "";
+  /** Every account on the platform, so a game can be started on one no source
+   * recorded as an owner. Free-to-play titles are the common case. */
+  let accounts: AccountRef[] = [];
+  /** True while artwork is still filling in behind the grid. */
+  let artPending = false;
   let warnings: string[] = [];
   let unsupported = false;
   let loading = true;
@@ -75,12 +86,24 @@
       return fuzzyWordsMatch(term, g.name) || g.gameId.toLowerCase().includes(term.toLowerCase());
     });
 
+  /** Whether the account signed in right now is one of the game's owners. */
+  function activeOwns(game: Game): boolean {
+    return !!activeAccountId && game.owners.some((o) => o.accountId === activeAccountId);
+  }
+
   /**
-   * The account a click should act on: the one that installed the game when a
-   * launcher named it, otherwise the single owner. Anything else needs a pick,
-   * because choosing for the user would log them into the wrong account.
+   * The account a click should act on.
+   *
+   * The account already signed in wins whenever it owns the game: there is
+   * nothing to switch, so the click just starts it. Otherwise the one a
+   * launcher named as having installed it, then a sole owner. Anything past
+   * that is a genuine choice and gets asked rather than guessed, because
+   * picking wrong signs the user out of the account they were using.
    */
   function decidedOwner(game: Game): Owner | null {
+    if (activeOwns(game)) {
+      return game.owners.find((o) => o.accountId === activeAccountId) ?? null;
+    }
     const installer = game.owners.find((o) => o.installedBy);
     if (installer) return installer;
     if (game.owners.length === 1) return game.owners[0];
@@ -88,6 +111,7 @@
   }
 
   function ownerLabel(game: Game): string {
+    if (activeOwns(game)) return get(t)("Games_PlayNow");
     const owner = decidedOwner(game);
     if (owner) {
       return owner.installedBy && game.owners.length > 1
@@ -131,6 +155,12 @@
       games = ((res?.games ?? []) as Game[]) ?? [];
       warnings = res?.warnings ?? [];
       unsupported = Boolean(res?.unsupported);
+      activeAccountId = res?.activeAccountId ?? "";
+      accounts = (res?.accounts ?? []) as AccountRef[];
+      // The backend starts an artwork pass behind every load, so tiles without
+      // a cached image are expected to be blank for a moment rather than empty
+      // for good.
+      artPending = games.some((g) => !g.artUrl);
     } catch (e) {
       pushToast({
         type: "error",
@@ -157,6 +187,40 @@
     }
   }
 
+  /**
+   * Right click offers every account on the platform, not just the ones a
+   * source called owners.
+   *
+   * Ownership is only ever as good as what a launcher wrote down, and for a
+   * free-to-play game nothing writes anything down at all: no account "owns"
+   * it, yet every account can play it. Refusing to start those would make the
+   * menu wrong more often than the data is.
+   */
+  function gameMenuItems(game: Game): MenuItemDef[] {
+    const owners = new Map(game.owners.map((o) => [o.accountId, o]));
+    const rows: MenuItemDef[] = accounts.map((a) => {
+      const owner = owners.get(a.accountId);
+      const name = get(censoredName)(a.accountName || a.accountId);
+      const isActive = a.accountId === activeAccountId;
+      let label = name;
+      if (isActive) label = get(t)("Games_AccountSignedIn", { name });
+      else if (!owner) label = get(t)("Games_AccountNotKnownToOwn", { name });
+      return { label, action: () => void switchTo(game, a.accountId) };
+    });
+
+    if (rows.length === 0) {
+      return [{ label: get(t)("Games_NoAccounts"), disabled: true }];
+    }
+    return [{ label: get(t)("Games_StartOnAccount"), disabled: true }, { type: "separator" }, ...rows];
+  }
+
+  function onGameContextMenu(e: MouseEvent, game: Game): void {
+    e.preventDefault();
+    if (busyGameId) return;
+    pickerGameId = "";
+    openContextMenu(e.clientX, e.clientY, gameMenuItems(game));
+  }
+
   function onGameClick(game: Game): void {
     if (game.owners.length === 0) {
       pushToast({ type: "info", message: get(t)("Games_NoOwners"), duration: 5000 });
@@ -170,8 +234,41 @@
     pickerGameId = pickerGameId === game.gameId ? "" : game.gameId;
   }
 
+  let offArtUpdated: (() => void) | undefined;
+  let offArtDone: (() => void) | undefined;
+
+  /**
+   * Applies one resolved tile.
+   *
+   * Reassigns the array because Svelte tracks the binding, not the object, so
+   * mutating a row in place would leave the grid showing the old blank tile.
+   */
+  function applyArtPatch(patch: { platformKey?: string; gameId?: string; artUrl?: string }): void {
+    if (!patch?.gameId || patch.platformKey !== platformKey || !patch.artUrl) return;
+    let hit = false;
+    const next = games.map((g) => {
+      if (g.gameId !== patch.gameId) return g;
+      hit = true;
+      return { ...g, artUrl: patch.artUrl as string };
+    });
+    if (hit) games = next;
+  }
+
   onMount(() => {
     void load();
+
+    offArtUpdated = Events.On("gamelib-game-art-updated", (ev) => {
+      applyArtPatch((ev?.data ?? {}) as { platformKey?: string; gameId?: string; artUrl?: string });
+    });
+    offArtDone = Events.On("gamelib-game-art-done", (ev) => {
+      const p = (ev?.data ?? {}) as { platformKey?: string };
+      if (p.platformKey === platformKey) artPending = false;
+    });
+  });
+
+  onDestroy(() => {
+    offArtUpdated?.();
+    offArtDone?.();
   });
 </script>
 
@@ -237,8 +334,12 @@
             aria-label={`${game.name}. ${ownerLabel(game)}`}
             disabled={busyGameId !== ""}
             on:click={() => onGameClick(game)}
+            on:contextmenu={(e) => onGameContextMenu(e, game)}
           >
-            <span class="game-art-wrap">
+            <!-- The badge sits inside the element the hover lifts, so it rides
+                 with the art instead of staying pinned to the grid while the
+                 card moves out from under it. -->
+            <span class="game-art-wrap" class:pending={!game.artUrl && artPending}>
               {#if game.artUrl}
                 <img class="game-art" src={game.artUrl} alt="" draggable="false" loading="lazy" />
               {:else}
@@ -379,10 +480,14 @@
     text-align: left;
     cursor: pointer;
 
+    &:hover .game-art-wrap,
+    &:focus-visible .game-art-wrap {
+      transform: translateY(-2px);
+    }
+
     &:hover .game-art,
     &:focus-visible .game-art {
       outline: 2px solid var(--accent, #f90);
-      transform: translateY(-2px);
     }
 
     &:disabled {
@@ -393,6 +498,23 @@
   .game-art-wrap {
     position: relative;
     display: block;
+    transition: transform 0.12s ease;
+
+    /* A tile whose art has not resolved yet breathes gently, so a blank square
+       reads as still loading rather than as a game with no artwork. */
+    &.pending .game-art {
+      animation: game-art-pending 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes game-art-pending {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 0.85;
+    }
   }
 
   .game-art {
@@ -402,9 +524,7 @@
     object-fit: cover;
     border-radius: 6px;
     background: var(--backdrop-dark-25, rgba(0, 0, 0, 0.3));
-    transition:
-      transform 0.12s ease,
-      outline-color 0.12s ease;
+    transition: outline-color 0.12s ease;
   }
 
   .game-art--placeholder {

@@ -112,7 +112,7 @@ func resolveEpic(ctx context.Context, opts gamelib.Options) (gamelib.Result, err
 	if w := ambiguousOwnerWarning("Epic Games", opts); w != "" {
 		res.Warnings = append(res.Warnings, w)
 	}
-	applyLauncherArt(ctx, b, EpicPlatformKey, art, gamelib.SourceEpicManifest, opts.AllowArtwork)
+	applyLauncherArt(ctx, b, EpicPlatformKey, art, gamelib.SourceEpicManifest, opts)
 	res.Games = b.Games()
 	return res, nil
 }

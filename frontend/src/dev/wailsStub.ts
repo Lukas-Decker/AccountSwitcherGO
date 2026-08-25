@@ -478,6 +478,12 @@ const CANNED: Record<string, (args: unknown[]) => unknown> = {
     warnings: [],
     unsupported: false,
     durationMs: 42,
+    activeAccountId: "76561198000000001",
+    accounts: [
+      { accountId: "76561198000000001", accountName: "Main" },
+      { accountId: "76561198000000002", accountName: "Alt" },
+      { accountId: "76561198000000003", accountName: "Smurf" },
+    ],
   }),
   GetGames: () => ({
     games: RESOLVED_GAMES,

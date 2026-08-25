@@ -125,7 +125,7 @@ func resolveGOG(ctx context.Context, opts gamelib.Options) (gamelib.Result, erro
 		})
 	}
 
-	applyGOGArt(ctx, b, db, installed, opts.AllowArtwork)
+	applyGOGArt(ctx, b, db, installed, opts)
 
 	res.Games = b.Games()
 	return res, nil
@@ -136,7 +136,7 @@ func resolveGOG(ctx context.Context, opts gamelib.Options) (gamelib.Result, erro
 // Galaxy stores artwork as URLs rather than files, so unlike Steam there is
 // nothing cached on disk to copy except whatever the publisher dropped in the
 // install folder. The URLs are public and need no session.
-func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed map[string]string, allowArtwork bool) {
+func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed map[string]string, opts gamelib.Options) {
 	portrait, other := gogImageURLs(db)
 	games := b.Games()
 	if len(games) == 0 {
@@ -162,7 +162,7 @@ func applyGOGArt(ctx context.Context, b *gamelib.Builder, db *sql.DB, installed 
 		}
 		sources = append(sources, src)
 	}
-	applyLauncherArt(ctx, b, GOGPlatformKey, sources, gamelib.SourceGOGGalaxyDB, allowArtwork)
+	applyLauncherArt(ctx, b, GOGPlatformKey, sources, gamelib.SourceGOGGalaxyDB, opts)
 }
 
 // gogImageURLs maps release key to artwork URLs, split by shape.

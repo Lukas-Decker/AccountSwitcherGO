@@ -15,11 +15,25 @@ import (
 // Done after the sources have been read rather than while reading them: the
 // same app turns up from several sources, and resolving art inline would repeat
 // the work and, once the CDN is in play, the round trip with it.
-func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, accounts map[string]string, allowArtwork bool) {
+func applySteamArt(ctx context.Context, b *gamelib.Builder, root string, accounts map[string]string, allowArtwork, cacheOnly bool) {
 	games := b.Games()
 	if len(games) == 0 {
 		return
 	}
+	if cacheOnly {
+		for _, g := range games {
+			if res := gameart.Cached(PlatformKey, g.GameID); res.PublicURL != "" {
+				b.Observe(gamelib.Observation{
+					PlatformKey: PlatformKey,
+					GameID:      g.GameID,
+					ArtURL:      res.PublicURL,
+					Source:      gamelib.SourceSteamAppList,
+				})
+			}
+		}
+		return
+	}
+
 	id32s := steamUserID32s(root, accounts)
 
 	reqs := make([]gameart.Request, 0, len(games))

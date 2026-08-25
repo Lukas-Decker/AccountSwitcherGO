@@ -88,10 +88,13 @@ func (s *Service) GetPlatformGames(platformKey string, allowNetwork bool) (Resul
 	if err := security.RequireUnlocked(); err != nil {
 		return Result{}, err
 	}
-	res, err := ResolvePlatform(context.Background(), platformKey, allowNetwork, artworkAllowed())
+	// Drawn from art already on disk, which is instant, then the rest fills in
+	// behind it through GameArtUpdatedEvent.
+	res, err := ResolvePlatform(context.Background(), platformKey, allowNetwork, artworkAllowed(), true)
 	if err != nil {
 		res.Warnings = append(res.Warnings, err.Error())
 	}
+	RefreshArtInBackground(platformKey, allowNetwork)
 	return res, nil
 }
 
@@ -119,7 +122,7 @@ func (s *Service) resolve(ctx context.Context, allowNetwork, force bool) (Librar
 		return *cached, nil
 	}
 
-	results := ResolveAll(ctx, allowNetwork, artworkAllowed())
+	results := ResolveAll(ctx, allowNetwork, artworkAllowed(), false)
 	sort.SliceStable(results, func(i, j int) bool {
 		return results[i].PlatformKey < results[j].PlatformKey
 	})

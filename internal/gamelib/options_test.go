@@ -33,7 +33,7 @@ func TestResolvePlatform_ArtworkIsIndependentOfLibraryEnrichment(t *testing.T) {
 	var got Options
 	withResolver(t, "TestPlatform", func(o Options) { got = o })
 
-	if _, err := ResolvePlatform(context.Background(), "TestPlatform", false, true); err != nil {
+	if _, err := ResolvePlatform(context.Background(), "TestPlatform", false, true, false); err != nil {
 		t.Fatal(err)
 	}
 	if got.AllowNetwork {
@@ -50,7 +50,7 @@ func TestResolvePlatform_ArtworkCanBeRefusedIndependently(t *testing.T) {
 	var got Options
 	withResolver(t, "TestPlatform", func(o Options) { got = o })
 
-	if _, err := ResolvePlatform(context.Background(), "TestPlatform", true, false); err != nil {
+	if _, err := ResolvePlatform(context.Background(), "TestPlatform", true, false, false); err != nil {
 		t.Fatal(err)
 	}
 	if !got.AllowNetwork {
@@ -72,7 +72,7 @@ func TestResolvePlatform_KeepsAccountContext(t *testing.T) {
 	var got Options
 	withResolver(t, "TestPlatform", func(o Options) { got = o })
 
-	if _, err := ResolvePlatform(context.Background(), "TestPlatform", true, true); err != nil {
+	if _, err := ResolvePlatform(context.Background(), "TestPlatform", true, true, false); err != nil {
 		t.Fatal(err)
 	}
 	if len(got.KnownAccounts) != 1 || got.ActiveAccountID != "a" {

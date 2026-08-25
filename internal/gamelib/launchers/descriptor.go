@@ -73,7 +73,7 @@ func resolveSingleTitle(ctx context.Context, platformKey string, opts gamelib.Op
 		gameID: platformKey,
 		name:   platformKey,
 		exe:    exe,
-	}}, gamelib.SourceDescriptorExe, opts.AllowArtwork)
+	}}, gamelib.SourceDescriptorExe, opts)
 
 	res.Games = b.Games()
 	return res, nil

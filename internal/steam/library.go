@@ -130,7 +130,7 @@ func resolveSteamLibraryAt(ctx context.Context, root string, opts gamelib.Option
 	// lookups that say nothing about ownership, and batching them keeps the art
 	// pass from opening a socket per game as the sources are walked.
 	applyCatalogueNames(ctx, b, manifests, opts.AllowNetwork)
-	applySteamArt(ctx, b, root, accounts, opts.AllowArtwork)
+	applySteamArt(ctx, b, root, accounts, opts.AllowArtwork, opts.ArtFromCacheOnly)
 
 	res.Games = dropNamelessSteamGames(b.Games())
 	return res, nil
@@ -477,5 +477,5 @@ func (s *SteamService) ResolveLibrary(ctx context.Context, allowNetwork, allowAr
 	if strings.TrimSpace(root) == "" {
 		return gamelib.Result{PlatformKey: PlatformKey, Games: []gamelib.Game{}}, nil
 	}
-	return gamelib.ResolvePlatform(ctx, PlatformKey, allowNetwork, allowArtwork)
+	return gamelib.ResolvePlatform(ctx, PlatformKey, allowNetwork, allowArtwork, false)
 }

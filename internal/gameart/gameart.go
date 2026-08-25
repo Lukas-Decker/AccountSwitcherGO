@@ -252,6 +252,21 @@ func fileHasContent(path string) bool {
 	return err == nil && !st.IsDir() && st.Size() > 0
 }
 
+// Cached returns art that has already been published for a game, without
+// touching a source.
+//
+// It exists so a view can be drawn from what is on disk the instant it is
+// asked for, and have the tiles that have never been resolved fill in behind
+// it. Resolving inline means the first open of a large library waits on
+// thousands of file reads and, the first time, on the network too.
+func Cached(platformKey, gameID string) Result {
+	name, tier, ok := findCached(platformKey, gameID)
+	if !ok {
+		return Result{}
+	}
+	return Result{PublicURL: publicURL(platformKey, name), Tier: tier}
+}
+
 // Resolve publishes the best art it can find for one game.
 //
 // It returns an empty result rather than an error when nothing resolves: a game

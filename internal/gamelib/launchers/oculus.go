@@ -90,7 +90,7 @@ func resolveOculus(ctx context.Context, opts gamelib.Options) (gamelib.Result, e
 		}
 	}
 
-	applyLauncherArt(ctx, b, OculusPlatformKey, art, gamelib.SourceOculusManifest, opts.AllowArtwork)
+	applyLauncherArt(ctx, b, OculusPlatformKey, art, gamelib.SourceOculusManifest, opts)
 	games := b.Games()
 	if len(games) == 0 {
 		res.Unsupported = true
