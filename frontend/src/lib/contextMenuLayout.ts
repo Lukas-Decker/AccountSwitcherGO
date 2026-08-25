@@ -150,3 +150,37 @@ export function submenuShouldFillRootHeight(layout: SubmenuRootHeightLayout): bo
   const topGap = Math.max(0, layout.naturalTop + layout.topOffset - layout.rootTop);
   return topGap <= layout.rowHeight * 1.5;
 }
+
+export type RootMenuHeightLayout = {
+  /** What the root column measures with no cap applied at all. */
+  contentHeight: number;
+  viewportHeight: number;
+  /** Gap kept between the column and each window edge. */
+  pad: number;
+};
+
+export type RootMenuHeightPlan = {
+  /** Cap in px, or null to leave the column at its natural height. */
+  maxHeight: number | null;
+  /** True once the cap is smaller than the content, so the column has to scroll. */
+  scrollable: boolean;
+};
+
+/**
+ * How tall the root column may be in the window it is opening into.
+ *
+ * The height used to be a fixed 30em, from a menu that could not leave the program window and
+ * was cut off by the window itself. Nothing cuts it off now, so the column has to size itself,
+ * and when it does run out of room it has to scroll: a cap alone stops the panel's background
+ * without stopping its rows, which leaves labels drawn over the page with nothing behind them.
+ *
+ * The one pixel of slack keeps a sub-pixel rounding difference from putting a column that
+ * visually fits into scrolling.
+ */
+export function planRootMenuHeight(layout: RootMenuHeightLayout): RootMenuHeightPlan {
+  const available = Math.max(0, layout.viewportHeight - layout.pad * 2);
+  if (!Number.isFinite(layout.contentHeight) || layout.contentHeight - available <= 1) {
+    return { maxHeight: null, scrollable: false };
+  }
+  return { maxHeight: available, scrollable: true };
+}

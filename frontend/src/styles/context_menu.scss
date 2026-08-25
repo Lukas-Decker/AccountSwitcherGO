@@ -25,7 +25,11 @@
     box-shadow: 10px 10px 5px -3px var(--shadow-color-30);
     position: absolute;
     width: 15em;
-    max-height: 30em;
+    /* No height cap here on purpose. A cap with `overflow: visible` stops the
+       panel's background without stopping its rows: everything past it keeps
+       laying out and drawing, which is how labels ended up floating over the
+       page with nothing behind them. The height comes from the layout pass in
+       ContextMenu.svelte instead, which knows how much window there is. */
     margin: 0;
     padding: 0;
     list-style: none;
@@ -299,6 +303,25 @@
             display: flex;
             flex-direction: column;
         }
+    }
+
+    /* Out of window: the column scrolls rather than drawing rows past its own
+       background. Only the layout pass sets this class, and it sets the matching
+       height with it. */
+    &.ctx-menu-root--scrollable {
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+    }
+
+    /* A scrolling column clips anything positioned inside it, flyouts included, so its own
+       flyouts switch to the window and take their left/top from the layout pass. Only its own:
+       deeper ones sit inside a column that never scrolls, and the flyout entry animation leaves
+       a transform behind, which would make that column the frame they are placed against. */
+    &.ctx-menu-root--scrollable > li.hasSubmenu.submenu-expanded > .submenu {
+        position: fixed;
+        right: auto;
+        top: auto;
     }
 
     /* Invisible hit strip between parent column and submenu so brief gaps don’t collapse the branch */

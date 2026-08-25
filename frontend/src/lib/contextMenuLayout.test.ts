@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   balancedSubmenuPageRanges,
+  planRootMenuHeight,
   submenuShouldFillRootHeight,
   submenuTopOffset,
 } from "./contextMenuLayout";
@@ -127,5 +128,37 @@ describe("context menu root-height snapping", () => {
         rowHeight: 32,
       }),
     ).toBe(false);
+  });
+});
+
+describe("context menu root height", () => {
+  it("leaves a column that fits the window uncapped", () => {
+    expect(
+      planRootMenuHeight({ contentHeight: 413, viewportHeight: 800, pad: 8 }),
+    ).toEqual({ maxHeight: null, scrollable: false });
+  });
+
+  it("grows past the old fixed cap when the window has the room", () => {
+    expect(
+      planRootMenuHeight({ contentHeight: 700, viewportHeight: 1080, pad: 8 }),
+    ).toEqual({ maxHeight: null, scrollable: false });
+  });
+
+  it("caps to the window and scrolls once the rows no longer fit", () => {
+    expect(
+      planRootMenuHeight({ contentHeight: 900, viewportHeight: 600, pad: 8 }),
+    ).toEqual({ maxHeight: 584, scrollable: true });
+  });
+
+  it("ignores a sub-pixel overshoot rather than adding a scrollbar for it", () => {
+    expect(
+      planRootMenuHeight({ contentHeight: 584.4, viewportHeight: 600, pad: 8 }),
+    ).toEqual({ maxHeight: null, scrollable: false });
+  });
+
+  it("never plans a negative height in a window smaller than its padding", () => {
+    expect(
+      planRootMenuHeight({ contentHeight: 400, viewportHeight: 10, pad: 8 }),
+    ).toEqual({ maxHeight: 0, scrollable: true });
   });
 });

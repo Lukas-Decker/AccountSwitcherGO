@@ -25,12 +25,19 @@
     handleContextMenuQuickFilter,
   } from "../lib/contextMenuKeyboard";
   import {
+    planRootMenuHeight,
     submenuShouldFillRootHeight,
     submenuTopOffset,
   } from "../lib/contextMenuLayout";
 
   /** Viewport padding — keep menu fully inside the window. */
   const PAD = 8;
+
+  /**
+   * Set while the root column is taller than the window has room for. It is what switches
+   * flyouts to window placement, since a scrolling column clips the ones positioned inside it.
+   */
+  const SCROLLABLE_CLASS = "ctx-menu-root--scrollable";
 
   let menuEl: HTMLUListElement | null = null;
   let resizeObs: ResizeObserver | null = null;
@@ -208,9 +215,11 @@
   }
 
   function fitExpandedSubmenusToViewport(root: HTMLUListElement): void {
+    const rootScrolls = root.classList.contains(SCROLLABLE_CLASS);
     root.querySelectorAll("ul.submenu").forEach((sub) => {
       if (sub instanceof HTMLElement) {
         sub.style.removeProperty("top");
+        sub.style.removeProperty("left");
         sub.style.removeProperty("height");
         sub.style.removeProperty("max-height");
       }
@@ -220,6 +229,8 @@
       return;
     }
     const rootRect = root.getBoundingClientRect();
+    /* Document order, so a parent column is already placed by the time its own flyout is
+       measured and the row rects below are the final ones. */
     expanded.forEach((sub) => {
       if (!(sub instanceof HTMLElement)) {
         return;
@@ -229,9 +240,30 @@
         return;
       }
       const rect = sub.getBoundingClientRect();
+      const liRect = li.getBoundingClientRect();
+      /* Only the scrolling column's own flyouts are placed against the window (see the
+         stylesheet); deeper ones stay inside a column that cannot clip them. */
+      const windowPlaced = rootScrolls && li.parentElement === root;
+      /* Placed against the window, the flyout's own rect is wherever the missing left/top left
+         it, so where it belongs comes from the row: the same spot `top: 0` and `right: -15em`
+         put it in a column that does not scroll. */
+      const naturalTop = windowPlaced ? liRect.top : rect.top;
+      const naturalBottom = naturalTop + rect.height;
+      const placeAt = (top: number): void => {
+        if (windowPlaced) {
+          /* The column's outer edge rather than the row's: a scrolling column has a scrollbar
+             between the two, and the flyout should sit beside it, not over it. */
+          sub.style.left = `${rootRect.right}px`;
+          /* Scrolling can carry the parent row above the column, and only the bottom edge is
+             held by the offset above, so the flyout stops at the top of the column too. */
+          sub.style.top = `${Math.max(top, rootRect.top)}px`;
+          return;
+        }
+        sub.style.top = `${top - naturalTop}px`;
+      };
       const topOffset = submenuTopOffset({
-        naturalTop: rect.top,
-        naturalBottom: rect.bottom,
+        naturalTop,
+        naturalBottom,
         rootTop: rootRect.top,
         rootBottom: rootRect.bottom,
       });
@@ -247,24 +279,28 @@
       const hasPagination = rows.some((row) => row.classList.contains("ctx-pagination-li"));
       const rowHeight = itemHeights.length > 0 ? Math.min(...itemHeights) : 0;
       if (hasPagination && submenuShouldFillRootHeight({
-        naturalTop: rect.top,
+        naturalTop,
         topOffset,
         naturalHeight: rect.height,
         rootTop: rootRect.top,
         rootHeight: rootRect.height,
         rowHeight,
       })) {
-        sub.style.top = `${rootRect.top - rect.top}px`;
+        placeAt(rootRect.top);
         sub.style.height = `${rootRect.height}px`;
         return;
       }
-      sub.style.top = `${topOffset}px`;
+      placeAt(naturalTop + topOffset);
     });
   }
 
   function refreshFlyoutLayout(root: HTMLUListElement): void {
     fitExpandedSubmenusToViewport(root);
-    nudgeRootForSubmenus(root);
+    /* Window-placed flyouts hold coordinates, not an offset from the column, so a root that
+       moves out from under them has to be measured against again. */
+    if (nudgeRootForSubmenus(root)) {
+      fitExpandedSubmenusToViewport(root);
+    }
   }
 
   function onSubmenuPlanned(ev: Event): void {
@@ -278,7 +314,8 @@
     }
   }
 
-  function nudgeRootForSubmenus(el: HTMLUListElement): void {
+  /** True when the root actually moved, so anything measured against it is now stale. */
+  function nudgeRootForSubmenus(el: HTMLUListElement): boolean {
     const subs = el.querySelectorAll(".submenu");
     let shiftLeft = 0;
     subs.forEach((sub) => {
@@ -287,7 +324,7 @@
       if (rs > 0) shiftLeft = Math.max(shiftLeft, rs + 40);
     });
     if (shiftLeft <= 0) {
-      return;
+      return false;
     }
     const cur = el.getBoundingClientRect();
     const nextLeft = clamp(
@@ -295,7 +332,50 @@
       PAD,
       Math.max(PAD, window.innerWidth - cur.width - PAD),
     );
+    if (nextLeft === cur.left) {
+      return false;
+    }
     el.style.left = `${nextLeft}px`;
+    return true;
+  }
+
+  /**
+   * What the column measures with no cap on it.
+   *
+   * Read with the cap lifted rather than from `scrollHeight`, because an open flyout is out of
+   * flow but still counts towards the scrollable area: that would report a column far taller
+   * than its own rows and drop it into scrolling for no reason.
+   */
+  function naturalRootHeight(el: HTMLUListElement): number {
+    const previous = el.style.maxHeight;
+    el.style.maxHeight = "none";
+    const height = el.offsetHeight;
+    if (previous === "") {
+      el.style.removeProperty("max-height");
+    } else {
+      el.style.maxHeight = previous;
+    }
+    return height;
+  }
+
+  /**
+   * Size the column to the window it is in, and let it scroll once it no longer fits.
+   *
+   * Both halves have to happen together: a height on its own would clip the panel's background
+   * while the rows below carried on drawing over the page.
+   */
+  function applyRootHeightPlan(el: HTMLUListElement): void {
+    const plan = planRootMenuHeight({
+      contentHeight: naturalRootHeight(el),
+      viewportHeight: window.innerHeight,
+      pad: PAD,
+    });
+    if (plan.maxHeight === null) {
+      el.style.removeProperty("max-height");
+    } else {
+      el.style.maxHeight = `${plan.maxHeight}px`;
+    }
+    el.classList.toggle(SCROLLABLE_CLASS, plan.scrollable);
   }
 
   function applyAnchorLayout(): void {
@@ -303,6 +383,7 @@
     if (!st || !menuEl) {
       return;
     }
+    applyRootHeightPlan(menuEl);
     const mw = menuEl.offsetWidth;
     const mh = menuEl.offsetHeight;
     if (mw === 0 || mh === 0) {
@@ -350,8 +431,27 @@
     }
   }
 
+  /** A scrolling column moves its rows, and window-placed flyouts have to follow them. */
+  function onRootScroll(): void {
+    scheduleFlyoutRefresh();
+  }
+
+  function scheduleFlyoutRefresh(): void {
+    if (flyoutRaf !== null) {
+      cancelAnimationFrame(flyoutRaf);
+    }
+    flyoutRaf = requestAnimationFrame(() => {
+      flyoutRaf = null;
+      if (!menuEl || !get(contextMenu)) {
+        return;
+      }
+      refreshFlyoutLayout(menuEl);
+    });
+  }
+
   function detachObservers(): void {
     clearFocusAfterOpenTimers();
+    menuEl?.removeEventListener("scroll", onRootScroll);
     resizeObs?.disconnect();
     resizeObs = null;
     mutationObs?.disconnect();
@@ -364,6 +464,7 @@
 
   function attachObservers(el: HTMLUListElement): void {
     detachObservers();
+    el.addEventListener("scroll", onRootScroll, { passive: true });
     resizeObs = new ResizeObserver(() => {
       /* Never applyAnchorLayout here: root/subtree size changes (e.g. submenu pagination)
          would snap the menu back to the pointer anchor and undo nudge from flyouts. */
@@ -419,16 +520,7 @@
       if (!menuEl || !get(contextMenu)) {
         return;
       }
-      if (flyoutRaf !== null) {
-        cancelAnimationFrame(flyoutRaf);
-      }
-      flyoutRaf = requestAnimationFrame(() => {
-        flyoutRaf = null;
-        if (!menuEl || !get(contextMenu)) {
-          return;
-        }
-        refreshFlyoutLayout(menuEl);
-      });
+      scheduleFlyoutRefresh();
     });
 
     return () => {
@@ -459,6 +551,7 @@
     aria-label="Context menu"
     tabindex="-1"
     in:scale={{ start: 0.97, duration: motionEnabled() ? DUR.fast : 0, easing: cubicOut }}
+    on:introend={() => menuEl && refreshFlyoutLayout(menuEl)}
     on:keydown={onMenuKeydown}
   >
     <ContextMenuNest
