@@ -240,13 +240,6 @@ func (p *PlatformService) SetProtocolEnabled(enabled bool) error {
 	return nil
 }
 
-func (p *PlatformService) SetPrereleaseUpdates(enabled bool) error {
-	return p.withSettingsWrite(func(s *AppSettings) error {
-		s.PrereleaseUpdates = enabled
-		return nil
-	})
-}
-
 // SetSteamGridDBAPIKey stores the artwork archive key and applies it live, so
 // a tile can be refreshed without restarting.
 func (p *PlatformService) SetSteamGridDBAPIKey(key string) error {

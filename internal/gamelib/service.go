@@ -98,6 +98,40 @@ func (s *Service) GetPlatformGames(platformKey string, allowNetwork bool) (Resul
 	return res, nil
 }
 
+// SetGameHidden hides or unhides one game.
+func (s *Service) SetGameHidden(platformKey, gameID string, hidden bool) error {
+	if err := security.RequireUnlocked(); err != nil {
+		return err
+	}
+	return SetHidden(platformKey, gameID, hidden)
+}
+
+// SetGameArtwork pins a game to one of the artwork options already published
+// for it, or clears the pin when url is empty.
+func (s *Service) SetGameArtwork(platformKey, gameID, url string) error {
+	if err := security.RequireUnlocked(); err != nil {
+		return err
+	}
+	return SetArtOverride(platformKey, gameID, url)
+}
+
+// SetGameAdult records the user's own answer about a game's rating, which
+// always beats what the title suggested.
+func (s *Service) SetGameAdult(platformKey, gameID string, adult bool) error {
+	if err := security.RequireUnlocked(); err != nil {
+		return err
+	}
+	return SetNSFWOverride(platformKey, gameID, &adult)
+}
+
+// ClearGameAdult drops the user's answer and returns the game to the default.
+func (s *Service) ClearGameAdult(platformKey, gameID string) error {
+	if err := security.RequireUnlocked(); err != nil {
+		return err
+	}
+	return SetNSFWOverride(platformKey, gameID, nil)
+}
+
 // SupportedPlatforms lists the platforms that have a resolver.
 func (s *Service) SupportedPlatforms() []string {
 	return RegisteredPlatforms()

@@ -233,12 +233,6 @@ export const roundedCornersToggle = createToggle({
   labelKey: "Settings_RoundedCorners",
 });
 
-export const prereleaseUpdates = createToggle({
-  read: () => PlatformService.GetPrereleaseUpdates(),
-  write: (v) => PlatformService.SetPrereleaseUpdates(v),
-  labelKey: "Settings_PrereleaseUpdates",
-});
-
 export const debugLogging = createToggle({
   read: () => PlatformService.GetDebugLogging(),
   write: (v) => PlatformService.SetDebugLogging(v),
@@ -325,7 +319,6 @@ const alwaysLoadedToggles = [
   animations,
   controllerSupport,
   roundedCornersToggle,
-  prereleaseUpdates,
   debugLogging,
   skipElevatePrompt,
 ];
@@ -341,7 +334,6 @@ async function hydrateFromSnapshot(): Promise<void> {
   igdbClientSecret.set(settings.igdbClientSecret ?? "");
   protocolEnabled.value.set(settings.protocolEnabled);
   exitToTray.value.set(settings.exitToTray);
-  prereleaseUpdates.value.set(settings.prereleaseUpdates);
   discordRpc.value.set(settings.discordRpc);
   minimizeOnSwitch.value.set(settings.minimizeOnSwitch);
   startTrayWithWindows.value.set(settings.startTrayWithWindows);

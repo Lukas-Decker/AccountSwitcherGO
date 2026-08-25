@@ -119,15 +119,6 @@ func (p *PlatformService) GetOfflineMode() (bool, error) {
 	return val, err
 }
 
-func (p *PlatformService) GetPrereleaseUpdates() (bool, error) {
-	var val bool
-	err := p.withSettingsRead(func(s *AppSettings) error {
-		val = s.PrereleaseUpdates
-		return nil
-	})
-	return val, err
-}
-
 func (p *PlatformService) GetDiscordRpc() (bool, error) {
 	var val bool
 	err := p.withSettingsRead(func(s *AppSettings) error {

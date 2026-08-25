@@ -154,10 +154,34 @@ type Game struct {
 	InstallPath string `json:"installPath"`
 	SizeOnDisk  int64  `json:"sizeOnDisk"`
 
+	// Hidden is set when the user has hidden this game. It is marked rather
+	// than dropped so unhiding needs no rescan.
+	Hidden bool `json:"hidden"`
+	// Adult marks content the view keeps behind a filter by default.
+	Adult bool `json:"adult"`
+	// AdultOverridden says the rating came from the user rather than a guess,
+	// so the view can offer to undo it rather than re-asserting it.
+	AdultOverridden bool `json:"adultOverridden"`
+	// ArtPinned says the artwork is the user's choice, not the chain's.
+	ArtPinned bool `json:"artPinned"`
+	// ArtOptions are the other artwork the chain could have used, so the user
+	// can pick a different one. Empty when only one source produced anything.
+	ArtOptions []ArtOption `json:"artOptions"`
+
 	Owners []Ownership `json:"owners"`
 	// Sources lists every source that contributed, for troubleshooting a game
 	// that resolved to an unexpected account or to none.
 	Sources []Source `json:"sources"`
+}
+
+// ArtOption is one artwork the chain published or could publish for a game.
+type ArtOption struct {
+	// URL is a wwwroot path the view can show immediately.
+	URL string `json:"url"`
+	// Tier names the shape, so the picker can say what each option is.
+	Tier string `json:"tier"`
+	// Source is where it came from, for the same reason.
+	Source string `json:"source"`
 }
 
 // InstalledOwner returns the account that installed the game, when a source

@@ -176,6 +176,8 @@ func ResolvePlatform(ctx context.Context, platformKey string, allowNetwork, allo
 	res.PlatformKey = platformKey
 	res.ActiveAccountID = opts.ActiveAccountID
 	res.Accounts = accountRefs(opts.KnownAccounts)
+	// The user's own choices are applied last, over whatever the sources said.
+	res.Games = applyPrefs(platformKey, res.Games)
 	res.DurationMS = time.Since(started).Milliseconds()
 	if res.Games == nil {
 		res.Games = []Game{}

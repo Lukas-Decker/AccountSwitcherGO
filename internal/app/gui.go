@@ -117,10 +117,15 @@ func mainWindowOptions(guiSettings platform.AppSettings, parsed cli.Parsed) appl
 	return winOpts
 }
 
-func githubUpdaterConfig(guiSettings platform.AppSettings) github.Config {
+// githubUpdaterConfig describes where updates come from.
+//
+// Stable releases only. The preference that used to select pre-releases was a
+// switch with nothing behind it, so it is gone rather than left to imply a
+// choice the updater never made.
+func githubUpdaterConfig(platform.AppSettings) github.Config {
 	return github.Config{
 		Repository:    appconfig.GitHubRepository,
-		Prerelease:    guiSettings.PrereleaseUpdates,
+		Prerelease:    false,
 		ChecksumAsset: "SHA256SUMS",
 		AssetMatcher:  updatecheck.GitHubAssetMatcher,
 	}

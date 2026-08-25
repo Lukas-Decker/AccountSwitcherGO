@@ -42,7 +42,6 @@ type PlatformStartup struct {
 	HideFromScreenshots      bool   `json:"hideFromScreenshots"`
 	AnimationsEnabled        bool   `json:"animationsEnabled"`
 	ControllerSupportEnabled bool   `json:"controllerSupportEnabled"`
-	PrereleaseUpdates        bool   `json:"prereleaseUpdates"`
 	CommandPaletteHotkey     string `json:"commandPaletteHotkey"`
 	ThemeAccentPreset        string `json:"themeAccentPreset"`
 	ThemeAccentCustom        string `json:"themeAccentCustom"`
@@ -150,7 +149,6 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 				HideFromScreenshots:      settings.HideFromScreenshots,
 				AnimationsEnabled:        settings.AnimationsEnabled,
 				ControllerSupportEnabled: settings.ControllerSupportEnabled,
-				PrereleaseUpdates:        settings.PrereleaseUpdates,
 				CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 				ThemeAccentPreset:        settings.ThemeAccentPreset,
 				ThemeAccentCustom:        settings.ThemeAccentCustom,
@@ -209,7 +207,6 @@ func (p *PlatformService) GetStartup() (PlatformStartup, error) {
 		HideFromScreenshots:      settings.HideFromScreenshots,
 		AnimationsEnabled:        settings.AnimationsEnabled,
 		ControllerSupportEnabled: settings.ControllerSupportEnabled,
-		PrereleaseUpdates:        settings.PrereleaseUpdates,
 		CommandPaletteHotkey:     settings.CommandPaletteHotkey,
 		ThemeAccentPreset:        settings.ThemeAccentPreset,
 		ThemeAccentCustom:        settings.ThemeAccentCustom,
@@ -240,7 +237,6 @@ type SettingsBatchUpdate struct {
 	HideFromScreenshots      *bool   `json:"hideFromScreenshots,omitempty"`
 	AnimationsEnabled        *bool   `json:"animationsEnabled,omitempty"`
 	ControllerSupportEnabled *bool   `json:"controllerSupportEnabled,omitempty"`
-	PrereleaseUpdates        *bool   `json:"prereleaseUpdates,omitempty"`
 	Language                 *string `json:"language,omitempty"`
 	Theme                    *string `json:"theme,omitempty"`
 	ThemeAccentPreset        *string `json:"themeAccentPreset,omitempty"`

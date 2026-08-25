@@ -63,7 +63,6 @@ func applySettingsBatchUpdate(s *AppSettings, req SettingsBatchUpdate) settingsB
 	if req.ControllerSupportEnabled != nil {
 		effects.controllerSupport = req.ControllerSupportEnabled
 	}
-	applyBool(&s.PrereleaseUpdates, req.PrereleaseUpdates)
 	if req.Language != nil {
 		s.Language = stringsDefault(*req.Language, "en-US")
 		effects.dirty = true

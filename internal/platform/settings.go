@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	settingsFileName         = settingsfile.FileName
-	defaultPrereleaseUpdates = true
+	settingsFileName = settingsfile.FileName
 )
 
 // AppSettings is stored as indented JSON in the user data folder (default locations) or next to the executable when user data is custom.
@@ -87,10 +86,6 @@ type AppSettings struct {
 	// everything. Both empty leaves it off, which is the default.
 	IGDBClientID     string `json:"igdbClientId,omitempty"`
 	IGDBClientSecret string `json:"igdbClientSecret,omitempty"`
-
-	// PrereleaseUpdates includes GitHub pre-releases in update checks.
-	// Stored without omitempty so an explicit opt-out survives a restart.
-	PrereleaseUpdates bool `json:"prereleaseUpdates"`
 
 	// DiscordRpc enables Discord rich presence integration.
 	// Stored without omitempty so false round-trips: omitted key plus normalize defaults would otherwise force true on load.
@@ -201,7 +196,6 @@ func defaultSettings() AppSettings {
 		PlatformExePaths:         map[string]string{},
 		PlatformOrder:            nil,
 		DisabledPlatforms:        nil,
-		PrereleaseUpdates:        defaultPrereleaseUpdates,
 		DiscordRpc:               true,
 		AnimationsEnabled:        true,
 		ControllerSupportEnabled: true,
@@ -223,9 +217,6 @@ func normalizeAppSettingsDefaults(s *AppSettings, raw map[string]json.RawMessage
 	}
 	if s.PlatformExePaths == nil {
 		s.PlatformExePaths = map[string]string{}
-	}
-	if _, ok := raw["prereleaseUpdates"]; !ok {
-		s.PrereleaseUpdates = defaultPrereleaseUpdates
 	}
 	if _, ok := raw["discordRpc"]; !ok {
 		s.DiscordRpc = true
