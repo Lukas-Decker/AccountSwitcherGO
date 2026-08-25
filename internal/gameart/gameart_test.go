@@ -266,9 +266,10 @@ func TestResolve_RejectsTinyImages(t *testing.T) {
 	}
 }
 
-// A better shape becoming reachable must replace what is published, and must
-// not leave the old file behind.
-func TestResolve_UpgradesAndPrunesTheOld(t *testing.T) {
+// A better shape becoming reachable must become the one in use. The shape it
+// replaced is kept on disk, because the view offers a choice of artwork and
+// deleting the old one would mean re-fetching it the moment it was picked.
+func TestResolve_UpgradesButKeepsTheOtherShape(t *testing.T) {
 	wwwroot := setupWwwroot(t)
 	dir := t.TempDir()
 
@@ -283,8 +284,40 @@ func TestResolve_UpgradesAndPrunesTheOld(t *testing.T) {
 	if second := Resolve(context.Background(), http.DefaultClient, req, false); second.Tier != TierPortrait {
 		t.Fatalf("tier = %v, want portrait", second.Tier)
 	}
+	got := publishedFiles(t, wwwroot, "Steam")
+	if len(got) != 2 {
+		t.Errorf("published %v, want both shapes kept as options", got)
+	}
+	opts := CachedOptions("Steam", "440")
+	if len(opts) != 2 || opts[0].Tier != TierPortrait {
+		t.Errorf("options = %+v, want the portrait offered first", opts)
+	}
+}
+
+// Re-publishing the same shape replaces it rather than accumulating one file
+// per format the source happened to serve.
+func TestResolve_SameShapeReplacesItself(t *testing.T) {
+	wwwroot := setupWwwroot(t)
+	dir := t.TempDir()
+
+	req := Request{
+		PlatformKey: "Steam",
+		GameID:      "620",
+		Candidates: []Candidate{
+			LocalFile(TierPortrait, writeFile(t, filepath.Join(dir, "a.png"), noisyPNG(t, 300, 450))),
+		},
+	}
+	Resolve(context.Background(), http.DefaultClient, req, false)
+
+	req.Candidates = []Candidate{
+		LocalFile(TierPortrait, writeFile(t, filepath.Join(dir, "b.jpg"), jpegOf(t, 600, 900))),
+	}
+	// Nothing better is on offer, so the cached portrait stands; the point is
+	// that the directory never grows a second portrait.
+	Resolve(context.Background(), http.DefaultClient, req, false)
+
 	if got := publishedFiles(t, wwwroot, "Steam"); len(got) != 1 {
-		t.Errorf("published %v, want the old tier pruned", got)
+		t.Errorf("published %v, want one file per shape", got)
 	}
 }
 

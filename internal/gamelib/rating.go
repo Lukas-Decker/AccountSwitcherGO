@@ -3,6 +3,8 @@ package gamelib
 import (
 	"regexp"
 	"strings"
+
+	"account-switcher/internal/gameart"
 )
 
 // Adult content is hidden by default, and the filter has to be turned off to
@@ -83,6 +85,17 @@ func applyPrefs(platformKey string, games []Game) []Game {
 	for i := range games {
 		if _, ok := hidden[games[i].GameID]; ok {
 			games[i].Hidden = true
+		}
+		// Every shape the chain published stays on disk, so the view can offer
+		// them as a choice. Only listed when there is more than one: a picker
+		// with a single entry is a menu that cannot change anything.
+		if opts := gameart.CachedOptions(platformKey, games[i].GameID); len(opts) > 1 {
+			for _, o := range opts {
+				games[i].ArtOptions = append(games[i].ArtOptions, ArtOption{
+					URL:  o.PublicURL,
+					Tier: o.Tier.String(),
+				})
+			}
 		}
 		if pinned := strings.TrimSpace(prefs.ArtOverride[games[i].GameID]); pinned != "" {
 			games[i].ArtURL = pinned

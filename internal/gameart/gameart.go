@@ -623,21 +623,70 @@ func tierFromFileName(name string) Tier {
 	return Tier(n)
 }
 
-// pruneOtherTiers deletes the game's art from every tier except the one just
-// written, so an upgraded capsule does not leave the old icon behind. It also
-// clears names written under an older schema.
+// pruneOtherTiers removes what the newly written file supersedes.
+//
+// Only the same tier, and only files written under an older schema. Other tiers
+// are deliberately kept: the view offers the user a choice of artwork, and
+// throwing away the wide capsule the moment a portrait resolves would mean
+// re-downloading it the moment they asked for it back. One file per shape per
+// game is a handful of kilobytes against a library that is already megabytes of
+// covers.
 func pruneOtherTiers(dir, gameID, keep string) {
 	matches, err := filepath.Glob(filepath.Join(dir, safeSegment(gameID)+"@*.*"))
 	if err != nil {
 		return
 	}
+	keepTier := tierFromFileName(keep)
 	for _, m := range matches {
-		if filepath.Base(m) == keep {
+		base := filepath.Base(m)
+		if base == keep {
+			continue
+		}
+		t := tierFromFileName(base)
+		// TierNone means an older schema, which nothing can read any more.
+		if t != TierNone && t != keepTier {
 			continue
 		}
 		// Absolute path from Glob, which only ever returns entries inside dir.
 		_ = os.Remove(m)
 	}
+}
+
+// Option is one artwork already published for a game.
+type Option struct {
+	PublicURL string
+	Tier      Tier
+}
+
+// CachedOptions lists every artwork published for a game, best shape first.
+//
+// This is what lets the view offer a choice: the chain picks one, and the other
+// shapes it resolved along the way stay on disk so switching between them costs
+// nothing.
+func CachedOptions(platformKey, gameID string) []Option {
+	dir, err := artDir(platformKey)
+	if err != nil {
+		return nil
+	}
+	matches, err := filepath.Glob(filepath.Join(dir, safeSegment(gameID)+"@*.*"))
+	if err != nil {
+		return nil
+	}
+	var out []Option
+	for _, m := range matches {
+		st, err := os.Stat(m)
+		if err != nil || st.IsDir() || st.Size() == 0 {
+			continue
+		}
+		base := filepath.Base(m)
+		tier := tierFromFileName(base)
+		if tier == TierNone {
+			continue
+		}
+		out = append(out, Option{PublicURL: publicURL(platformKey, base), Tier: tier})
+	}
+	sort.SliceStable(out, func(i, j int) bool { return out[i].Tier > out[j].Tier })
+	return out
 }
 
 // artConcurrency bounds how many games are resolved at once.
