@@ -8,6 +8,7 @@
   import {
     contextMenu,
     closeContextMenu,
+    collapsedSections,
     submenuOpenPath,
     submenuExpandEnabled,
     type ContextMenuState,
@@ -56,6 +57,7 @@
   /** Element to restore focus when the menu closes (set when moving focus into the menu). */
   let priorFocusEl: HTMLElement | null = null;
   let flyoutRaf: number | null = null;
+  let sectionRaf: number | null = null;
   let focusAfterOpenTimers: ReturnType<typeof setTimeout>[] = [];
 
   function capturePriorFocus(menuRoot: HTMLElement): HTMLElement | null {
@@ -431,6 +433,25 @@
     }
   }
 
+  /**
+   * Folding a section changes how tall the column is, so the height it may take has to be
+   * worked out again. Its position is left alone: the menu should not walk out from under the
+   * pointer because the user folded something away.
+   */
+  function scheduleSectionRelayout(): void {
+    if (sectionRaf !== null) {
+      cancelAnimationFrame(sectionRaf);
+    }
+    sectionRaf = requestAnimationFrame(() => {
+      sectionRaf = null;
+      if (!menuEl || !get(contextMenu)) {
+        return;
+      }
+      applyRootHeightPlan(menuEl);
+      refreshFlyoutLayout(menuEl);
+    });
+  }
+
   /** A scrolling column moves its rows, and window-placed flyouts have to follow them. */
   function onRootScroll(): void {
     scheduleFlyoutRefresh();
@@ -516,6 +537,13 @@
     window.addEventListener("resize", onWinResize);
     document.addEventListener("ctxsubmenuplanned", onSubmenuPlanned);
 
+    const unsubCollapsed = collapsedSections.subscribe(() => {
+      if (!menuEl || !get(contextMenu)) {
+        return;
+      }
+      scheduleSectionRelayout();
+    });
+
     const unsub = submenuOpenPath.subscribe(() => {
       if (!menuEl || !get(contextMenu)) {
         return;
@@ -528,6 +556,7 @@
       window.removeEventListener("keydown", onKey, true);
       window.removeEventListener("resize", onWinResize);
       document.removeEventListener("ctxsubmenuplanned", onSubmenuPlanned);
+      unsubCollapsed();
       unsub();
     };
   });
@@ -535,6 +564,9 @@
   onDestroy(() => {
     if (flyoutRaf !== null) {
       cancelAnimationFrame(flyoutRaf);
+    }
+    if (sectionRaf !== null) {
+      cancelAnimationFrame(sectionRaf);
     }
     detachObservers();
     closeContextMenu();

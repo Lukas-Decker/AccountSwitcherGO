@@ -20,6 +20,9 @@ export type ContextMenuWeight = "normal" | "medium" | "bold";
 /** Which font a row's label uses. */
 export type ContextMenuFont = "app" | "system" | "mono";
 
+/** How a section title is drawn. All three centre and embolden it; they differ in colour. */
+export type ContextMenuHeaderStyle = "accent" | "plain" | "band";
+
 export type ContextMenuStyle = {
   density: ContextMenuDensity;
   /** Icons are optional per item; this hides them all when false. */
@@ -29,6 +32,9 @@ export type ContextMenuStyle = {
   font: ContextMenuFont;
   /** Italic labels. Off by default; a whole menu in italic is hard to scan. */
   italic: boolean;
+  /** Section titles are optional. Off hides every one, and with them the folding they offer. */
+  showHeaders: boolean;
+  headerStyle: ContextMenuHeaderStyle;
 };
 
 export const CONTEXT_MENU_STYLE_DEFAULT: ContextMenuStyle = {
@@ -38,6 +44,8 @@ export const CONTEXT_MENU_STYLE_DEFAULT: ContextMenuStyle = {
   weight: "normal",
   font: "app",
   italic: false,
+  showHeaders: true,
+  headerStyle: "accent",
 };
 
 const STORAGE_KEY = "accsw:contextMenuStyle";
@@ -59,6 +67,7 @@ function sanitize(s: ContextMenuStyle): ContextMenuStyle {
   const densities: ContextMenuDensity[] = ["slim", "normal", "roomy"];
   const weights: ContextMenuWeight[] = ["normal", "medium", "bold"];
   const fonts: ContextMenuFont[] = ["app", "system", "mono"];
+  const headerStyles: ContextMenuHeaderStyle[] = ["accent", "plain", "band"];
   return {
     density: densities.includes(s.density) ? s.density : "normal",
     showIcons: Boolean(s.showIcons),
@@ -66,6 +75,8 @@ function sanitize(s: ContextMenuStyle): ContextMenuStyle {
     weight: weights.includes(s.weight) ? s.weight : "normal",
     font: fonts.includes(s.font) ? s.font : "app",
     italic: Boolean(s.italic),
+    showHeaders: Boolean(s.showHeaders),
+    headerStyle: headerStyles.includes(s.headerStyle) ? s.headerStyle : "accent",
   };
 }
 
@@ -107,6 +118,22 @@ const FONT_STACK: Record<ContextMenuFont, string> = {
 };
 
 /**
+ * A section title is centred and bold whichever of these is chosen, since that is what stops it
+ * reading as a row the user cannot click. What varies is how loudly it announces itself.
+ */
+const HEADER_COLOR: Record<ContextMenuHeaderStyle, string> = {
+  accent: "var(--accent)",
+  plain: "var(--white)",
+  band: "var(--white)",
+};
+
+const HEADER_BACKGROUND: Record<ContextMenuHeaderStyle, string> = {
+  accent: "transparent",
+  plain: "transparent",
+  band: "var(--surface-context-row)",
+};
+
+/**
  * The style as an inline `style` string for the menu root.
  *
  * Custom properties rather than classes so a submenu nested any number of
@@ -120,5 +147,7 @@ export const contextMenuCssVars = derived(contextMenuStyle, (s) =>
     `--ctx-font-family:${FONT_STACK[s.font]}`,
     `--ctx-font-style:${s.italic ? "italic" : "normal"}`,
     `--ctx-icon-display:${s.showIcons ? "inline-flex" : "none"}`,
+    `--ctx-header-color:${HEADER_COLOR[s.headerStyle]}`,
+    `--ctx-header-bg:${HEADER_BACKGROUND[s.headerStyle]}`,
   ].join(";"),
 );

@@ -2,7 +2,16 @@
   import type { MenuItemDef } from "../stores/contextMenu";
   import { onDestroy, tick } from "svelte";
   import { get } from "svelte/store";
-  import { closeContextMenu, submenuOpenPath, submenuExpandEnabled } from "../stores/contextMenu";
+  import {
+    closeContextMenu,
+    collapsedSections,
+    sectionKey,
+    submenuOpenPath,
+    submenuExpandEnabled,
+    toggleSection,
+  } from "../stores/contextMenu";
+  import { contextMenuStyle } from "../lib/contextMenuStyle";
+  import { menuSectionOwners, sectionHasRows } from "../lib/contextMenuSections";
   import {
     balancedSubmenuPageRanges,
     type SubmenuPageRange,
@@ -112,7 +121,7 @@
     if (!showSearchRow || q === "") {
       return true;
     }
-    if (it.type === "separator") {
+    if (it.type === "separator" || isTitle(it)) {
       return false;
     }
     if (!it.label) {
@@ -132,16 +141,52 @@
   $: filteredTailEntries = (() => {
     void showSearchRow;
     void q;
+    /* Named here so the compiler sees them: the filtering below reads them through helpers,
+       and a dependency it cannot see is one it will not order this statement after. */
+    void headersShown;
+    void collapsedKeys;
+    void sectionOwners;
     const out: TailEntry[] = [];
     for (let idx = 0; idx < tail.length; idx++) {
       const item = tail[idx]!;
+      if (isTitle(item) && !headersShown) {
+        continue;
+      }
       if (!rowMatchesSearch(item)) {
+        continue;
+      }
+      if (foldedAway(idx)) {
         continue;
       }
       out.push({ item, idx });
     }
     return out;
   })();
+
+  /* Titles are optional twice over: a menu need not define any, and the user can switch the
+     ones that exist off. With them off there is nothing left to click, so nothing stays
+     folded either. */
+  $: headersShown = $contextMenuStyle.showHeaders;
+  $: sectionOwners = menuSectionOwners(tail);
+  $: collapsedKeys = $collapsedSections;
+
+  function isTitle(item: MenuItemDef): boolean {
+    return item.type === "header" || item.type === "subheader";
+  }
+
+  function sectionIsCollapsed(idx: number): boolean {
+    return collapsedKeys.includes(sectionKey([...pathPrefix, idx]));
+  }
+
+  /** Rows of a folded section are dropped from the column, not merely hidden with CSS. */
+  function foldedAway(idx: number): boolean {
+    if (!headersShown || q !== "" || !sectionOwners) {
+      return false;
+    }
+    return (sectionOwners[idx] ?? []).some((owner) =>
+      collapsedKeys.includes(sectionKey([...pathPrefix, owner])),
+    );
+  }
 
   function pathIsOpen(path: number[], openPath: number[]): boolean {
     return path.length > 0 &&
@@ -435,6 +480,33 @@
 {#each pagedTailEntries as { item, idx } (idx)}
   {#if item.type === "separator"}
     <li class="ctx-sep" role="separator" data-page-measure-row><hr /></li>
+  {:else if isTitle(item)}
+    {@const foldable = sectionHasRows(sectionOwners, idx)}
+    {@const folded = sectionIsCollapsed(idx)}
+    <li
+      class="ctx-header"
+      class:ctx-subheader={item.type === "subheader"}
+      class:ctx-header--folded={folded}
+      class:ctx-header--static={!foldable}
+      role="none"
+      data-page-measure-row
+    >
+      <button
+        id={itemDomId(idx)}
+        type="button"
+        class="ctx-menu__btn ctx-menu__header"
+        role="menuitem"
+        tabindex="-1"
+        disabled={!foldable}
+        aria-disabled={!foldable ? "true" : undefined}
+        aria-expanded={foldable ? !folded : undefined}
+        on:click={() => foldable && toggleSection([...pathPrefix, idx])}
+      >
+        {#if foldable}<span class="ctx-header__caret" aria-hidden="true"
+          ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg
+        ></span>{/if}{item.label}
+      </button>
+    </li>
   {:else if item.children?.length}
     <li
       class="hasSubmenu"

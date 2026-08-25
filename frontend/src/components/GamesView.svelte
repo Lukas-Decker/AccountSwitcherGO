@@ -288,7 +288,7 @@
       const anyOwner = launchable.some((l) => l.owns);
       rows.push({
         label: anyOwner ? get(t)("Games_StartOnAccount") : get(t)("Games_StartOnAccount_NoOwner"),
-        disabled: true,
+        type: "header",
       });
       for (const { ref, owns } of launchable) {
         const name = get(censoredName)(ref.accountName || ref.accountId);

@@ -7,6 +7,7 @@
     setContextMenuStyle,
     type ContextMenuDensity,
     type ContextMenuFont,
+    type ContextMenuHeaderStyle,
     type ContextMenuWeight,
   } from "../../../lib/contextMenuStyle";
   import { settingsIcons } from "./settingsIcons";
@@ -37,6 +38,15 @@
   function onFont(e: CustomEvent<string>): void {
     setContextMenuStyle({ font: e.detail as ContextMenuFont });
   }
+  function onHeaderStyle(e: CustomEvent<string>): void {
+    setContextMenuStyle({ headerStyle: e.detail as ContextMenuHeaderStyle });
+  }
+
+  $: headerStyleOptions = [
+    { value: "accent", label: $t("Settings_ContextMenu_HeaderStyle_Accent") },
+    { value: "plain", label: $t("Settings_ContextMenu_HeaderStyle_Plain") },
+    { value: "band", label: $t("Settings_ContextMenu_HeaderStyle_Band") },
+  ];
 
   $: fontOptions = [
     { value: "app", label: $t("Settings_ContextMenu_Font_App") },
@@ -48,7 +58,7 @@
 <SettingsCard
   title={$t("Settings_Header_ContextMenu")}
   icon={settingsIcons.contextMenu}
-  keywords="context menu right click slim compact density icons font bold italic style"
+  keywords="context menu right click slim compact density icons font bold italic style header title section collapse"
 >
   <SettingsRow
     label={$t("Settings_ContextMenu_Density")}
@@ -80,6 +90,38 @@
       />
       <label for="{uid}-icons" class="ctxstyle-box" aria-hidden="true"></label>
     </span>
+  </SettingsRow>
+
+  <SettingsRow
+    label={$t("Settings_ContextMenu_Headers")}
+    hint={$t("Settings_ContextMenu_Headers_Hint")}
+    controlId="{uid}-headers"
+    keywords="header title section group collapse fold"
+  >
+    <span class="ctxstyle-check">
+      <input
+        id="{uid}-headers"
+        type="checkbox"
+        checked={$contextMenuStyle.showHeaders}
+        on:change={(e) => setContextMenuStyle({ showHeaders: e.currentTarget.checked })}
+      />
+      <label for="{uid}-headers" class="ctxstyle-box" aria-hidden="true"></label>
+    </span>
+  </SettingsRow>
+
+  <SettingsRow
+    label={$t("Settings_ContextMenu_HeaderStyle")}
+    hint={$t("Settings_ContextMenu_HeaderStyle_Hint")}
+    controlId="{uid}-headerstyle"
+    keywords="header title accent colour color band"
+  >
+    <SettingsSelect
+      id="{uid}-headerstyle"
+      label={$t("Settings_ContextMenu_HeaderStyle")}
+      options={headerStyleOptions}
+      value={$contextMenuStyle.headerStyle}
+      on:select={onHeaderStyle}
+    />
   </SettingsRow>
 
   <SettingsRow

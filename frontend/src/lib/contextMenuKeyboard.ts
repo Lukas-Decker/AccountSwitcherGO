@@ -133,7 +133,9 @@ function firstNavigableInMenu(menuRoot: HTMLElement): HTMLElement | null {
     return null;
   }
   const col = navigableTargetsInColumn(rootUl, getInputModality() !== "controller");
-  return col[0] ?? null;
+  /* A section title can be focused and folded from the keyboard, but it is not what the menu
+     was opened to do, so the first actual entry keeps the opening focus. */
+  return col.find((el) => !el.classList.contains("ctx-menu__header")) ?? col[0] ?? null;
 }
 
 function parentMenuList(el: HTMLElement): HTMLUListElement | null {

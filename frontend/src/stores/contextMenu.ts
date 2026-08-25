@@ -7,7 +7,12 @@ function ctxMenuLog(...args: unknown[]): void {
 export type MenuItemDef = {
   /** Ignored when type is search/separator */
   label?: string;
-  type?: "item" | "search" | "separator";
+  /**
+   * `header` and `subheader` name a section rather than doing anything. The rows after one
+   * belong to it, up to the next header, subheader or separator, and fold away with it when the
+   * user clicks the title. Both are optional: a menu that names no sections has none.
+   */
+  type?: "item" | "search" | "separator" | "header" | "subheader";
   /** Leaf click, or with `children` a parent row click (see ContextMenuNest). */
   action?: () => void;
   children?: MenuItemDef[];
@@ -52,6 +57,23 @@ export type ContextMenuAnchorRect = {
 
 export const contextMenu = writable<ContextMenuState>(null);
 
+/**
+ * Section titles the user has folded shut, as paths from the root (`sectionKey`). Cleared with
+ * every open, because a fold is a way of looking past a long list right now, not a preference.
+ */
+export const collapsedSections = writable<string[]>([]);
+
+export function sectionKey(path: number[]): string {
+  return path.join("-");
+}
+
+export function toggleSection(path: number[]): void {
+  const key = sectionKey(path);
+  collapsedSections.update((cur) =>
+    cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key],
+  );
+}
+
 /** Indices from root — which branches are expanded (e.g. [4, 0] = root item 4, then child 0). */
 export const submenuOpenPath = writable<number[]>([]);
 
@@ -65,6 +87,7 @@ export function openContextMenu(x: number, y: number, items: MenuItemDef[]): voi
   ctxMenuLog("openContextMenu", { x, y, itemCount: items.length });
   submenuOpenPath.set([]);
   submenuExpandEnabled.set(false);
+  collapsedSections.set([]);
   contextMenu.set({ x, y, items });
 }
 
@@ -72,6 +95,7 @@ export function openContextMenuAtRect(rect: ContextMenuAnchorRect, items: MenuIt
   ctxMenuLog("openContextMenuAtRect", { rect, itemCount: items.length });
   submenuOpenPath.set([]);
   submenuExpandEnabled.set(false);
+  collapsedSections.set([]);
   contextMenu.set({
     x: rect.left,
     y: rect.bottom,
@@ -84,5 +108,6 @@ export function closeContextMenu(): void {
   ctxMenuLog("closeContextMenu");
   submenuOpenPath.set([]);
   submenuExpandEnabled.set(false);
+  collapsedSections.set([]);
   contextMenu.set(null);
 }
