@@ -18,6 +18,8 @@ export const settingsIcons = {
   appearance: [circle(12, 12, 9), "M12 3v18", "M12 7h5", "M12 12h8", "M12 17h5"],
   /** Globe. */
   language: [circle(12, 12, 9), "M3 12h18", "M12 3a14 14 0 010 18a14 14 0 010-18"],
+  /** A pointer beside a stack of menu rows. */
+  contextMenu: ["M4 5h10", "M4 9h10", "M4 13h6", "M14 12l6 6-2.5.5L19 21l-2 1-1.5-2.5L14 21z"],
   /** Gamepad. */
   games: [
     "M7 12h4M9 10v4",

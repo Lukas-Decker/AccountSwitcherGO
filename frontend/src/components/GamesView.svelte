@@ -31,6 +31,11 @@
     sizeOnDisk: number;
     owners: Owner[];
     sources: string[];
+    hidden: boolean;
+    nsfw: boolean;
+    nsfwOverridden: boolean;
+    artPinned: boolean;
+    artOptions: { url: string; tier: string; source: string }[];
   };
 
   /** Which platform's library to show. */
@@ -60,6 +65,15 @@
   let loading = true;
   let search = "";
   let installedOnly = false;
+  /** Hidden games stay resolved and are simply not drawn, so showing them
+   * again is a filter rather than a rescan. */
+  let showHidden = false;
+  /** Sexual content sits behind a filter that starts off, so it takes a
+   * deliberate action to show it rather than a deliberate action to avoid it.
+   * Narrower than an age rating: a game rated 18+ for violence is not hidden. */
+  let showNSFW = false;
+  /** Which game has its artwork picker open. */
+  let artPickerGameId = "";
   let includeOnline = false;
   let launchAfterSwitch = true;
   let busyGameId = "";
@@ -80,11 +94,18 @@
 
   $: filtered = games
     .filter((g) => !installedOnly || g.installed)
+    .filter((g) => showHidden || !g.hidden)
+    .filter((g) => showNSFW || !g.nsfw)
     .filter((g) => {
       const term = search.trim();
       if (!term) return true;
       return fuzzyWordsMatch(term, g.name) || g.gameId.toLowerCase().includes(term.toLowerCase());
     });
+
+  /** What the filters are currently keeping out, so the view can say so rather
+   * than looking as though the library is smaller than it is. */
+  $: filteredOutHidden = games.filter((g) => g.hidden).length;
+  $: filteredOutNSFW = games.filter((g) => g.nsfw && !g.hidden).length;
 
   /** Whether the account signed in right now is one of the game's owners. */
   function activeOwns(game: Game): boolean {
@@ -187,31 +208,150 @@
     }
   }
 
+  /** Small glyphs for the menu. Optional: the user can switch icons off, and
+   * the column disappears with them. */
+  const ICON = {
+    play: "M8 5v14l11-7z",
+    account: ["M12 12a4 4 0 100-8 4 4 0 000 8z", "M4 20a8 8 0 0116 0"],
+    hide: ["M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z", "M4 4l16 16"],
+    show: ["M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z", "M12 15a3 3 0 100-6 3 3 0 000 6z"],
+    art: ["M4 5h16v14H4z", "M4 16l5-5 4 4 3-3 4 4"],
+    folder: "M3 6h6l2 2h10v10H3z",
+    nsfw: ["M12 3l9 16H3z", "M12 9v4", "M12 16h.01"],
+    refresh: ["M20 12a8 8 0 11-2.3-5.7", "M20 4v5h-5"],
+  };
+
   /**
-   * Right click offers every account on the platform, not just the ones a
-   * source called owners.
+   * Accounts offered for a game, owners first.
    *
-   * Ownership is only ever as good as what a launcher wrote down, and for a
-   * free-to-play game nothing writes anything down at all: no account "owns"
-   * it, yet every account can play it. Refusing to start those would make the
-   * menu wrong more often than the data is.
+   * Only accounts a source actually recorded as owning it, because offering
+   * the rest invites signing out of a working account to launch something that
+   * account cannot run. The exception is a game nothing recorded an owner for,
+   * which is what a free-to-play title looks like: every source is silent, so
+   * refusing to offer anything would make it unlaunchable.
    */
+  function launchableAccounts(game: Game): { ref: AccountRef; owns: boolean }[] {
+    const owners = new Set(game.owners.map((o) => o.accountId));
+    const known = accounts.filter((a) => owners.has(a.accountId));
+    if (known.length > 0) {
+      return known.map((ref) => ({ ref, owns: true }));
+    }
+    return accounts.map((ref) => ({ ref, owns: false }));
+  }
+
+  async function setHidden(game: Game, hidden: boolean): Promise<void> {
+    try {
+      await GameLibraryService.SetGameHidden(platformKey, game.gameId, hidden);
+      games = games.map((g) => (g.gameId === game.gameId ? { ...g, hidden } : g));
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_SaveFailed"), e), duration: 8000 });
+    }
+  }
+
+  async function setNSFW(game: Game, nsfw: boolean): Promise<void> {
+    try {
+      await GameLibraryService.SetGameNSFW(platformKey, game.gameId, nsfw);
+      games = games.map((g) =>
+        g.gameId === game.gameId ? { ...g, nsfw, nsfwOverridden: true } : g,
+      );
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_SaveFailed"), e), duration: 8000 });
+    }
+  }
+
+  async function pickArtwork(game: Game, url: string): Promise<void> {
+    artPickerGameId = "";
+    try {
+      await GameLibraryService.SetGameArtwork(platformKey, game.gameId, url);
+      games = games.map((g) =>
+        g.gameId === game.gameId ? { ...g, artUrl: url || g.artUrl, artPinned: url !== "" } : g,
+      );
+      if (!url) await load();
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_SaveFailed"), e), duration: 8000 });
+    }
+  }
+
+  function artTierLabel(tier: string): string {
+    const key = `Games_ArtTier_${tier.charAt(0).toUpperCase()}${tier.slice(1)}`;
+    const label = get(t)(key);
+    return label === key ? tier : label;
+  }
+
   function gameMenuItems(game: Game): MenuItemDef[] {
-    const owners = new Map(game.owners.map((o) => [o.accountId, o]));
-    const rows: MenuItemDef[] = accounts.map((a) => {
-      const owner = owners.get(a.accountId);
-      const name = get(censoredName)(a.accountName || a.accountId);
-      const isActive = a.accountId === activeAccountId;
-      let label = name;
-      if (isActive) label = get(t)("Games_AccountSignedIn", { name });
-      else if (!owner) label = get(t)("Games_AccountNotKnownToOwn", { name });
-      return { label, action: () => void switchTo(game, a.accountId) };
+    const rows: MenuItemDef[] = [];
+    const launchable = launchableAccounts(game);
+
+    if (launchable.length === 0) {
+      rows.push({ label: get(t)("Games_NoAccounts"), disabled: true });
+    } else {
+      const anyOwner = launchable.some((l) => l.owns);
+      rows.push({
+        label: anyOwner ? get(t)("Games_StartOnAccount") : get(t)("Games_StartOnAccount_NoOwner"),
+        disabled: true,
+      });
+      for (const { ref, owns } of launchable) {
+        const name = get(censoredName)(ref.accountName || ref.accountId);
+        const isActive = ref.accountId === activeAccountId;
+        rows.push({
+          label: isActive ? get(t)("Games_AccountSignedIn", { name }) : name,
+          icon: isActive ? ICON.play : ICON.account,
+          action: () => void switchTo(game, ref.accountId),
+        });
+        void owns;
+      }
+    }
+
+    rows.push({ type: "separator" });
+
+    if (game.artOptions?.length > 1) {
+      rows.push({
+        label: get(t)("Games_ChooseArtwork"),
+        icon: ICON.art,
+        children: [
+          ...game.artOptions.map((o) => ({
+            label: artTierLabel(o.tier),
+            action: () => void pickArtwork(game, o.url),
+          })),
+          ...(game.artPinned
+            ? [{ type: "separator" as const }, { label: get(t)("Games_ArtworkAuto"), action: () => void pickArtwork(game, "") }]
+            : []),
+        ],
+      });
+    }
+
+    if (game.installPath) {
+      rows.push({
+        label: get(t)("Games_OpenInstallFolder"),
+        icon: ICON.folder,
+        action: () => void openInstallFolder(game),
+      });
+    }
+
+    rows.push({
+      label: game.nsfw ? get(t)("Games_MarkNotNSFW") : get(t)("Games_MarkNSFW"),
+      icon: ICON.nsfw,
+      action: () => void setNSFW(game, !game.nsfw),
     });
 
-    if (rows.length === 0) {
-      return [{ label: get(t)("Games_NoAccounts"), disabled: true }];
+    rows.push({
+      label: game.hidden ? get(t)("Games_Unhide") : get(t)("Games_Hide"),
+      icon: game.hidden ? ICON.show : ICON.hide,
+      action: () => void setHidden(game, !game.hidden),
+    });
+
+    rows.push({ type: "separator" });
+    rows.push({ label: get(t)("Games_Refresh"), icon: ICON.refresh, action: () => void load() });
+
+    return rows;
+  }
+
+  async function openInstallFolder(game: Game): Promise<void> {
+    try {
+      await GameLibraryService.OpenGameFolder(game.installPath);
+    } catch (e) {
+      pushToast({ type: "error", message: formatToastWithError(get(t)("Toast_OpenFolderFailed"), e), duration: 8000 });
     }
-    return [{ label: get(t)("Games_StartOnAccount"), disabled: true }, { type: "separator" }, ...rows];
   }
 
   function onGameContextMenu(e: MouseEvent, game: Game): void {
@@ -286,6 +426,16 @@
       <label for="{uid}-installed" class="games-toggle-box" aria-hidden="true"></label>
       <label for="{uid}-installed" class="games-toggle-text">{$t("Games_FilterInstalled")}</label>
     </span>
+    <span class="games-toggle">
+      <input type="checkbox" id="{uid}-hidden" bind:checked={showHidden} />
+      <label for="{uid}-hidden" class="games-toggle-box" aria-hidden="true"></label>
+      <label for="{uid}-hidden" class="games-toggle-text">{$t("Games_FilterShowHidden")}</label>
+    </span>
+    <span class="games-toggle" title={$t("Games_FilterShowNSFW_Hint")}>
+      <input type="checkbox" id="{uid}-nsfw" bind:checked={showNSFW} />
+      <label for="{uid}-nsfw" class="games-toggle-box" aria-hidden="true"></label>
+      <label for="{uid}-nsfw" class="games-toggle-text">{$t("Games_FilterShowNSFW")}</label>
+    </span>
     {#if canLaunchGame}
       <span class="games-toggle">
         <input type="checkbox" id="{uid}-launch" bind:checked={launchAfterSwitch} />
@@ -309,6 +459,17 @@
       {$t("Games_Refresh")}
     </button>
   </div>
+
+  {#if !loading && ((!showHidden && filteredOutHidden > 0) || (!showNSFW && filteredOutNSFW > 0))}
+    <p class="games-filtered-note">
+      {#if !showHidden && filteredOutHidden > 0}
+        {$t("Games_FilteredHidden", { count: filteredOutHidden })}
+      {/if}
+      {#if !showNSFW && filteredOutNSFW > 0}
+        {$t("Games_FilteredNSFW", { count: filteredOutNSFW })}
+      {/if}
+    </p>
+  {/if}
 
   {#each warnings as warning (warning)}
     <p class="games-warning">{warning}</p>
@@ -440,6 +601,12 @@
     }
   }
 
+  .games-filtered-note {
+    margin: 0 0.1875rem;
+    font-size: 0.6375rem;
+    opacity: 0.65;
+  }
+
   .games-warning {
     margin: 0 0.1875rem;
     font-size: 0.6375rem;
@@ -542,13 +709,18 @@
     position: absolute;
     top: 0.225rem;
     left: 0.225rem;
-    padding: 0.075rem 0.225rem;
+    padding: 0.1rem 0.3rem;
     border-radius: 3px;
     background: var(--accent, #f90);
     color: #000;
-    font-size: 0.5rem;
+    /* Bold and a little larger: it sits over artwork of any colour, and at the
+       old weight it was the first thing to become unreadable. */
+    font-size: 0.5625rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    text-shadow: none;
   }
 
   .game-name {

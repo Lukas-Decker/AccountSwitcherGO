@@ -2,11 +2,15 @@ package gamelib
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
 	"account-switcher/internal/appclient"
+	"account-switcher/internal/platform"
 	"account-switcher/internal/security"
 )
 
@@ -115,21 +119,41 @@ func (s *Service) SetGameArtwork(platformKey, gameID, url string) error {
 	return SetArtOverride(platformKey, gameID, url)
 }
 
-// SetGameAdult records the user's own answer about a game's rating, which
-// always beats what the title suggested.
-func (s *Service) SetGameAdult(platformKey, gameID string, adult bool) error {
+// SetGameNSFW records the user's own answer about a game, which always beats
+// what the title suggested.
+func (s *Service) SetGameNSFW(platformKey, gameID string, nsfw bool) error {
 	if err := security.RequireUnlocked(); err != nil {
 		return err
 	}
-	return SetNSFWOverride(platformKey, gameID, &adult)
+	return SetNSFWOverride(platformKey, gameID, &nsfw)
 }
 
-// ClearGameAdult drops the user's answer and returns the game to the default.
-func (s *Service) ClearGameAdult(platformKey, gameID string) error {
+// ClearGameNSFW drops the user's answer and returns the game to the default.
+func (s *Service) ClearGameNSFW(platformKey, gameID string) error {
 	if err := security.RequireUnlocked(); err != nil {
 		return err
 	}
 	return SetNSFWOverride(platformKey, gameID, nil)
+}
+
+// OpenGameFolder shows a game's install directory in the file manager.
+//
+// The path is checked rather than trusted: this is a binding the webview can
+// call, so it opens a directory that exists and nothing else. Anything that is
+// not a directory is refused instead of being handed to the shell.
+func (s *Service) OpenGameFolder(path string) error {
+	if err := security.RequireUnlocked(); err != nil {
+		return err
+	}
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return fmt.Errorf("no install folder recorded for this game")
+	}
+	st, err := os.Stat(path)
+	if err != nil || !st.IsDir() {
+		return fmt.Errorf("install folder is not there any more")
+	}
+	return platform.OpenPathInFileManager(path)
 }
 
 // SupportedPlatforms lists the platforms that have a resolver.

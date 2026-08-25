@@ -7,8 +7,14 @@ import (
 	"account-switcher/internal/gameart"
 )
 
-// Adult content is hidden by default, and the filter has to be turned off to
+// Sexual content is hidden by default, and the filter has to be turned off to
 // see it.
+//
+// This is deliberately narrower than an age rating. Plenty of games are 18+ for
+// violence, language or drugs, and none of that is what this filter is for:
+// hiding Doom or Grand Theft Auto because they carry a mature rating would make
+// the library wrong for everybody who owns them. Only titles that announce
+// sexual content match.
 //
 // There is no single authority for this. Steam publishes content descriptors
 // but only through a per-app store call, which is thousands of requests for a
@@ -32,17 +38,14 @@ var nsfwTitlePatterns = []*regexp.Regexp{
 	regexp.MustCompile(`(?i)\beroge\b`),
 	regexp.MustCompile(`(?i)\bporn(o|ographic)?\b`),
 	regexp.MustCompile(`(?i)\bsex(y|ual)?\s+(simulator|game|adventure|story)\b`),
-	regexp.MustCompile(`(?i)\badults?\s*only\b`),
-	regexp.MustCompile(`(?i)\b18\+`),
-	regexp.MustCompile(`(?i)\buncensored\b`),
 	regexp.MustCompile(`(?i)\bwaifu\s+(sex|nude|naked)`),
 	regexp.MustCompile(`(?i)\bnude\b`),
 	regexp.MustCompile(`(?i)\bnudity\b`),
 	regexp.MustCompile(`(?i)\bstrip\s*(poker|club)\b`),
 }
 
-// looksAdult reports whether a title announces itself as adult content.
-func looksAdult(name string) bool {
+// looksNSFW reports whether a title announces sexual content.
+func looksNSFW(name string) bool {
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return false
@@ -62,12 +65,12 @@ func looksAdult(name string) bool {
 func applyRatings(platformKey string, games []Game) []Game {
 	prefs := PrefsFor(platformKey)
 	for i := range games {
-		adult := looksAdult(games[i].Name)
+		nsfw := looksNSFW(games[i].Name)
 		if v, ok := prefs.NSFWOverride[games[i].GameID]; ok {
-			adult = v
-			games[i].AdultOverridden = true
+			nsfw = v
+			games[i].NSFWOverridden = true
 		}
-		games[i].Adult = adult
+		games[i].NSFW = nsfw
 	}
 	return games
 }

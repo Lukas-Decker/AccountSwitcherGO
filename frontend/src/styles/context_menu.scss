@@ -15,6 +15,11 @@
     --ctx-font-style: normal;
     --ctx-icon-display: inline-flex;
 
+    font-size: var(--ctx-font-size);
+    font-weight: var(--ctx-font-weight);
+    font-family: var(--ctx-font-family);
+    font-style: var(--ctx-font-style);
+
     background: var(--surface-context-submenu);
     border: 0;
     box-shadow: 10px 10px 5px -3px var(--shadow-color-30);
@@ -76,10 +81,6 @@
             width: 100%;
             text-align: left;
             padding: var(--ctx-row-padding);
-            font-size: var(--ctx-font-size);
-            font-weight: var(--ctx-font-weight);
-            font-family: var(--ctx-font-family);
-            font-style: var(--ctx-font-style);
             margin: 0;
             border: none;
             background: transparent;
@@ -166,10 +167,6 @@
                 a,
                 button.paginationButton {
                     padding: var(--ctx-row-padding);
-            font-size: var(--ctx-font-size);
-            font-weight: var(--ctx-font-weight);
-            font-family: var(--ctx-font-family);
-            font-style: var(--ctx-font-style);
                     width: 38px;
                     text-align: center;
                     border: none;
@@ -352,19 +349,57 @@ hr {
 /* An optional leading icon. Items opt in by supplying one, and the whole
    column disappears when icons are switched off, so a menu of plain rows keeps
    its original alignment rather than reserving space for nothing. */
-.ctx-menu__icon {
+/* A separator was an unstyled <hr>, which the browser draws with its own
+   margins and a border that is invisible on this surface: the result was a gap
+   with nothing in it, which reads as a rendering fault rather than as a
+   division. This draws the line itself. */
+.contextmenu .ctx-sep {
+    margin: 0.25em 0;
+    padding: 0;
+    pointer-events: none;
+
+    hr {
+        margin: 0 0.6em;
+        border: 0;
+        /* currentColor rather than a fixed border token: the menu's text colour
+           is already whatever contrasts with its surface, so the line stays
+           visible on a light theme as well as a dark one. */
+        border-top: 1px solid currentColor;
+        opacity: 0.22;
+        height: 0;
+    }
+}
+
+/* Rows carrying an icon lay out as a line so the glyph sits beside the label
+   rather than above it. Rows without one are untouched. */
+.contextmenu li > button:has(> .ctx-menu__icon) {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+}
+
+/* The row rule above sets every span inside a menu to display:block and
+   width:100%, which would drop the glyph onto a line of its own. This is more
+   specific on purpose. */
+.contextmenu .ctx-menu__icon {
     display: var(--ctx-icon-display);
     align-items: center;
     justify-content: center;
     width: 1em;
     height: 1em;
-    margin-right: 0.5em;
+    min-width: 1em;
+    padding: 0;
+    margin: 0;
     flex: none;
     opacity: 0.85;
 
     svg {
         width: 100%;
         height: 100%;
-        fill: currentColor;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
 }

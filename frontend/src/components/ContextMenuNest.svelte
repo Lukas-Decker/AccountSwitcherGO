@@ -504,7 +504,7 @@
         disabled={item.disabled}
         aria-disabled={item.disabled ? "true" : undefined}
         tabindex={item.disabled ? -1 : undefined}
-        on:click={() => run(item)}>{item.label}</button>
+        on:click={() => run(item)}>{#if item.icon}<span class="ctx-menu__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">{#each (Array.isArray(item.icon) ? item.icon : [item.icon]) as d}<path {d} />{/each}</svg></span>{/if}{item.label}</button>
     </li>
   {/if}
 {/each}

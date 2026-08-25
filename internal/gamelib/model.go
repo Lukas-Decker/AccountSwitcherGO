@@ -157,11 +157,13 @@ type Game struct {
 	// Hidden is set when the user has hidden this game. It is marked rather
 	// than dropped so unhiding needs no rescan.
 	Hidden bool `json:"hidden"`
-	// Adult marks content the view keeps behind a filter by default.
-	Adult bool `json:"adult"`
-	// AdultOverridden says the rating came from the user rather than a guess,
-	// so the view can offer to undo it rather than re-asserting it.
-	AdultOverridden bool `json:"adultOverridden"`
+	// NSFW marks sexual content the view keeps behind a filter by default.
+	// Narrower than an age rating on purpose: a game rated 18+ for violence is
+	// not what this hides.
+	NSFW bool `json:"nsfw"`
+	// NSFWOverridden says the flag came from the user rather than a guess, so
+	// the view can offer to undo it rather than re-asserting it.
+	NSFWOverridden bool `json:"nsfwOverridden"`
 	// ArtPinned says the artwork is the user's choice, not the chain's.
 	ArtPinned bool `json:"artPinned"`
 	// ArtOptions are the other artwork the chain could have used, so the user

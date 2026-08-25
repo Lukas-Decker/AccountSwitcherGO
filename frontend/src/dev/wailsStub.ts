@@ -207,6 +207,10 @@ const RESOLVED_GAMES = [
       },
     ],
     sources: ["steam:appmanifest", "steam:localconfig"],
+    artOptions: [
+      { url: "", tier: "portrait", source: "steam:appmanifest" },
+      { url: "", tier: "wide", source: "steam:applist" },
+    ],
   },
   {
     platformKey: "Steam",
@@ -269,6 +273,34 @@ const RESOLVED_GAMES = [
     sizeOnDisk: 0,
     owners: [],
     sources: ["steam:userdata"],
+  },
+  {
+    platformKey: "Steam",
+    gameId: "9001",
+    name: "Hentai Puzzle Deluxe",
+    artUrl: "",
+    installed: false,
+    installPath: "",
+    sizeOnDisk: 0,
+    owners: [
+      { accountId: "76561198000000002", accountName: "Alt", source: "steam:sharedconfig", confidence: "strong", installedBy: false, playtimeMinutes: 0, lastPlayed: "" },
+    ],
+    sources: ["steam:sharedconfig"],
+    nsfw: true,
+  },
+  {
+    platformKey: "Steam",
+    gameId: "9002",
+    name: "Something You Hid",
+    artUrl: "",
+    installed: false,
+    installPath: "",
+    sizeOnDisk: 0,
+    owners: [
+      { accountId: "76561198000000001", accountName: "Main", source: "steam:localconfig", confidence: "strong", installedBy: false, playtimeMinutes: 10, lastPlayed: "" },
+    ],
+    sources: ["steam:localconfig"],
+    hidden: true,
   },
 ];
 

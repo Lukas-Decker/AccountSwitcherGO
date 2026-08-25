@@ -84,29 +84,32 @@ func TestSetArtOverride_PinsAndClears(t *testing.T) {
 
 // The bar for guessing adult content is deliberately high: a false positive
 // hides a game somebody owns and leaves them hunting for it.
-func TestLooksAdult(t *testing.T) {
+func TestLooksNSFW(t *testing.T) {
 	t.Parallel()
 
-	adult := []string{
-		"Hentai Puzzle", "NSFW Simulator", "Some Game [18+]",
-		"Nude Raider", "Strip Poker Night", "Uncensored Edition",
+	nsfw := []string{
+		"Hentai Puzzle", "NSFW Simulator", "Nude Raider", "Strip Poker Night",
 	}
-	for _, name := range adult {
-		if !looksAdult(name) {
-			t.Errorf("looksAdult(%q) = false, want true", name)
+	for _, name := range nsfw {
+		if !looksNSFW(name) {
+			t.Errorf("looksNSFW(%q) = false, want true", name)
 		}
 	}
 
 	// Whole-word matching: these all contain an adult substring and none of
 	// them are adult games.
+	// An age rating is not the same thing. These are all 18+ for violence,
+	// language or drugs, and hiding them would make the library wrong for
+	// everybody who owns them.
 	safe := []string{
 		"Assassin's Creed", "Analogue: A Hate Story", "Cuphead",
 		"Grand Theft Auto V", "Sexy Brutale", "Prison Architect",
 		"Half-Life", "Middle-earth: Shadow of Mordor", "",
+		"Some Game [18+]", "Mortal Kombat Uncensored", "Adults Only Shooter",
 	}
 	for _, name := range safe {
-		if looksAdult(name) {
-			t.Errorf("looksAdult(%q) = true, want false", name)
+		if looksNSFW(name) {
+			t.Errorf("looksNSFW(%q) = true, want false", name)
 		}
 	}
 }
@@ -134,13 +137,13 @@ func TestApplyRatings_UserAnswerWins(t *testing.T) {
 	for _, g := range games {
 		byID[g.GameID] = g
 	}
-	if !byID["570"].Adult || !byID["570"].AdultOverridden {
+	if !byID["570"].NSFW || !byID["570"].NSFWOverridden {
 		t.Errorf("570 = %+v, want forced adult", byID["570"])
 	}
-	if byID["999"].Adult || !byID["999"].AdultOverridden {
+	if byID["999"].NSFW || !byID["999"].NSFWOverridden {
 		t.Errorf("999 = %+v, want forced not adult", byID["999"])
 	}
-	if byID["730"].Adult || byID["730"].AdultOverridden {
+	if byID["730"].NSFW || byID["730"].NSFWOverridden {
 		t.Errorf("730 = %+v, want the default", byID["730"])
 	}
 
@@ -149,7 +152,7 @@ func TestApplyRatings_UserAnswerWins(t *testing.T) {
 		t.Fatal(err)
 	}
 	games = applyRatings("Steam", []Game{{GameID: "999", Name: "Hentai Puzzle"}})
-	if !games[0].Adult || games[0].AdultOverridden {
+	if !games[0].NSFW || games[0].NSFWOverridden {
 		t.Errorf("got %+v, want the guess back", games[0])
 	}
 }
