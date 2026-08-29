@@ -93,6 +93,15 @@ The authors are not responsible for the contents of external links.
 For the rest of the disclaimer, refer to the License (GNU General Public License v3.0) file (LICENSE) - see sections 15, 16 and 17.
 ```
 
+## Credits
+
+This project is an unbranded reimplementation of
+[TcNo-Acc-Switcher](https://github.com/TCNOco/TcNo-Acc-Switcher) by TechNobo (Wesley
+Pyburn) and its contributors, released under the GPL v3.0. The account-swap approach
+and the platform definitions in `Platforms.json` originate there; the Go backend and
+Svelte frontend in this repository are a rewrite. Third-party licenses are collected
+in [OPEN_SOURCE_LICENSES.txt](OPEN_SOURCE_LICENSES.txt).
+
 ## License
 
 Licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE).
